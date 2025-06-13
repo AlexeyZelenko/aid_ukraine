@@ -24,8 +24,11 @@
 
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
+import { useToast } from 'primevue/usetoast'
 import { rtdb } from '@/config/firebase'
 import { push, ref as dbRef, serverTimestamp } from 'firebase/database'
+
+const toast = useToast()
 
 const props = defineProps({
   topicId: {
@@ -54,10 +57,10 @@ const submitComment = async () => {
     comment.value.createdAt = serverTimestamp()
     await push(dbRef(rtdb, `topics/${props.topicId}/comments`), comment.value)
     comment.value.content = ''
-    alert('Коментар успішно опубліковано!')
+    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Коментар успішно опубліковано!', life: 3000 })
   } catch (error) {
     console.error('Помилка при публікації коментаря:', error)
-    alert('Не вдалося опублікувати коментар. Спробуйте ще раз.')
+    toast.add({ severity: 'error', summary: 'Помилка', detail: 'Не вдалося опублікувати коментар. Спробуйте ще раз.', life: 3000 })
   }
 }
 </script>

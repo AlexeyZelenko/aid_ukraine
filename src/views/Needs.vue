@@ -332,9 +332,13 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { useNeedsStore, type Need } from '../stores/needs'
-  import { useAuthStore } from '../stores/auth'
+  import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/auth'
+import { useNeedsStore } from '@/stores/needs'
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
   
   const needsStore = useNeedsStore()
   const authStore = useAuthStore()
@@ -597,7 +601,7 @@
   
   const openAddModal = () => {
     if (!authStore.user) {
-      alert('Для додавання потреби необхідно увійти в систему')
+      toast.add({ severity: 'warn', summary: 'Попередження', detail: 'Для додавання потреби необхідно увійти в систему', life: 3000 })
       return
     }
     showAddModal.value = true
@@ -620,7 +624,7 @@
   
   const submitNeed = async () => {
     if (!authStore.user) {
-      alert('Необхідно увійти в систему')
+      toast.add({ severity: 'warn', summary: 'Попередження', detail: 'Необхідно увійти в систему', life: 3000 })
       return
     }
   
@@ -636,9 +640,9 @@
     if (result.success) {
       closeAddModal()
       await needsStore.fetchNeeds()
-      alert('Потребу успішно додано!')
+      toast.add({ severity: 'success', summary: 'Успіх', detail: 'Потребу успішно додано!', life: 3000 })
     } else {
-      alert('Помилка при додаванні потреби. Спробуйте пізніше.')
+      toast.add({ severity: 'error', summary: 'Помилка', detail: 'Помилка при додаванні потреби. Спробуйте пізніше.', life: 3000 })
     }
   
     submitting.value = false
@@ -661,7 +665,7 @@
   }
   
   const viewDetails = (need: Need) => {
-    alert(`Деталі потреби:\n\nНазва: ${need.title}\nОпис: ${need.description}\nКатегорія: ${need.category}\nПріоритет: ${need.priority}\nМісце: ${need.location}\nКонтакт: ${need.contactPerson}\nТелефон: ${need.contactPhone}\nEmail: ${need.contactEmail}${need.quantity ? `\nКількість: ${need.quantity}` : ''}`)
+    toast.add({ severity: 'info', summary: 'Деталі потреби', detail: `Назва: ${need.title}\nОпис: ${need.description}\nКатегорія: ${need.category}\nПріоритет: ${need.priority}\nМісце: ${need.location}\nКонтакт: ${need.contactPerson}\nТелефон: ${need.contactPhone}\nEmail: ${need.contactEmail}${need.quantity ? `\nКількість: ${need.quantity}` : ''}`, life: 5000 })
   }
   
   onMounted(() => {

@@ -209,14 +209,17 @@
 </template>
 
 <script setup lang="ts">
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
+
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
-    // Show success message (you could use a toast notification here)
-    alert('Номер скопійовано в буфер обміну!')
+    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Номер скопійовано в буфер обміну!', life: 3000 })
   } catch (err) {
     console.error('Failed to copy text: ', err)
-    alert('Не вдалось скопіювати номер')
+    toast.add({ severity: 'error', summary: 'Помилка', detail: 'Не вдалось скопіювати номер', life: 3000 })
   }
 }
 </script>

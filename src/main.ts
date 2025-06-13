@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
 import App from './App.vue'
 import router from './router'
 import './style.css'
@@ -30,5 +31,6 @@ app.use(pinia)
 app.use(router)
 app.use(i18n)
 app.use(PrimeVue)
+app.use(ToastService)
 
 app.mount('#app')

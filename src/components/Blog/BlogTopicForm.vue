@@ -59,13 +59,13 @@ const submitTopic = async () => {
 
   // 1. Перевірка наявності даних
   if (!topic.value.title || topic.value.title.trim() === '') {
-    alert('Будь ласка, введіть заголовок теми.');
+    toast.add({ severity: 'warn', summary: 'Попередження', detail: 'Будь ласка, введіть заголовок теми.', life: 3000 });
     console.warn('Публікація скасована: відсутній заголовок.');
     return; // Зупиняємо виконання функції
   }
 
   if (!topic.value.content || topic.value.content.trim() === '') {
-    alert('Будь ласка, введіть зміст теми.');
+    toast.add({ severity: 'warn', summary: 'Попередження', detail: 'Будь ласка, введіть зміст теми.', life: 3000 });
     console.warn('Публікація скасована: відсутній зміст.');
     return; // Зупиняємо виконання функції
   }
@@ -90,7 +90,7 @@ const submitTopic = async () => {
     topic.value.content = '';
 
     // 5. Повідомлення користувача про успіх
-    alert('Тему успішно опубліковано!');
+    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Тему успішно опубліковано!', life: 3000 });
 
   } catch (error) {
     // 6. Обробка помилок Firebase та інших можливих помилок
@@ -116,7 +116,7 @@ const submitTopic = async () => {
       errorMessage = `Помилка: ${error.message}`;
     }
 
-    alert(errorMessage);
+    toast.add({ severity: 'error', summary: 'Помилка', detail: errorMessage, life: 3000 });
   }
 };
 </script>

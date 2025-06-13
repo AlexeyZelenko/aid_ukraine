@@ -6,6 +6,9 @@
     <!-- Navigation -->
     <AppNavigation />
     
+    <!-- Toast for PrimeVue notifications -->
+    <Toast />
+
     <!-- Main content -->
     <main>
       <router-view />
@@ -21,6 +24,7 @@ import { onMounted } from 'vue'
 import { useAuthStore } from './stores/auth'
 import AppNavigation from './components/AppNavigation.vue'
 import AppFooter from './components/AppFooter.vue'
+import Toast from 'primevue/toast'
 
 const authStore = useAuthStore()
 

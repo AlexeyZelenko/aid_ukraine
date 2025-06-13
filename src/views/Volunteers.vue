@@ -402,6 +402,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useVolunteersStore, type Volunteer } from '../stores/volunteers'
 import { useAuthStore } from '../stores/auth'
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
 
 const volunteersStore = useVolunteersStore()
 const authStore = useAuthStore()
@@ -727,9 +730,9 @@ const submitRegistration = async () => {
   if (result.success) {
     closeRegistrationModal()
     await volunteersStore.fetchVolunteers()
-    alert('Реєстрацію успішно подано! Очікуйте на верифікацію.')
+    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Реєстрацію успішно подано! Очікуйте на верифікацію.', life: 3000 })
   } else {
-    alert('Помилка при реєстрації. Спробуйте пізніше.')
+    toast.add({ severity: 'error', summary: 'Помилка', detail: 'Помилка при реєстрації. Спробуйте пізніше.', life: 3000 })
   }
   
   submitting.value = false
@@ -739,9 +742,19 @@ const contactVolunteer = (volunteer: any) => {
   const message = `Привіт! Я знайшов ваш профіль на платформі "Допомога Україні" і хотів би обговорити можливість співпраці.`
   const emailUrl = `mailto:${volunteer.email}?subject=Співпраця через платформу "Допомога Україні"&body=${encodeURIComponent(message)}`
   
-  if (confirm(`Зв'язатися з ${volunteer.name}?\n\nEmail: ${volunteer.email}\nТелефон: ${volunteer.phone}`)) {
-    window.open(emailUrl)
-  }
+  toast.add({
+    severity: 'info',
+    summary: 'Зв\'язатися з волонтером',
+    detail: `Зв'язатися з ${volunteer.name}?\n\nEmail: ${volunteer.email}\nТелефон: ${volunteer.phone}`,
+    life: 5000,
+    group: 'confirm',
+    onClose: (event) => {
+      if (event.type === 'confirm') {
+        window.open(emailUrl)
+      }
+    }
+  })
+
 }
 
 const viewProfile = (volunteer: any) => {
@@ -771,7 +784,12 @@ const viewProfile = (volunteer: any) => {
   profileInfo += `\n\nЗареєстровано: ${formatDate(volunteer.createdAt)}`
   profileInfo += `\nСтатус: ${volunteer.verified ? 'Верифіковано ✓' : 'Очікує верифікації'}`
   
-  alert(profileInfo)
+  toast.add({
+    severity: 'info',
+    summary: 'Профіль волонтера',
+    detail: profileInfo,
+    life: 10000
+  })
 }
 
 onMounted(() => {
