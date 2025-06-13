@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "home": "Home",
+    "volunteers": "Volunteers",
+    "needs": "Needs",
+    "financial": "Financial Help",
+    "map": "Map",
+    "blog": "Blog",
+    "articles": "Articles",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "title": "Help Ukraine",
+    "subtitle": "Support platform for displaced persons, soldiers and victims",
+    "description": "We unite volunteers, funds and those who need help",
+    "joinUs": "Join Us",
+    "learnMore": "Learn More"
+  },
+  "volunteers": {
+    "title": "Volunteers and Organizations",
+    "subtitle": "Registration of volunteers, funds and rehabilitation centers",
+    "register": "Register as volunteer",
+    "types": {
+      "volunteer": "Volunteer",
+      "fund": "Fund",
+      "rehabilitation": "Rehabilitation Center"
+    }
+  },
+  "needs": {
+    "title": "Needs",
+    "subtitle": "Current needs by categories",
+    "addNeed": "Add Need",
+    "categories": {
+      "medical": "Medical Help",
+      "housing": "Housing",
+      "food": "Food",
+      "clothing": "Clothing",
+      "transportation": "Transportation",
+      "legal": "Legal Help",
+      "psychological": "Psychological Support",
+      "education": "Education",
+      "other": "Other"
+    }
+  },
+  "financial": {
+    "title": "Financial Help",
+    "subtitle": "Bank details for assistance",
+    "privatbank": "PrivatBank",
+    "monobank": "Monobank"
+  },
+  "map": {
+    "title": "Help Map",
+    "subtitle": "Mark places where help is needed"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Community discussions and support"
+  },
+  "articles": {
+    "title": "Articles",
+    "subtitle": "Useful materials and advice"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All"
+  }
+}
