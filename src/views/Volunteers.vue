@@ -29,7 +29,7 @@
       </div>
 
       <!-- Volunteer Types -->
-      <div class="grid md:grid-cols-3 gap-8 mb-12">
+      <div class="grid md:grid-cols-4 gap-8 mb-12">
         <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
           <div class="text-center">
             <div class="w-16 h-16 bg-ukraine-blue rounded-full flex items-center justify-center mx-auto mb-4">
@@ -77,6 +77,22 @@
             </button>
           </div>
         </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-purple-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-church text-2xl text-purple-700"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">{{ $t('volunteers.types.church') }}</h3>
+            <p class="text-gray-600 mb-4">Релігійні громади, церкви, парафії, що допомагають людям</p>
+            <button 
+              @click="openRegistrationModal('church')"
+              class="btn-ukraine w-full"
+            >
+              Зареєструватися
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Search and Filters -->
@@ -101,6 +117,7 @@
               <option value="volunteer">Волонтери</option>
               <option value="fund">Фонди</option>
               <option value="rehabilitation">Центри реабілітації</option>
+              <option value="church">Церкви</option>
             </select>
 
             <select 
@@ -411,7 +428,7 @@ const authStore = useAuthStore()
 
 // Reactive data
 const showRegistrationModal = ref(false)
-const registrationType = ref<'volunteer' | 'fund' | 'rehabilitation'>('volunteer')
+const registrationType = ref<'volunteer' | 'fund' | 'rehabilitation' | 'church'>('volunteer')
 const submitting = ref(false)
 const searchQuery = ref('')
 const selectedType = ref('')
@@ -527,7 +544,22 @@ const mockVolunteers: (Volunteer & {
     specializations: ['юридичні консультації', 'соціальне право', 'документообіг'],
     rating: 5,
     experience: 12
-  }  
+  },
+  {
+    id: '13',
+    name: 'Парафія Святого Миколая',
+    email: 'church.st.nicholas@email.com',
+    phone: '+38 (067) 111-22-33',
+    organization: 'Парафія Святого Миколая',
+    type: 'church',
+    description: 'Церква, що організовує гуманітарну допомогу, підтримку переселенців, духовну підтримку та спільні заходи для громади.',
+    location: 'Тернопіль',
+    verified: true,
+    createdAt: new Date('2024-01-03'),
+    website: 'https://st-nicholas-church.ua',
+    specializations: ['гуманітарна допомога', 'підтримка переселенців', 'духовна підтримка', 'соціальні заходи'],
+    rating: 5
+  }
 ]
 
 // Computed properties
@@ -581,7 +613,8 @@ const getTypeClass = (type: string) => {
   const classes = {
     volunteer: 'bg-blue-100 text-blue-800',
     fund: 'bg-yellow-100 text-yellow-800',
-    rehabilitation: 'bg-green-100 text-green-800'
+    rehabilitation: 'bg-green-100 text-green-800',
+    church: 'bg-purple-100 text-purple-800'
   }
   return classes[type as keyof typeof classes] || 'bg-gray-100 text-gray-800'
 }
@@ -598,12 +631,13 @@ const getDescriptionPlaceholder = () => {
   const placeholders = {
     volunteer: 'Опишіть ваші навички, досвід та як ви можете допомогти...',
     fund: 'Опишіть діяльність фонду, основні напрямки роботи...',
-    rehabilitation: 'Опишіть послуги центру, спеціалізацію, можливості...'
+    rehabilitation: 'Опишіть послуги центру, спеціалізацію, можливості...',
+    church: 'Опишіть діяльність релігійної громади, церкви, парафії...'
   }
   return placeholders[registrationType.value]
 }
 
-const openRegistrationModal = (type: 'volunteer' | 'fund' | 'rehabilitation') => {
+const openRegistrationModal = (type: 'volunteer' | 'fund' | 'rehabilitation' | 'church') => {
   registrationType.value = type
   showRegistrationModal.value = true
   // Reset form

@@ -26,7 +26,8 @@
     "types": {
       "volunteer": "Волонтер",
       "fund": "Фонд",
-      "rehabilitation": "Центр реабілітації"
+      "rehabilitation": "Центр реабілітації",
+      "church": "Церква/релігійна громада"
     }
   },
   "needs": {
