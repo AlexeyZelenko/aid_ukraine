@@ -24,6 +24,12 @@ const i18n = createI18n({
   }
 })
 
+if (process.env.NODE_ENV === 'development') {
+  import('@vue/devtools').then(({ connect })=>{
+    connect('ws://localhost:8098')
+  })
+}
+
 const app = createApp(App)
 const pinia = createPinia()
 
