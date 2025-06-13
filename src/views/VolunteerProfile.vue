@@ -69,10 +69,19 @@
         <div v-if="volunteer.specializations && volunteer.specializations.length > 0" class="mb-8">
           <div class="font-semibold mb-2 text-gray-700">Спеціалізації:</div>
           <div class="flex flex-wrap gap-2">
-            <span v-for="spec in volunteer.specializations" :key="spec" class="px-3 py-1 bg-ukraine-blue bg-opacity-10 text-ukraine-blue text-xs rounded-full">
+            <span v-for="spec in volunteer.specializations" :key="spec" class="px-3 py-1 bg-ukraine-blue bg-opacity-10 text-white text-xs rounded-full">
               {{ spec }}
             </span>
           </div>
+        </div>
+        <div class="mb-8">
+          <div class="font-semibold mb-2 text-gray-700">Розташування на карті:</div>
+          <l-map :zoom="13" :center="locationCoords" style="height: 300px; border-radius: 16px; overflow: hidden;">
+            <l-tile-layer :url="tileUrl" :attribution="tileAttribution" />
+            <l-marker :lat-lng="locationCoords">
+              <l-popup>{{ volunteer.location }}</l-popup>
+            </l-marker>
+          </l-map>
         </div>
       </div>
       <div v-else class="text-center text-gray-500 py-12">
@@ -86,6 +95,27 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+
+// Fix default icon path for leaflet
+delete L.Icon.Default.prototype._getIconUrl
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+})
+
+const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+const tileAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+
+// Координаты для Черкас (пример)
+const locationCoords = ref<[number, number]>([49.444433, 32.059767])
 
 // Импортируем mockVolunteers из Volunteers.vue (или продублируем для мок-режима)
 const mockVolunteers = [
