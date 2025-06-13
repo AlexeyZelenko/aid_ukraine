@@ -1,7 +1,7 @@
 {
   "files": [],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.svelte", "src/**/*.astro"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.svelte", "src/**/*.astro", "src/main.js"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
       "composite": true,            // This must be true
