@@ -18,10 +18,10 @@
               <i class="fas fa-heart mr-2"></i>
               {{ $t('home.joinUs') }}
             </router-link>
-            <button class="btn-ukraine text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white text-ukraine-blue border-2 border-ukraine-blue hover:bg-ukraine-blue hover:text-white">
+            <router-link to="/about" class="btn-ukraine text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white text-ukraine-blue border-2 border-ukraine-blue hover:bg-ukraine-blue hover:text-white">
               <i class="fas fa-info-circle mr-2"></i>
               {{ $t('home.learnMore') }}
-            </button>
+            </router-link>
           </div>
         </div>
       </div>
