@@ -9,7 +9,7 @@
       </div>
 
       <!-- Statistics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
         <div class="bg-white rounded-lg shadow p-4 text-center">
           <div class="text-2xl font-bold text-ukraine-blue">{{ totalVolunteers }}</div>
           <div class="text-sm text-gray-600">Всього волонтерів</div>
@@ -29,7 +29,7 @@
       </div>
 
       <!-- Volunteer Types -->
-      <div class="grid md:grid-cols-4 gap-8 mb-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 mb-8 sm:mb-12">
         <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
           <div class="flex flex-col justify-between h-full text-center">
             <div class="w-16 h-16 bg-ukraine-blue rounded-full flex items-center justify-center mx-auto mb-4">
@@ -96,22 +96,22 @@
       </div>
 
       <!-- Search and Filters -->
-      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div class="flex flex-col sm:flex-row gap-4 flex-1">
+      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4">
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 flex-1 w-full">
             <div class="relative flex-1">
               <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Пошук волонтерів..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
               >
             </div>
             
             <select 
               v-model="selectedType"
-              class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
+              class="border border-gray-300 rounded-md px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
             >
               <option value="">Всі типи</option>
               <option value="volunteer">Волонтери</option>
@@ -122,7 +122,7 @@
 
             <select 
               v-model="selectedLocation"
-              class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
+              class="border border-gray-300 rounded-md px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
             >
               <option value="">Всі міста</option>
               <option v-for="location in uniqueLocations" :key="location" :value="location">
@@ -132,7 +132,7 @@
 
             <select 
               v-model="selectedVerification"
-              class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
+              class="border border-gray-300 rounded-md px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
             >
               <option value="">Всі</option>
               <option value="verified">Верифіковані</option>
@@ -143,10 +143,10 @@
       </div>
 
       <!-- Volunteers List -->
-      <div class="bg-white rounded-lg shadow-lg p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-semibold">Зареєстровані волонтери та організації</h2>
-          <div class="text-sm text-gray-600">
+      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
+          <h2 class="text-lg sm:text-2xl font-semibold">Зареєстровані волонтери та організації</h2>
+          <div class="text-xs sm:text-sm text-gray-600">
             Знайдено: {{ filteredVolunteers.length }} з {{ mockVolunteers.length }}
           </div>
         </div>
@@ -156,7 +156,7 @@
           <p class="mt-2 text-gray-600">{{ $t('common.loading') }}</p>
         </div>
 
-        <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div 
             v-for="volunteer in filteredVolunteers" 
             :key="volunteer.id"

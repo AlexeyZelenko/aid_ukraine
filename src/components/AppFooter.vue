@@ -1,36 +1,36 @@
 <template>
   <footer class="bg-gray-800 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid md:grid-cols-4 gap-8">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-8">
         <!-- About -->
-        <div>
-          <h3 class="text-lg font-semibold mb-4">{{ $t('home.title') }}</h3>
-          <p class="text-gray-300 text-sm">
+        <div class="mb-8 md:mb-0">
+          <h3 class="text-lg sm:text-xl font-semibold mb-4">{{ $t('home.title') }}</h3>
+          <p class="text-gray-300 text-sm sm:text-base">
             {{ $t('home.description') }}
           </p>
         </div>
 
         <!-- Quick Links -->
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Швидкі посилання</h3>
+        <div class="mb-8 md:mb-0">
+          <h3 class="text-lg sm:text-xl font-semibold mb-4">Швидкі посилання</h3>
           <ul class="space-y-2">
             <li>
-              <router-link to="/volunteers" class="text-gray-300 hover:text-white text-sm">
+              <router-link to="/volunteers" class="text-gray-300 hover:text-white text-sm sm:text-base">
                 {{ $t('nav.volunteers') }}
               </router-link>
             </li>
             <li>
-              <router-link to="/needs" class="text-gray-300 hover:text-white text-sm">
+              <router-link to="/needs" class="text-gray-300 hover:text-white text-sm sm:text-base">
                 {{ $t('nav.needs') }}
               </router-link>
             </li>
             <li>
-              <router-link to="/financial" class="text-gray-300 hover:text-white text-sm">
+              <router-link to="/financial" class="text-gray-300 hover:text-white text-sm sm:text-base">
                 {{ $t('nav.financial') }}
               </router-link>
             </li>
             <li>
-              <router-link to="/map" class="text-gray-300 hover:text-white text-sm">
+              <router-link to="/map" class="text-gray-300 hover:text-white text-sm sm:text-base">
                 {{ $t('nav.map') }}
               </router-link>
             </li>
@@ -38,9 +38,9 @@
         </div>
 
         <!-- Contact -->
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Контакти</h3>
-          <ul class="space-y-2 text-sm text-gray-300">
+        <div class="mb-8 md:mb-0">
+          <h3 class="text-lg sm:text-xl font-semibold mb-4">Контакти</h3>
+          <ul class="space-y-2 text-sm sm:text-base text-gray-300">
             <li>
               <i class="fas fa-envelope mr-2"></i>
               info@help-ukraine.org
@@ -58,19 +58,19 @@
 
         <!-- Social -->
         <div>
-          <h3 class="text-lg font-semibold mb-4">Слідкуйте за нами</h3>
+          <h3 class="text-lg sm:text-xl font-semibold mb-4">Слідкуйте за нами</h3>
           <div class="flex space-x-4">
             <a href="#" class="text-gray-300 hover:text-white">
-              <i class="fab fa-facebook-f text-xl"></i>
+              <i class="fab fa-facebook-f text-xl sm:text-2xl"></i>
             </a>
             <a href="#" class="text-gray-300 hover:text-white">
-              <i class="fab fa-twitter text-xl"></i>
+              <i class="fab fa-twitter text-xl sm:text-2xl"></i>
             </a>
             <a href="#" class="text-gray-300 hover:text-white">
-              <i class="fab fa-instagram text-xl"></i>
+              <i class="fab fa-instagram text-xl sm:text-2xl"></i>
             </a>
             <a href="#" class="text-gray-300 hover:text-white">
-              <i class="fab fa-telegram text-xl"></i>
+              <i class="fab fa-telegram text-xl sm:text-2xl"></i>
             </a>
           </div>
         </div>
@@ -78,7 +78,7 @@
 
       <div class="border-t border-gray-700 mt-8 pt-8 text-center">
         <div class="ukraine-accent-bar mb-4"></div>
-        <p class="text-gray-400 text-sm">
+        <p class="text-gray-400 text-xs sm:text-sm">
           © 2024 Допомога Україні. Всі права захищені. Разом до перемоги! 🇺🇦
         </p>
       </div>
