@@ -11,6 +11,7 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import About from '../views/About.vue';
 import NeedDetail from '../views/NeedDetail.vue';
+import VolunteerProfile from '../views/VolunteerProfile.vue'
 
 var router = createRouter({
     history: createWebHistory(),
@@ -75,6 +76,12 @@ var router = createRouter({
             path: '/need/:id',
             name: 'NeedDetail',
             component: NeedDetail,
+            props: true
+        },
+        {
+            path: '/volunteers/:id',
+            name: 'VolunteerProfile',
+            component: VolunteerProfile,
             props: true
         }
     ]

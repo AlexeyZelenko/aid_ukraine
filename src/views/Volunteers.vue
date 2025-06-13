@@ -31,7 +31,7 @@
       <!-- Volunteer Types -->
       <div class="grid md:grid-cols-4 gap-8 mb-12">
         <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="text-center">
+          <div class="flex flex-col justify-between h-full text-center">
             <div class="w-16 h-16 bg-ukraine-blue rounded-full flex items-center justify-center mx-auto mb-4">
               <i class="fas fa-hand-heart text-2xl text-white"></i>
             </div>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="text-center">
+          <div class="flex flex-col justify-between h-full text-center">
             <div class="w-16 h-16 bg-ukraine-yellow rounded-full flex items-center justify-center mx-auto mb-4">
               <i class="fas fa-building text-2xl text-ukraine-blue"></i>
             </div>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="text-center">
+          <div class="flex flex-col justify-between h-full text-center">
             <div class="w-16 h-16 bg-ukraine-blue rounded-full flex items-center justify-center mx-auto mb-4">
               <i class="fas fa-hospital text-2xl text-white"></i>
             </div>
@@ -79,7 +79,7 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="text-center">
+          <div class="flex flex-col justify-between h-full text-center">
             <div class="w-16 h-16 bg-purple-200 rounded-full flex items-center justify-center mx-auto mb-4">
               <i class="fas fa-church text-2xl text-purple-700"></i>
             </div>
@@ -420,8 +420,10 @@ import { ref, computed, onMounted } from 'vue'
 import { useVolunteersStore, type Volunteer } from '../stores/volunteers'
 import { useAuthStore } from '../stores/auth'
 import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router'
 
 const toast = useToast()
+const router = useRouter()
 
 const volunteersStore = useVolunteersStore()
 const authStore = useAuthStore()
@@ -487,18 +489,18 @@ const mockVolunteers: (Volunteer & {
   },
   {
     id: '3',
-    name: 'Олександр Петренко',
-    email: 'alex.petrenko@email.com',
-    phone: '+38 (067) 345-67-89',
-    organization: 'Незалежний волонтер',
-    type: 'volunteer',
-    description: 'Водій-волонтер. Допомагаю з транспортуванням людей та вантажів. Маю власний мікроавтобус.',
-    location: 'Львів',
+    name: 'Блага вість',
+    email: 'church.st.nicholas@email.com',
+    phone: '+38 (067) 111-22-33',
+    organization: 'Блага Вість',
+    type: 'church',
+    description: 'Церква, що організовує гуманітарну допомогу, підтримку переселенців, духовну підтримку та спільні заходи для громади.',
+    location: 'Черкаси',
     verified: true,
-    createdAt: new Date('2024-01-12'),
-    specializations: ['транспорт', 'логістика', 'доставка'],
-    rating: 4,
-    experience: 3
+    createdAt: new Date('2024-01-03'),
+    website: 'https://st-nicholas-church.ua',
+    specializations: ['гуманітарна допомога', 'підтримка переселенців', 'духовна підтримка', 'соціальні заходи'],
+    rating: 5
   },  
   {
     id: '4',
@@ -544,22 +546,7 @@ const mockVolunteers: (Volunteer & {
     specializations: ['юридичні консультації', 'соціальне право', 'документообіг'],
     rating: 5,
     experience: 12
-  },
-  {
-    id: '13',
-    name: 'Парафія Святого Миколая',
-    email: 'church.st.nicholas@email.com',
-    phone: '+38 (067) 111-22-33',
-    organization: 'Парафія Святого Миколая',
-    type: 'church',
-    description: 'Церква, що організовує гуманітарну допомогу, підтримку переселенців, духовну підтримку та спільні заходи для громади.',
-    location: 'Тернопіль',
-    verified: true,
-    createdAt: new Date('2024-01-03'),
-    website: 'https://st-nicholas-church.ua',
-    specializations: ['гуманітарна допомога', 'підтримка переселенців', 'духовна підтримка', 'соціальні заходи'],
-    rating: 5
-  }
+  }  
 ]
 
 // Computed properties
@@ -705,38 +692,7 @@ const contactVolunteer = (volunteer: any) => {
 }
 
 const viewProfile = (volunteer: any) => {
-  let profileInfo = `Профіль: ${volunteer.name}\n\n`
-  profileInfo += `Організація: ${volunteer.organization}\n`
-  profileInfo += `Тип: ${volunteer.type}\n`
-  profileInfo += `Місцезнаходження: ${volunteer.location}\n`
-  profileInfo += `Опис: ${volunteer.description}\n`
-  
-  if (volunteer.specializations && volunteer.specializations.length > 0) {
-    profileInfo += `\nСпеціалізації: ${volunteer.specializations.join(', ')}\n`
-  }
-  
-  if (volunteer.experience) {
-    profileInfo += `Досвід: ${volunteer.experience} років\n`
-  }
-  
-  if (volunteer.rating) {
-    profileInfo += `Рейтинг: ${volunteer.rating}/5\n`
-  }
-  
-  if (volunteer.website) {
-    profileInfo += `Веб-сайт: ${volunteer.website}\n`
-  }
-  
-  profileInfo += `\nКонтакти:\nEmail: ${volunteer.email}\nТелефон: ${volunteer.phone}`
-  profileInfo += `\n\nЗареєстровано: ${formatDate(volunteer.createdAt)}`
-  profileInfo += `\nСтатус: ${volunteer.verified ? 'Верифіковано ✓' : 'Очікує верифікації'}`
-  
-  toast.add({
-    severity: 'info',
-    summary: 'Профіль волонтера',
-    detail: profileInfo,
-    life: 10000
-  })
+  router.push({ name: 'VolunteerProfile', params: { id: volunteer.id } })
 }
 
 onMounted(() => {
