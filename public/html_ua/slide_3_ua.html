@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наше рішення</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ukraine-gradient {
+            background: linear-gradient(135deg, rgba(0, 87, 183, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+        }
+        .blue-ua {
+            color: #0057B7;
+        }
+        .yellow-ua {
+            color: #FFD700;
+        }
+        .solution-card {
+            background-color: white;
+            border-left: 5px solid #FFD700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .feature-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            transition: transform 0.2s ease;
+        }
+        .feature-box:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container ukraine-gradient">
+        <!-- Синьо-жовта смуга вгорі -->
+        <div class="absolute top-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+        
+        <div class="flex min-h-full pt-20 pb-16 px-16">
+            <!-- Ліва колонка з заголовком -->
+            <div class="w-1/3 pr-10">
+                <h1 class="text-5xl font-bold yellow-ua mb-8">Наше рішення</h1>
+                
+                <div class="mt-10">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-yellow-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-lightbulb text-2xl yellow-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Єдина платформа</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-handshake text-2xl blue-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Прозора допомога</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Права колонка з описом рішення -->
+            <div class="w-2/3">
+                <div class="solution-card">
+                    <p class="text-lg mb-6">
+                        <span class="text-xl font-semibold yellow-ua">Єдиний онлайн-майданчик</span> для координації всіх видів допомоги та ресурсів на одній платформі:
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="feature-box">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-users-cog text-lg blue-ua mr-3"></i>
+                                <h3 class="font-semibold">Координація волонтерів</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Система реєстрації та верифікації волонтерів, фондів та реабілітаційних центрів</p>
+                        </div>
+                        
+                        <div class="feature-box">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-list-alt text-lg yellow-ua mr-3"></i>
+                                <h3 class="font-semibold">Структуровані потреби</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Чіткий розподіл запитів на допомогу за категоріями та пріоритетами</p>
+                        </div>
+                        
+                        <div class="feature-box">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-wallet text-lg blue-ua mr-3"></i>
+                                <h3 class="font-semibold">Прозорі фінанси</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Захищені платіжні системи з детальною звітністю про використання коштів</p>
+                        </div>
+                        
+                        <div class="feature-box">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-map-marked-alt text-lg yellow-ua mr-3"></i>
+                                <h3 class="font-semibold">Геолокація допомоги</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Інтерактивна карта потреб та центрів підтримки з актуальною інформацією</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-quote-left text-4xl text-gray-300 mr-4 mt-1"></i>
+                            <p class="text-lg italic text-gray-700">
+                                Адресна допомога з чіткою координацією та оперативністю — ключові принципи нашої платформи. Ми об'єднуємо тих, хто надає і потребує підтримки, в єдину ефективну спільноту.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between mt-6">
+                    <div class="text-center bg-blue-50 rounded-lg p-3 flex-1 mr-4">
+                        <i class="fas fa-shield-alt text-3xl blue-ua mb-2"></i>
+                        <p class="text-sm font-semibold">Безпека даних</p>
+                    </div>
+                    <div class="text-center bg-yellow-50 rounded-lg p-3 flex-1 mr-4">
+                        <i class="fas fa-language text-3xl yellow-ua mb-2"></i>
+                        <p class="text-sm font-semibold">Українська + English</p>
+                    </div>
+                    <div class="text-center bg-blue-50 rounded-lg p-3 flex-1">
+                        <i class="fas fa-mobile-alt text-3xl blue-ua mb-2"></i>
+                        <p class="text-sm font-semibold">Адаптивний дизайн</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Синьо-жовта смуга внизу -->
+        <div class="absolute bottom-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+    </div>
+</body>
+</html>

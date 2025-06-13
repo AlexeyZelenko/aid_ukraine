@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Audience</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .header-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .footer-accent {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #97CC04 0%, #2D7DD2 100%);
+        }
+        .side-accent {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 12px;
+            height: calc(100% - 24px);
+            background: linear-gradient(180deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .content-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+            width: 55%;
+            z-index: 10;
+        }
+        .audience-category {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .audience-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(45, 125, 210, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: #2D7DD2;
+            flex-shrink: 0;
+        }
+        .audience-visual {
+            position: absolute;
+            right: 50px;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+        .circle-group {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .outer-circle {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border: 2px dashed rgba(45, 125, 210, 0.3);
+            border-radius: 50%;
+        }
+        .inner-circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 2px dashed rgba(151, 204, 4, 0.3);
+            border-radius: 50%;
+            top: 50px;
+            left: 50px;
+        }
+        .audience-bubble {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #2D7DD2;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container flex flex-col items-start justify-center">
+        <div class="header-accent"></div>
+        <div class="side-accent"></div>
+        <div class="footer-accent"></div>
+        
+        <div class="absolute top-6 left-8 flex items-center">
+            <h2 class="text-2xl font-bold text-gray-700">Humanitarian Aid Website</h2>
+        </div>
+        
+        <div class="absolute top-6 right-6 p-3 flex items-center">
+            <div class="w-5 h-5 bg-blue-600 rounded-full mr-2"></div>
+            <span class="text-gray-600">June 2025</span>
+        </div>
+        
+        <div class="content-box ml-16">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-blue-600 pb-2">Target Audience</h1>
+            
+            <p class="text-lg text-gray-700 mb-8">Our platform serves a diverse community of individuals with varying needs for support and those with resources to offer help.</p>
+            
+            <div class="audience-categories space-y-4">
+                <div class="audience-category">
+                    <div class="audience-icon">
+                        <i class="fas fa-home-alt fa-2x"></i>
+                    </div>
+                    <div class="audience-text">
+                        <h3 class="font-semibold text-lg text-gray-800">Displaced Persons</h3>
+                        <p class="text-gray-600">Individuals and families forced to leave their homes</p>
+                    </div>
+                </div>
+                
+                <div class="audience-category">
+                    <div class="audience-icon">
+                        <i class="fas fa-user-shield fa-2x"></i>
+                    </div>
+                    <div class="audience-text">
+                        <h3 class="font-semibold text-lg text-gray-800">Soldiers & Wounded Veterans</h3>
+                        <p class="text-gray-600">Active military personnel and those injured in service</p>
+                    </div>
+                </div>
+                
+                <div class="audience-category">
+                    <div class="audience-icon">
+                        <i class="fas fa-heart-broken fa-2x"></i>
+                    </div>
+                    <div class="audience-text">
+                        <h3 class="font-semibold text-lg text-gray-800">Widows</h3>
+                        <p class="text-gray-600">Those who have lost partners in conflict</p>
+                    </div>
+                </div>
+                
+                <div class="audience-category">
+                    <div class="audience-icon">
+                        <i class="fas fa-hands-helping fa-2x"></i>
+                    </div>
+                    <div class="audience-text">
+                        <h3 class="font-semibold text-lg text-gray-800">Volunteers & Donors</h3>
+                        <p class="text-gray-600">Individuals and groups looking to provide assistance</p>
+                    </div>
+                </div>
+                
+                <div class="audience-category">
+                    <div class="audience-icon">
+                        <i class="fas fa-hospital fa-2x"></i>
+                    </div>
+                    <div class="audience-text">
+                        <h3 class="font-semibold text-lg text-gray-800">NGOs & Rehabilitation Centers</h3>
+                        <p class="text-gray-600">Organizations providing structured support services</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-blue-50 p-3 rounded-md border-l-4 border-blue-500">
+                <p class="text-gray-700 italic">A diverse, multilingual user base in need of trust and support</p>
+            </div>
+        </div>
+        
+        <div class="audience-visual">
+            <div class="circle-group">
+                <div class="outer-circle"></div>
+                <div class="inner-circle"></div>
+                
+                <div class="audience-bubble" style="width: 80px; height: 80px; top: 50px; left: 160px;">
+                    <i class="fas fa-home fa-lg"></i>
+                </div>
+                
+                <div class="audience-bubble" style="width: 70px; height: 70px; top: 160px; left: 60px;">
+                    <i class="fas fa-user-shield fa-lg"></i>
+                </div>
+                
+                <div class="audience-bubble" style="width: 60px; height: 60px; bottom: 100px; left: 100px;">
+                    <i class="fas fa-heart-broken fa-lg"></i>
+                </div>
+                
+                <div class="audience-bubble" style="width: 90px; height: 90px; bottom: 60px; right: 100px;">
+                    <i class="fas fa-hands-helping fa-lg"></i>
+                </div>
+                
+                <div class="audience-bubble" style="width: 75px; height: 75px; top: 120px; right: 60px;">
+                    <i class="fas fa-hospital fa-lg"></i>
+                </div>
+                
+                <div class="audience-bubble" style="width: 100px; height: 100px; top: 170px; left: 150px;">
+                    <i class="fas fa-globe fa-lg text-green-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute left-8 bottom-8 flex items-center">
+            <i class="fas fa-file-alt text-gray-500 mr-2"></i>
+            <span class="text-gray-500">4</span>
+        </div>
+    </div>
+</body>
+</html>

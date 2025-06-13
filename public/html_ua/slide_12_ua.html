@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>План реалізації проекту</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ukraine-gradient {
+            background: linear-gradient(135deg, rgba(0, 87, 183, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+        }
+        .blue-ua {
+            color: #0057B7;
+        }
+        .yellow-ua {
+            color: #FFD700;
+        }
+        .step-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+        .step-number {
+            background-color: #0057B7;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            border: 3px solid white;
+        }
+        .timeline-connector {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #0057B7, #FFD700);
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container ukraine-gradient">
+        <!-- Синьо-жовта смуга вгорі -->
+        <div class="absolute top-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+        
+        <div class="flex min-h-full pt-20 pb-16 px-16">
+            <!-- Ліва колонка з заголовком -->
+            <div class="w-1/3 pr-10">
+                <h1 class="text-5xl font-bold blue-ua mb-8">План реалізації проекту</h1>
+                
+                <div class="mt-10">
+                    <div class="bg-white p-5 rounded-lg shadow-md">
+                        <p class="text-lg text-gray-700 mb-4">
+                            Поетапна розробка та запуск веб-сайту для досягнення максимальної ефективності та охоплення цільової аудиторії.
+                        </p>
+                        
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 rounded-full p-3 mr-3">
+                                <i class="fas fa-rocket text-2xl blue-ua"></i>
+                            </div>
+                            <p class="text-xl font-semibold text-gray-700">Час реалізації: 4-6 місяців</p>
+                        </div>
+                        
+                        <div class="mt-8 text-center">
+                            <a href="#" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                                Зв'язатися з нами
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Права колонка з етапами -->
+            <div class="w-2/3 relative">
+                <div class="timeline-connector"></div>
+                
+                <div class="step-card ml-6 mb-6">
+                    <div class="step-number">1</div>
+                    <h3 class="text-xl font-bold blue-ua mb-2">Розробка технічного завдання</h3>
+                    <p class="text-gray-700">Аналіз потреб цільової аудиторії, формування вимог до функціоналу, визначення необхідних інтеграцій та ресурсів.</p>
+                    <div class="flex mt-3">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">1-2 тижні</span>
+                        <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Аналітика</span>
+                    </div>
+                </div>
+                
+                <div class="step-card ml-12 mb-6">
+                    <div class="step-number">2</div>
+                    <h3 class="text-xl font-bold blue-ua mb-2">Дизайн і верстка сайту</h3>
+                    <p class="text-gray-700">Створення прототипу, UI/UX дизайну всіх сторінок, адаптивна верстка для мобільних та десктопних пристроїв.</p>
+                    <div class="flex mt-3">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">3-4 тижні</span>
+                        <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Дизайн</span>
+                    </div>
+                </div>
+                
+                <div class="step-card ml-6 mb-6">
+                    <div class="step-number">3</div>
+                    <h3 class="text-xl font-bold yellow-ua mb-2">Запуск MVP</h3>
+                    <p class="text-gray-700">Розробка базового функціоналу, тестування на обмеженій аудиторії, збір зворотного зв'язку та доопрацювання.</p>
+                    <div class="flex mt-3">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">2 місяці</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">Розробка</span>
+                    </div>
+                </div>
+                
+                <div class="step-card ml-12 mb-6">
+                    <div class="step-number">4</div>
+                    <h3 class="text-xl font-bold blue-ua mb-2">Партнерство з фондами</h3>
+                    <p class="text-gray-700">Залучення волонтерських організацій, реабілітаційних центрів та благодійних фондів до спільної роботи.</p>
+                    <div class="flex mt-3">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">1 місяць</span>
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded">Партнерство</span>
+                    </div>
+                </div>
+                
+                <div class="step-card ml-6">
+                    <div class="step-number">5</div>
+                    <h3 class="text-xl font-bold yellow-ua mb-2">Рекламна кампанія та підтримка</h3>
+                    <p class="text-gray-700">Запуск інформаційної кампанії, залучення користувачів, постійна технічна та контентна підтримка сайту.</p>
+                    <div class="flex mt-3">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">Постійно</span>
+                        <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">Просування</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Синьо-жовта смуга внизу -->
+        <div class="absolute bottom-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+    </div>
+</body>
+</html>

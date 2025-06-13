@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteers, Funds, & Centers</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .header-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .footer-accent {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #97CC04 0%, #2D7DD2 100%);
+        }
+        .side-accent {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 12px;
+            height: calc(100% - 24px);
+            background: linear-gradient(180deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .content-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+            max-width: 65%;
+            z-index: 10;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .feature-icon {
+            min-width: 40px;
+            height: 40px;
+            background-color: rgba(45, 125, 210, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #2D7DD2;
+        }
+        .registration-flow {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 340px;
+            height: 460px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+            padding: 20px;
+        }
+        .flow-step {
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            width: 100%;
+        }
+        .flow-step:not(:last-child):after {
+            content: "";
+            position: absolute;
+            height: 30px;
+            width: 2px;
+            background: linear-gradient(to bottom, #2D7DD2, #97CC04);
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .step-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            border: 2px solid #2D7DD2;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container flex flex-col items-start justify-center">
+        <div class="header-accent"></div>
+        <div class="side-accent"></div>
+        <div class="footer-accent"></div>
+        
+        <div class="absolute top-6 left-8 flex items-center">
+            <h2 class="text-2xl font-bold text-gray-700">Humanitarian Aid Website</h2>
+        </div>
+        
+        <div class="absolute top-6 right-6 p-3 flex items-center">
+            <div class="w-5 h-5 bg-blue-600 rounded-full mr-2"></div>
+            <span class="text-gray-600">June 2025</span>
+        </div>
+        
+        <div class="content-box ml-16">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-blue-600 pb-2">Volunteers, Funds, & Centers</h1>
+            
+            <p class="text-lg text-gray-700 leading-relaxed mb-8">
+                Our platform prioritizes trust and security through a comprehensive registration and management system for all aid providers.
+            </p>
+            
+            <div class="mt-8 space-y-5">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="text-gray-800 font-semibold">Central Registration System</div>
+                        <div class="text-gray-600 text-sm">All volunteer accounts require admin verification and approval</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="text-gray-800 font-semibold">Trusted Network for Aid</div>
+                        <div class="text-gray-600 text-sm">Verified volunteers create a reliable support ecosystem</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="text-gray-800 font-semibold">Verified Organization Partnerships</div>
+                        <div class="text-gray-600 text-sm">Collaboration with established rehabilitation centers and funds</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="text-gray-800 font-semibold">Resource Management</div>
+                        <div class="text-gray-600 text-sm">Efficient coordination and tracking of volunteer activities</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="text-gray-800 font-semibold">Administrator Dashboard</div>
+                        <div class="text-gray-600 text-sm">Real-time monitoring of volunteer and fund activity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="registration-flow">
+            <h3 class="text-xl font-bold text-gray-700 mb-6">Registration Process</h3>
+            
+            <div class="flow-step">
+                <div class="step-circle">
+                    <i class="fas fa-user-plus text-2xl text-blue-600"></i>
+                </div>
+                <div class="text-gray-700 font-medium">Registration Form Submission</div>
+            </div>
+            
+            <div class="flow-step">
+                <div class="step-circle">
+                    <i class="fas fa-id-card text-2xl text-blue-600"></i>
+                </div>
+                <div class="text-gray-700 font-medium">Identity Verification</div>
+            </div>
+            
+            <div class="flow-step">
+                <div class="step-circle">
+                    <i class="fas fa-clipboard-check text-2xl text-green-600"></i>
+                </div>
+                <div class="text-gray-700 font-medium">Admin Review & Approval</div>
+            </div>
+            
+            <div class="flow-step">
+                <div class="step-circle">
+                    <i class="fas fa-user-shield text-2xl text-green-600"></i>
+                </div>
+                <div class="text-gray-700 font-medium">Account Activation</div>
+            </div>
+            
+            <div class="mt-5 bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
+                <i class="fas fa-info-circle mr-1"></i> All partners undergo thorough verification to ensure trust and security.
+            </div>
+        </div>
+        
+        <div class="absolute left-8 bottom-8 flex items-center">
+            <i class="fas fa-file-alt text-gray-500 mr-2"></i>
+            <span class="text-gray-500">6</span>
+        </div>
+    </div>
+</body>
+</html>

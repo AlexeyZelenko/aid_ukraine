@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Структура пользователей</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .blue-accent {
+            background-color: #0057b7; /* Ukrainian flag blue */
+        }
+        .yellow-accent {
+            background-color: #ffd700; /* Ukrainian flag yellow */
+        }
+        .page-title {
+            border-left: 10px solid #0057b7;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+        .user-group {
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .user-group-1 {
+            background-color: rgba(0, 87, 183, 0.1);
+        }
+        .user-group-2 {
+            background-color: rgba(255, 215, 0, 0.1);
+        }
+        .user-type {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container bg-white">
+        <!-- Top accent bar -->
+        <div class="flex">
+            <div class="blue-accent h-4 w-1/2"></div>
+            <div class="yellow-accent h-4 w-1/2"></div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="p-16">
+            <!-- Title section -->
+            <div class="page-title">
+                <h2 class="text-4xl font-bold text-gray-800">Структура пользователей</h2>
+            </div>
+            
+            <!-- User groups section -->
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Left column: Volunteer organizations -->
+                <div class="user-group user-group-1">
+                    <h3 class="text-2xl font-semibold mb-4 text-blue-700">
+                        <i class="fas fa-hands-helping mr-2"></i>Помощь
+                    </h3>
+                    <p class="mb-4 text-gray-600 font-medium">Регистрация через администратора:</p>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle blue-accent text-white">
+                            <i class="fas fa-user-friends fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Волонтеры</h4>
+                            <p class="text-sm text-gray-600">Индивидуальные помощники и координаторы</p>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle blue-accent text-white">
+                            <i class="fas fa-hand-holding-usd fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Фонды</h4>
+                            <p class="text-sm text-gray-600">Благотворительные организации и сборы</p>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle blue-accent text-white">
+                            <i class="fas fa-hospital fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Центры реабилитации</h4>
+                            <p class="text-sm text-gray-600">Медицинская и психологическая помощь</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right column: Those who need help -->
+                <div class="user-group user-group-2">
+                    <h3 class="text-2xl font-semibold mb-4 text-yellow-600">
+                        <i class="fas fa-hand-holding-heart mr-2"></i>Нуждающиеся
+                    </h3>
+                    <p class="mb-4 text-gray-600 font-medium">Добавляются зарегистрированными волонтерами:</p>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle yellow-accent text-gray-800">
+                            <i class="fas fa-home fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Переселенцы</h4>
+                            <p class="text-sm text-gray-600">Люди, вынужденные покинуть свой дом</p>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle yellow-accent text-gray-800">
+                            <i class="fas fa-shield-alt fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Воины</h4>
+                            <p class="text-sm text-gray-600">Действующие военные на службе</p>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle yellow-accent text-gray-800">
+                            <i class="fas fa-first-aid fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Раненые воины</h4>
+                            <p class="text-sm text-gray-600">Пострадавшие в ходе боевых действий</p>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type">
+                        <div class="icon-circle yellow-accent text-gray-800">
+                            <i class="fas fa-heart fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Вдовы</h4>
+                            <p class="text-sm text-gray-600">Семьи погибших защитников</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom accent bar -->
+        <div class="absolute bottom-0 left-0 right-0 flex">
+            <div class="yellow-accent h-4 w-1/2"></div>
+            <div class="blue-accent h-4 w-1/2"></div>
+        </div>
+    </div>
+</body>
+</html>

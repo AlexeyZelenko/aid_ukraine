@@ -11,7 +11,26 @@
 
     <!-- Map Container -->
     <div class="h-[600px] relative">
-      <div id="map" class="w-full h-full"></div>
+          <LMap ref="map" :zoom="zoom" :center="[50.4501, 30.5234]" :use-global-leaflet="false">
+            <LTileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="<a href=&quot;https://www.openstreetmap.org/copyright>OpenStreetMap</a> contributors"
+            ></LTileLayer>
+            <LMarker
+              v-for="point in filteredHelpPoints"
+              :key="point.id"
+              :lat-lng="[point.latitude, point.longitude]"
+            >
+              <LIcon :icon-url="getPointIconUrl(point.type)" :icon-size="[32, 32]" />
+              <LPopup>
+                <div class="font-bold">{{ point.title }}</div>
+                <div>{{ point.description }}</div>
+                <div>{{ point.address }}</div>
+                <div>{{ point.phone }}</div>
+                <div>{{ point.hours }}</div>
+              </LPopup>
+            </LMarker>
+          </LMap>
       
       <!-- Map Controls -->
       <div class="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
@@ -219,22 +238,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface HelpPoint {
-  id: string
-  title: string
-  type: 'medical' | 'food' | 'shelter' | 'transport'
-  description: string
-  address: string
-  phone: string
-  hours: string
-  lat: number
-  lng: number
-  status: 'active' | 'urgent' | 'inactive'
+  id: number;
+  title: string;
+  type: 'medical' | 'food' | 'shelter' | 'transport';
+  description: string;
+  address: string;
+  phone: string;
+  hours: string;
+  status: 'active' | 'urgent' | 'inactive';
+  latitude: number;
+  longitude: number;
 }
 
-const showAddModal = ref(false)
+const { t } = useI18n();
+
+const zoom = ref(10);
+
+const showAddModal = ref(false);
 const map = ref<any>(null)
 
 const filters = reactive({
@@ -246,121 +272,179 @@ const filters = reactive({
 
 const pointForm = ref({
   title: '',
-  type: 'medical' as HelpPoint['type'],
+  type: 'medical',
   description: '',
   address: '',
   phone: '',
-  hours: ''
-})
+  hours: '',
+  latitude: 0,
+  longitude: 0,
+});
 
 // Mock data for demonstration
-const helpPoints = ref<HelpPoint[]>([
+const helpPoints = ref([
   {
-    id: '1',
-    title: 'Медичний центр "Надія"',
+    id: 1,
+    title: 'Медичний пункт №1',
     type: 'medical',
-    description: 'Безкоштовна медична допомога для переселенців',
-    address: 'вул. Хрещатик, 1, Київ',
-    phone: '+38 (044) 123-45-67',
-    hours: 'Пн-Нд 8:00-20:00',
-    lat: 50.4501,
-    lng: 30.5234,
-    status: 'active'
+    description: 'Надання першої медичної допомоги та консультацій.',
+    address: 'Вул. Хрещатик, 24, Київ',
+    phone: '+380 44 123 4567',
+    hours: 'Пн-Пт 9:00-18:00',
+    status: 'active',
+    latitude: 50.4501,
+    longitude: 30.5234,
   },
   {
-    id: '2',
-    title: 'Центр харчування',
+    id: 2,
+    title: 'Їдальня "Надія"',
     type: 'food',
-    description: 'Гарячі обіди для нужденних',
-    address: 'вул. Володимирська, 10, Київ',
-    phone: '+38 (044) 234-56-78',
-    hours: 'Пн-Пт 12:00-15:00',
-    lat: 50.4503,
-    lng: 30.5237,
-    status: 'active'
+    description: 'Гарячі обіди для всіх, хто потребує.',
+    address: 'Пр. Перемоги, 10, Київ',
+    phone: '+380 44 765 4321',
+    hours: 'Щодня 12:00-15:00',
+    status: 'urgent',
+    latitude: 50.4601,
+    longitude: 30.5334,
   },
   {
-    id: '3',
-    title: 'Тимчасове житло',
+    id: 3,
+    title: 'Притулок "Затишок"',
     type: 'shelter',
-    description: 'Тимчасове розміщення для переселенців',
-    address: 'вул. Грушевського, 5, Київ',
-    phone: '+38 (044) 345-67-89',
+    description: 'Тимчасове житло для переселенців.',
+    address: 'Вул. Мечникова, 5, Київ',
+    phone: '+380 44 987 6543',
     hours: 'Цілодобово',
-    lat: 50.4499,
-    lng: 30.5240,
-    status: 'urgent'
-  }
-])
+    status: 'active',
+    latitude: 50.4401,
+    longitude: 30.5134,
+  },
+  {
+    id: 4,
+    title: 'Транспортний хаб "Єдність"',
+    type: 'transport',
+    description: 'Допомога з транспортуванням до безпечних регіонів.',
+    address: 'Залізничний вокзал, Київ',
+    phone: '+380 44 234 5678',
+    hours: 'Пн-Нд 8:00-20:00',
+    status: 'inactive',
+    latitude: 50.4701,
+    longitude: 30.5434,
+  },
+]);
 
-const getPointIcon = (type: string) => {
-  const icons = {
-    medical: 'fas fa-plus-circle',
-    food: 'fas fa-utensils',
-    shelter: 'fas fa-home',
-    transport: 'fas fa-car'
-  }
-  return icons[type as keyof typeof icons] || 'fas fa-map-marker-alt'
+function addHelpPoint() {
+  showAddModal.value = true;
+  // Optionally, get current map center for new point default coordinates
+  // if (map.value) {
+  //   const center = map.value.leafletObject.getCenter();
+  //   pointForm.value.latitude = center.lat;
+  //   pointForm.value.longitude = center.lng;
+  // }
 }
 
-const getPointColor = (type: string) => {
-  const colors = {
-    medical: '#ef4444',
-    food: '#22c55e',
-    shelter: '#3b82f6',
-    transport: '#eab308'
-  }
-  return colors[type as keyof typeof colors] || '#6b7280'
+function closeAddModal() {
+  showAddModal.value = false;
+  resetForm();
 }
 
-const getStatusLabel = (status: string) => {
-  const labels = {
-    active: 'Активна',
-    urgent: 'Терміново',
-    inactive: 'Неактивна'
-  }
-  return labels[status as keyof typeof labels] || status
-}
+const submitHelpPoint = () => {
+  const newPoint: HelpPoint = {
+    id: helpPoints.value.length + 1,
+    title: pointForm.value.title,
+    type: pointForm.value.type as 'medical' | 'food' | 'shelter' | 'transport',
+    description: pointForm.value.description,
+    address: pointForm.value.address,
+    phone: pointForm.value.phone,
+    hours: pointForm.value.hours,
+    status: 'active',
+    latitude: pointForm.value.latitude,
+    longitude: pointForm.value.longitude,
+  };
+  helpPoints.value.push(newPoint);
+  closeAddModal();
+};
 
-const initMap = () => {
-  // This would initialize a real map (Leaflet, Google Maps, etc.)
-  // For now, it's just a placeholder
-  console.log('Map initialized')
-}
-
-const addHelpPoint = () => {
-  showAddModal.value = true
-}
-
-const closeAddModal = () => {
-  showAddModal.value = false
+const resetForm = () => {
   pointForm.value = {
     title: '',
     type: 'medical',
     description: '',
     address: '',
     phone: '',
-    hours: ''
+    hours: '',
+    latitude: 0,
+    longitude: 0,
+  };
+};
+
+function getPointIconUrl(type: string) {
+  // You would typically have different icons for different types
+  // For simplicity, using a generic marker icon here.
+  // In a real app, you'd import specific icon images.
+  switch (type) {
+    case 'medical':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png';
+    case 'food':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png';
+    case 'shelter':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png';
+    case 'transport':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png';
+    default:
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png';
   }
 }
 
-const submitHelpPoint = () => {
-  // In a real app, this would save to Firebase
-  const newPoint: HelpPoint = {
-    id: Date.now().toString(),
-    ...pointForm.value,
-    lat: 50.4501 + Math.random() * 0.01,
-    lng: 30.5234 + Math.random() * 0.01,
-    status: 'active'
+function getPointIcon(type: string) {
+  switch (type) {
+    case 'medical':
+      return 'fas fa-plus-circle';
+    case 'food':
+      return 'fas fa-utensils';
+    case 'shelter':
+      return 'fas fa-home';
+    case 'transport':
+      return 'fas fa-car';
+    default:
+      return 'fas fa-info-circle';
   }
-  
-  helpPoints.value.push(newPoint)
-  closeAddModal()
 }
 
-const showOnMap = (point: HelpPoint) => {
-  // This would center the map on the point
-  console.log('Showing point on map:', point)
+function getPointColor(type: string) {
+  switch (type) {
+    case 'medical':
+      return '#ef4444'; // red-500
+    case 'food':
+      return '#22c55e'; // green-500
+    case 'shelter':
+      return '#3b82f6'; // blue-500
+    case 'transport':
+      return '#eab308'; // yellow-500
+    default:
+      return '#6b7280'; // gray-500
+  }
+}
+
+function getStatusLabel(status: string) {
+  switch (status) {
+    case 'active':
+      return 'Активна';
+    case 'urgent':
+      return 'Термінова';
+    case 'inactive':
+      return 'Неактивна';
+    default:
+      return '';
+  }
+}
+
+
+
+function showOnMap(point: any) {
+  if (map.value) {
+    map.value.leafletObject.setView([point.latitude, point.longitude], 14); // Center map and set zoom
+  }
 }
 
 watch(filters, () => {
@@ -369,6 +453,6 @@ watch(filters, () => {
 }, { deep: true })
 
 onMounted(() => {
-  initMap()
+  // Map initialization is handled by Vue Leaflet's LMap component
 })
 </script>

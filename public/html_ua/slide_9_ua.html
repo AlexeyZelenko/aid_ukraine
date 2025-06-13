@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інтерактивна карта допомоги</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ukraine-gradient {
+            background: linear-gradient(135deg, rgba(0, 87, 183, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+        }
+        .blue-ua {
+            color: #0057B7;
+        }
+        .yellow-ua {
+            color: #FFD700;
+        }
+        .map-container {
+            height: 340px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #0057B7;
+        }
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #0057B7;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+        .map-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+        }
+        .map-pin {
+            position: absolute;
+            font-size: 24px;
+            transform: translate(-50%, -100%);
+        }
+        .pin-blue {
+            color: #0057B7;
+        }
+        .pin-yellow {
+            color: #FFD700;
+        }
+        .pin-red {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container ukraine-gradient">
+        <!-- Синьо-жовта смуга вгорі -->
+        <div class="absolute top-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+        
+        <div class="flex min-h-full pt-20 pb-16 px-16">
+            <!-- Ліва колонка з заголовком -->
+            <div class="w-1/3 pr-10">
+                <h1 class="text-5xl font-bold blue-ua mb-8">Інтерактивна карта</h1>
+                
+                <div class="mt-8">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-blue-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-map-marked-alt text-2xl blue-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Візуалізація потреб</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="bg-yellow-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-location-arrow text-2xl yellow-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Геолокація допомоги</p>
+                    </div>
+                    
+                    <div class="mt-10 bg-white p-4 rounded-lg shadow-md">
+                        <p class="text-gray-700">
+                            Інтерактивна карта допомагає ефективно координувати зусилля волонтерів та визначати пріоритетні зони для надання допомоги.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Права колонка з картою та функціями -->
+            <div class="w-2/3">
+                <div class="map-container mb-6">
+                    <div id="map">
+                        <div class="map-placeholder">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-map-marked-alt text-5xl blue-ua"></i>
+                                <h3 class="text-xl font-semibold mt-2">Інтерактивна карта України</h3>
+                            </div>
+                            
+                            <!-- Схематичне зображення карти з маркерами -->
+                            <div class="relative w-4/5 h-48 border-2 border-gray-300 rounded-lg bg-gray-100">
+                                <!-- Стилізоване представлення карти -->
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4/5 h-4/5 bg-gray-200 rounded-lg opacity-50"></div>
+                                
+                                <!-- Маркери на карті -->
+                                <i class="fas fa-map-marker-alt map-pin pin-red" style="top: 35%; left: 50%;"></i>
+                                <i class="fas fa-map-marker-alt map-pin pin-blue" style="top: 60%; left: 65%;"></i>
+                                <i class="fas fa-map-marker-alt map-pin pin-yellow" style="top: 45%; left: 30%;"></i>
+                                <i class="fas fa-map-marker-alt map-pin pin-blue" style="top: 25%; left: 70%;"></i>
+                                <i class="fas fa-map-marker-alt map-pin pin-red" style="top: 70%; left: 45%;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="feature-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-plus-circle text-lg blue-ua mr-2"></i>
+                            <h3 class="font-semibold">Додавання маркерів</h3>
+                        </div>
+                        <p class="text-sm text-gray-700">
+                            Можливість відзначити місця, де потрібна допомога, з детальним описом потреб
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-filter text-lg yellow-ua mr-2"></i>
+                            <h3 class="font-semibold">Фільтрація за категоріями</h3>
+                        </div>
+                        <p class="text-sm text-gray-700">
+                            Пошук за типом необхідної допомоги: медична, житло, їжа, одяг
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-bullhorn text-lg blue-ua mr-2"></i>
+                            <h3 class="font-semibold">Оповіщення волонтерів</h3>
+                        </div>
+                        <p class="text-sm text-gray-700">
+                            Автоматичні сповіщення про нові запити у вибраному регіоні
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-check-circle text-lg yellow-ua mr-2"></i>
+                            <h3 class="font-semibold">Відстеження статусу</h3>
+                        </div>
+                        <p class="text-sm text-gray-700">
+                            Моніторинг виконання запитів та координація дій волонтерів
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 text-center text-gray-600 italic">
+                    <p>Карта дозволяє ефективно розподіляти ресурси та оперативно реагувати на нові запити</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Синьо-жовта смуга внизу -->
+        <div class="absolute bottom-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+    </div>
+</body>
+</html>

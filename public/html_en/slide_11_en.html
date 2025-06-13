@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Support</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .header-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .footer-accent {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #97CC04 0%, #2D7DD2 100%);
+        }
+        .side-accent {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 12px;
+            height: calc(100% - 24px);
+            background: linear-gradient(180deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .content-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+            max-width: 65%;
+            z-index: 10;
+        }
+        .feature-point {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .feature-icon {
+            min-width: 40px;
+            height: 40px;
+            background-color: rgba(45, 125, 210, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #2D7DD2;
+        }
+        .language-visual {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 380px;
+            height: 380px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+            padding: 20px;
+        }
+        .language-tab {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 90%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .language-tab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .language-tab.active {
+            border-left: 4px solid #2D7DD2;
+        }
+        .flag-icon {
+            width: 30px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .language-preview {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 90%;
+            height: 180px;
+            margin-top: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-header {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .preview-content {
+            padding: 15px;
+            height: calc(100% - 38px);
+            overflow-y: auto;
+        }
+        .mockup-text {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container flex flex-col items-start justify-center">
+        <div class="header-accent"></div>
+        <div class="side-accent"></div>
+        <div class="footer-accent"></div>
+        
+        <div class="absolute top-6 left-8 flex items-center">
+            <h2 class="text-2xl font-bold text-gray-700">Humanitarian Aid Website</h2>
+        </div>
+        
+        <div class="absolute top-6 right-6 p-3 flex items-center">
+            <div class="w-5 h-5 bg-blue-600 rounded-full mr-2"></div>
+            <span class="text-gray-600">June 2025</span>
+        </div>
+        
+        <div class="content-box ml-16">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-blue-600 pb-2">Multilingual Support</h1>
+            
+            <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                Our platform provides comprehensive multilingual support to ensure accessibility and inclusivity for all users regardless of their language preference.
+            </p>
+            
+            <div class="mt-8 space-y-5">
+                <div class="feature-point">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <div class="feature-text text-gray-700">Complete interface localization in Ukrainian and English</div>
+                </div>
+                <div class="feature-point">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="feature-text text-gray-700">One-click language switching functionality</div>
+                </div>
+                <div class="feature-point">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="feature-text text-gray-700">All resources, forms, and documentation available in both languages</div>
+                </div>
+                <div class="feature-point">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-text text-gray-700">Support for bilingual user-generated content in the community blog</div>
+                </div>
+                <div class="feature-point">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="feature-text text-gray-700">Extensible architecture for adding more languages in future</div>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-blue-50 p-3 rounded-md border-l-4 border-blue-500">
+                <p class="text-gray-700 italic"><i class="fas fa-lightbulb mr-2 text-blue-500"></i>Language selection is remembered across sessions for improved user experience</p>
+            </div>
+        </div>
+        
+        <div class="language-visual">
+            <h3 class="text-xl font-bold text-gray-700 mb-4">Language Selection</h3>
+            
+            <div class="language-tab active flex items-center">
+                <div class="flag-icon bg-blue-500"></div>
+                <div class="flex-1">
+                    <div class="flex justify-between">
+                        <span class="font-semibold">Українська</span>
+                        <i class="fas fa-check text-green-500"></i>
+                    </div>
+                    <div class="text-xs text-gray-500">Основна мова</div>
+                </div>
+            </div>
+            
+            <div class="language-tab flex items-center">
+                <div class="flag-icon bg-red-500"></div>
+                <div class="flex-1">
+                    <div class="flex justify-between">
+                        <span class="font-semibold">English</span>
+                    </div>
+                    <div class="text-xs text-gray-500">Alternative language</div>
+                </div>
+            </div>
+            
+            <div class="language-preview">
+                <div class="preview-header">
+                    <div class="text-xs font-semibold">Platform Preview</div>
+                    <div class="text-xs text-blue-600">Українська</div>
+                </div>
+                <div class="preview-content">
+                    <div class="mockup-text w-3/4"></div>
+                    <div class="mockup-text w-full"></div>
+                    <div class="mockup-text w-2/3"></div>
+                    <div class="mockup-text w-5/6"></div>
+                    <div class="my-3"></div>
+                    <div class="mockup-text w-1/2"></div>
+                    <div class="mockup-text w-3/5"></div>
+                </div>
+            </div>
+            
+            <div class="mt-5 flex items-center justify-center">
+                <div class="px-4 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center">
+                    <i class="fas fa-exchange-alt mr-2"></i>
+                    <span>Switch Language</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute left-8 bottom-8 flex items-center">
+            <i class="fas fa-file-alt text-gray-500 mr-2"></i>
+            <span class="text-gray-500">11</span>
+        </div>
+    </div>
+</body>
+</html>

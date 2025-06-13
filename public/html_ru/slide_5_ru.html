@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Разделы сайта: Блог и коммуникация</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .blue-accent {
+            background-color: #0057b7; /* Ukrainian flag blue */
+        }
+        .yellow-accent {
+            background-color: #ffd700; /* Ukrainian flag yellow */
+        }
+        .page-title {
+            border-left: 10px solid #0057b7;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+        .feature-box {
+            border-radius: 8px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 100%;
+            transition: all 0.3s ease;
+            border-top: 4px solid #0057b7;
+        }
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(0,87,183,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .icon-circle i {
+            color: #0057b7;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container bg-white">
+        <!-- Top accent bar -->
+        <div class="flex">
+            <div class="blue-accent h-4 w-1/2"></div>
+            <div class="yellow-accent h-4 w-1/2"></div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="p-16">
+            <!-- Title section -->
+            <div class="page-title">
+                <h2 class="text-4xl font-bold text-gray-800">Разделы сайта: Блог и коммуникация</h2>
+            </div>
+            
+            <!-- Blog features -->
+            <div class="grid grid-cols-3 gap-6 mb-10">
+                <div class="feature-box bg-white">
+                    <div class="icon-circle">
+                        <i class="fas fa-newspaper fa-2x"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Блог для статей</h3>
+                    <p>Публикация информативных статей по актуальным темам помощи переселенцам и военнослужащим</p>
+                </div>
+                
+                <div class="feature-box bg-white">
+                    <div class="icon-circle">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Открытая регистрация</h3>
+                    <p>Возможность регистрации для всех посетителей с последующим созданием обсуждений</p>
+                </div>
+                
+                <div class="feature-box bg-white">
+                    <div class="icon-circle">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Модерация контента</h3>
+                    <p>Поддержка доброжелательной атмосферы и защита от недостоверной информации</p>
+                </div>
+            </div>
+            
+            <!-- Communication illustration -->
+            <div class="flex justify-center items-center">
+                <div class="bg-gray-50 rounded-lg p-4 w-3/4 text-center">
+                    <div class="flex justify-center mb-4">
+                        <div class="flex items-center">
+                            <div class="flex flex-col items-center mx-4">
+                                <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-user-edit text-blue-600 text-xl"></i>
+                                </div>
+                                <span class="mt-2">Авторы</span>
+                            </div>
+                            
+                            <div class="w-20 h-0.5 bg-gray-300"></div>
+                            
+                            <div class="flex flex-col items-center mx-4">
+                                <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
+                                    <i class="fas fa-comments text-yellow-600 text-xl"></i>
+                                </div>
+                                <span class="mt-2">Обсуждения</span>
+                            </div>
+                            
+                            <div class="w-20 h-0.5 bg-gray-300"></div>
+                            
+                            <div class="flex flex-col items-center mx-4">
+                                <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-hands-helping text-blue-600 text-xl"></i>
+                                </div>
+                                <span class="mt-2">Реальная помощь</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="font-semibold text-lg">Эффективный поток коммуникации для быстрого решения проблем</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom accent bar -->
+        <div class="absolute bottom-0 left-0 right-0 flex">
+            <div class="yellow-accent h-4 w-1/2"></div>
+            <div class="blue-accent h-4 w-1/2"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -9,37 +9,12 @@
       </div>
 
       <!-- Blog placeholder -->
-      <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-        <i class="fas fa-comments text-6xl text-ukraine-blue mb-6"></i>
-        <h2 class="text-2xl font-semibold mb-4">Блог в розробці</h2>
-        <p class="text-gray-600 mb-6">
-          Незабаром тут буде повноцінний блог з можливістю створення тем для обговорення,
-          коментування та спільного вирішення проблем.
-        </p>
-        <div class="space-y-4">
-          <h3 class="text-lg font-semibold">Що буде доступно:</h3>
-          <ul class="text-left max-w-md mx-auto space-y-2 text-gray-600">
-            <li class="flex items-center">
-              <i class="fas fa-check text-green-500 mr-2"></i>
-              Створення тем для обговорення
-            </li>
-            <li class="flex items-center">
-              <i class="fas fa-check text-green-500 mr-2"></i>
-              Коментування та відповіді
-            </li>
-            <li class="flex items-center">
-              <i class="fas fa-check text-green-500 mr-2"></i>
-              Категорії та теги
-            </li>
-            <li class="flex items-center">
-              <i class="fas fa-check text-green-500 mr-2"></i>
-              Система рейтингу
-            </li>
-            <li class="flex items-center">
-              <i class="fas fa-check text-green-500 mr-2"></i>
-              Модерація контенту
-            </li>
-          </ul>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="md:col-span-2">
+          <BlogTopicList />
+        </div>
+        <div class="md:col-span-1">
+          <BlogTopicForm />
         </div>
       </div>
     </div>
@@ -47,4 +22,6 @@
 </template>
 
 <script setup lang="ts">
+import BlogTopicForm from '@/components/Blog/BlogTopicForm.vue'
+import BlogTopicList from '@/components/Blog/BlogTopicList.vue'
 </script>

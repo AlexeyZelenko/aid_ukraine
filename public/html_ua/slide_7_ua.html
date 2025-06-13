@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розділ: Фінансова допомога</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ukraine-gradient {
+            background: linear-gradient(135deg, rgba(0, 87, 183, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+        }
+        .blue-ua {
+            color: #0057B7;
+        }
+        .yellow-ua {
+            color: #FFD700;
+        }
+        .bank-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .bank-card:hover {
+            transform: translateY(-5px);
+        }
+        .donation-flow-step {
+            position: relative;
+            padding-left: 30px;
+        }
+        .donation-flow-step:before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #0057B7, #FFD700);
+        }
+        .donation-flow-step:after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #0057B7;
+        }
+        .donation-flow-step:last-child:before {
+            height: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container ukraine-gradient">
+        <!-- Синьо-жовта смуга вгорі -->
+        <div class="absolute top-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+        
+        <div class="flex min-h-full pt-20 pb-16 px-16">
+            <!-- Ліва колонка з заголовком -->
+            <div class="w-1/3 pr-10">
+                <h1 class="text-5xl font-bold blue-ua mb-8">Розділ: Фінансова допомога</h1>
+                
+                <div class="mt-10">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-blue-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-hand-holding-usd text-2xl blue-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Безпечні платежі</p>
+                    </div>
+                    
+                    <div class="flex items-center mb-6">
+                        <div class="bg-yellow-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-chart-line text-2xl yellow-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Прозора звітність</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 rounded-full p-3 mr-3">
+                            <i class="fas fa-lock text-2xl blue-ua"></i>
+                        </div>
+                        <p class="text-xl font-semibold text-gray-700">Цільове використання</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Права колонка з інформацією про фінансову допомогу -->
+            <div class="w-2/3">
+                <div class="flex space-x-5 mb-6">
+                    <!-- ПриватБанк -->
+                    <div class="bank-card w-1/2 p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold blue-ua">ПриватБанк</h3>
+                            <div class="bg-blue-100 rounded-full p-2">
+                                <i class="fas fa-credit-card text-xl blue-ua"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 mb-4">Інтеграція з API ПриватБанку для миттєвих переказів з будь-якої картки.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm text-gray-700">Можливості:</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-700 mt-2">
+                                <li>Автоматичні регулярні платежі</li>
+                                <li>Платежі за QR-кодом</li>
+                                <li>Перекази на рахунок фонду</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- МоноБанк -->
+                    <div class="bank-card w-1/2 p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold yellow-ua">МоноБанк</h3>
+                            <div class="bg-yellow-100 rounded-full p-2">
+                                <i class="fas fa-mobile-alt text-xl yellow-ua"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 mb-4">Інтеграція з МоноБанком для зручних платежів через мобільний додаток.</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm text-gray-700">Можливості:</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-700 mt-2">
+                                <li>Банка для збору коштів</li>
+                                <li>Платежі через додаток</li>
+                                <li>Відстеження руху коштів</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-5 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold blue-ua mb-4">Принципи прозорості платежів</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <div class="donation-flow-step p-3">
+                            <h4 class="font-semibold">1. Надходження коштів</h4>
+                            <p class="text-sm text-gray-700">Автоматична фіксація внесків з усіх джерел у системі</p>
+                        </div>
+                        
+                        <div class="donation-flow-step p-3">
+                            <h4 class="font-semibold">2. Розподіл за потребами</h4>
+                            <p class="text-sm text-gray-700">Направлення внесків за обраними категоріями та проектами</p>
+                        </div>
+                        
+                        <div class="donation-flow-step p-3">
+                            <h4 class="font-semibold">3. Документування витрат</h4>
+                            <p class="text-sm text-gray-700">Завантаження чеків, актів та фото доставки допомоги</p>
+                        </div>
+                        
+                        <div class="donation-flow-step p-3">
+                            <h4 class="font-semibold">4. Публічна звітність</h4>
+                            <p class="text-sm text-gray-700">Періодичні звіти та можливість перевірити статус кожного платежу</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-600">
+                        <p class="text-sm italic text-gray-700">
+                            <i class="fas fa-info-circle blue-ua mr-2"></i>
+                            Кожен благодійник може відстежити, куди саме пішли його кошти, і отримати підтвердження про надання допомоги.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Синьо-жовта смуга внизу -->
+        <div class="absolute bottom-0 left-0 w-full h-6 flex">
+            <div class="w-1/2 bg-blue-600" style="background-color: #0057B7;"></div>
+            <div class="w-1/2 bg-yellow-400" style="background-color: #FFD700;"></div>
+        </div>
+    </div>
+</body>
+</html>

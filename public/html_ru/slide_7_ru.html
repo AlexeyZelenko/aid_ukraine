@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Технические особенности</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .blue-accent {
+            background-color: #0057b7; /* Ukrainian flag blue */
+        }
+        .yellow-accent {
+            background-color: #ffd700; /* Ukrainian flag yellow */
+        }
+        .page-title {
+            border-left: 10px solid #0057b7;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+        .lang-box {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            margin-bottom: 2rem;
+            border-left: 5px solid #0057b7;
+        }
+        .flag-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-right: 1.5rem;
+            color: white;
+        }
+        .design-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .design-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-left: 5px solid #ffd700;
+        }
+        .design-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .design-icon {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container bg-white">
+        <!-- Top accent bar -->
+        <div class="flex">
+            <div class="blue-accent h-4 w-1/2"></div>
+            <div class="yellow-accent h-4 w-1/2"></div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="p-16">
+            <!-- Title section -->
+            <div class="page-title">
+                <h2 class="text-4xl font-bold text-gray-800">Технические особенности</h2>
+            </div>
+            
+            <!-- Language section -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-700">Двуязычный интерфейс</h3>
+                
+                <div class="flex space-x-6">
+                    <div class="lang-box flex-1">
+                        <div class="flag-icon blue-accent">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Украинский язык</h4>
+                            <p>Основной языковой интерфейс для локальных пользователей</p>
+                        </div>
+                    </div>
+                    
+                    <div class="lang-box flex-1">
+                        <div class="flag-icon yellow-accent text-blue-800">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Английский язык</h4>
+                            <p>Для привлечения международной поддержки и помощи</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Design section -->
+            <div>
+                <h3 class="text-2xl font-semibold mb-4 text-gray-700">Современный дизайн</h3>
+                
+                <div class="design-grid">
+                    <div class="design-card">
+                        <div class="design-icon" style="color: #0057b7;">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="text-lg font-semibold">Адаптивный интерфейс</h4>
+                            <p>Оптимальное отображение на всех устройствах - от мобильных телефонов до настольных компьютеров</p>
+                        </div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <div class="design-icon" style="color: #0057b7;">
+                            <i class="fas fa-universal-access"></i>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="text-lg font-semibold">Доступность</h4>
+                            <p>Разработан с учетом нужд пользователей с ограниченными возможностями</p>
+                        </div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <div class="design-icon" style="color: #0057b7;">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="text-lg font-semibold">Высокая производительность</h4>
+                            <p>Быстрая загрузка страниц и оптимизированная работа даже при слабом соединении</p>
+                        </div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <div class="design-icon" style="color: #0057b7;">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="text-lg font-semibold">Безопасность</h4>
+                            <p>Защита персональных данных и безопасное взаимодействие между пользователями</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom accent bar -->
+        <div class="absolute bottom-0 left-0 right-0 flex">
+            <div class="yellow-accent h-4 w-1/2"></div>
+            <div class="blue-accent h-4 w-1/2"></div>
+        </div>
+    </div>
+</body>
+</html>

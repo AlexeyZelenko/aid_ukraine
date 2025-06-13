@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Веб-сайт помощи переселенцам и воинам</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .blue-accent {
+            background-color: #0057b7; /* Ukrainian flag blue */
+        }
+        .yellow-accent {
+            background-color: #ffd700; /* Ukrainian flag yellow */
+        }
+        .page-border {
+            border-left: 10px solid #0057b7;
+            padding-left: 2rem;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 1.5rem;
+        }
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container bg-white">
+        <!-- Top accent bar -->
+        <div class="flex">
+            <div class="blue-accent h-4 w-1/2"></div>
+            <div class="yellow-accent h-4 w-1/2"></div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="p-16 flex flex-col justify-center h-full">
+            <div class="page-border">
+                <h1 class="text-5xl font-bold mb-6 text-gray-800">Веб-сайт помощи переселенцам и воинам</h1>
+                <p class="text-2xl mb-12 text-gray-600">Современный и надежный онлайн-ресурс для поддержки переселенцев, воинов, раненых воинов и вдов.</p>
+            </div>
+            
+            <div class="icon-container mt-8">
+                <div class="icon-item">
+                    <div class="icon-circle blue-accent text-white">
+                        <i class="fas fa-home fa-2x"></i>
+                    </div>
+                    <span>Переселенцы</span>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-circle blue-accent text-white">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <span>Воины</span>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-circle blue-accent text-white">
+                        <i class="fas fa-first-aid fa-2x"></i>
+                    </div>
+                    <span>Раненые</span>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-circle blue-accent text-white">
+                        <i class="fas fa-heart fa-2x"></i>
+                    </div>
+                    <span>Вдовы</span>
+                </div>
+            </div>
+            
+            <p class="text-center text-lg mt-8">Представление проекта и командная миссия</p>
+        </div>
+        
+        <!-- Bottom accent bar -->
+        <div class="absolute bottom-0 left-0 right-0 flex">
+            <div class="yellow-accent h-4 w-1/2"></div>
+            <div class="blue-accent h-4 w-1/2"></div>
+        </div>
+    </div>
+</body>
+</html>

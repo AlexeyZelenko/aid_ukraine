@@ -6,8 +6,10 @@ import Financial from '../views/Financial.vue'
 import Map from '../views/Map.vue'
 import Blog from '../views/Blog.vue'
 import Articles from '../views/Articles.vue'
+import BlogTopicDetail from '../components/Blog/BlogTopicDetail.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import About from '../views/About.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -43,6 +45,12 @@ const router = createRouter({
       component: Blog
     },
     {
+      path: '/blog/:id',
+      name: 'blog-detail',
+      component: BlogTopicDetail,
+      props: true
+    },
+    {
       path: '/articles',
       name: 'articles',
       component: Articles
@@ -56,6 +64,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: Register
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About
     }
   ]
 })

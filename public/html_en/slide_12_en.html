@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI, Implementation & Call to Action</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .header-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .footer-accent {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #97CC04 0%, #2D7DD2 100%);
+        }
+        .side-accent {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 12px;
+            height: calc(100% - 24px);
+            background: linear-gradient(180deg, #2D7DD2 0%, #97CC04 100%);
+        }
+        .content-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 90%;
+            z-index: 10;
+        }
+        .timeline-container {
+            position: relative;
+            padding-left: 40px;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #2D7DD2, #97CC04);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -40px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #2D7DD2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .timeline-dot.last {
+            background-color: #97CC04;
+        }
+        .design-card {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: rgba(45, 125, 210, 0.05);
+            border-left: 4px solid #2D7DD2;
+        }
+        .cta-box {
+            background: linear-gradient(135deg, rgba(45, 125, 210, 0.1) 0%, rgba(151, 204, 4, 0.1) 100%);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .device-mockup {
+            position: relative;
+            width: 320px;
+            height: 180px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container flex flex-col items-center justify-center">
+        <div class="header-accent"></div>
+        <div class="side-accent"></div>
+        <div class="footer-accent"></div>
+        
+        <div class="absolute top-6 left-8 flex items-center">
+            <h2 class="text-2xl font-bold text-gray-700">Humanitarian Aid Website</h2>
+        </div>
+        
+        <div class="absolute top-6 right-6 p-3 flex items-center">
+            <div class="w-5 h-5 bg-blue-600 rounded-full mr-2"></div>
+            <span class="text-gray-600">June 2025</span>
+        </div>
+        
+        <div class="content-box mx-auto">
+            <h1 class="text-3xl font-bold mb-2 text-gray-800 border-b-2 border-blue-600 pb-2">UI, Implementation & Call to Action</h1>
+            
+            <div class="grid grid-cols-2 gap-6 mt-4">
+                <!-- Left Column: UI Design -->
+                <div>
+                    <h2 class="text-xl font-bold text-blue-600 mb-3">
+                        <i class="fas fa-paint-brush mr-2"></i>
+                        Modern UI Design Approach
+                    </h2>
+                    
+                    <div class="design-card">
+                        <div class="font-semibold text-gray-800">User-Centered Design</div>
+                        <div class="text-sm text-gray-600">Prioritizing intuitive navigation and simple user flows for diverse user base</div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <div class="font-semibold text-gray-800">WCAG Accessibility Standards</div>
+                        <div class="text-sm text-gray-600">High contrast, screen reader support, keyboard navigation</div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <div class="font-semibold text-gray-800">Responsive & Mobile-First</div>
+                        <div class="text-sm text-gray-600">Ensuring accessibility across all device types</div>
+                    </div>
+                    
+                    <div class="device-mockup mt-4">
+                        <div class="device-screen">
+                            <div class="h-3 w-24 bg-blue-500 rounded mb-2"></div>
+                            <div class="flex items-center space-x-2 mb-4">
+                                <div class="h-6 w-6 rounded-full bg-blue-400 flex items-center justify-center">
+                                    <i class="fas fa-home text-white text-xs"></i>
+                                </div>
+                                <div class="h-6 w-6 rounded-full bg-green-400 flex items-center justify-center">
+                                    <i class="fas fa-hands-helping text-white text-xs"></i>
+                                </div>
+                                <div class="h-6 w-6 rounded-full bg-red-400 flex items-center justify-center">
+                                    <i class="fas fa-heart text-white text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="h-2 w-32 bg-gray-300 rounded mb-2"></div>
+                            <div class="h-2 w-28 bg-gray-300 rounded mb-4"></div>
+                            <div class="h-16 w-full bg-white rounded shadow-sm mb-3"></div>
+                            <div class="h-16 w-full bg-white rounded shadow-sm"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Implementation Plan -->
+                <div>
+                    <h2 class="text-xl font-bold text-green-600 mb-3">
+                        <i class="fas fa-tasks mr-2"></i>
+                        Implementation Roadmap
+                    </h2>
+                    
+                    <div class="timeline-container">
+                        <div class="timeline-line"></div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot">
+                                <span class="text-white text-xs">1</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Phase 1: Foundation (Month 1-2)</h3>
+                            <p class="text-sm text-gray-600">Core structure, authentication, database setup</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot">
+                                <span class="text-white text-xs">2</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Phase 2: Features (Month 3-4)</h3>
+                            <p class="text-sm text-gray-600">Category system, mapping, payment integration</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot">
+                                <span class="text-white text-xs">3</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Phase 3: Community (Month 5)</h3>
+                            <p class="text-sm text-gray-600">Blog functionality, multilingual support</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot last">
+                                <span class="text-white text-xs">4</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Phase 4: Launch & Scaling (Month 6+)</h3>
+                            <p class="text-sm text-gray-600">Public release, volunteer onboarding, expansion</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Call to Action Section -->
+            <div class="cta-box mt-6">
+                <div class="mr-4">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Join Our Mission Today</h2>
+                    <p class="text-gray-700">Help us connect those in need with vital resources and support</p>
+                    <div class="mt-3 flex space-x-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-hands-helping text-blue-500 mr-1"></i>
+                            <span class="text-sm font-medium">Volunteer</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-handshake text-green-500 mr-1"></i>
+                            <span class="text-sm font-medium">Partner</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-donate text-purple-500 mr-1"></i>
+                            <span class="text-sm font-medium">Donate</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-600 text-white py-3 px-6 rounded-lg shadow-md flex items-center">
+                    <span class="font-bold mr-2">Get Started</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute left-8 bottom-8 flex items-center">
+            <i class="fas fa-file-alt text-gray-500 mr-2"></i>
+            <span class="text-gray-500">12</span>
+        </div>
+    </div>
+</body>
+</html>

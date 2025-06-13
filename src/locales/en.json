@@ -9,7 +9,8 @@
     "articles": "Articles",
     "login": "Login",
     "register": "Register",
-    "logout": "Logout"
+    "logout": "Logout",
+    "about": "About Us"
   },
   "home": {
     "title": "Help Ukraine",

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Разделы сайта: Карта помощи</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+        }
+        .blue-accent {
+            background-color: #0057b7; /* Ukrainian flag blue */
+        }
+        .yellow-accent {
+            background-color: #ffd700; /* Ukrainian flag yellow */
+        }
+        .page-title {
+            border-left: 10px solid #0057b7;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+        .map-container {
+            height: 350px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .feature-item {
+            border-left: 4px solid #ffd700;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+        .feature-item:hover {
+            transform: translateX(5px);
+        }
+        .map-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(0,87,183,0.8);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -20px 0 0 -20px;
+        }
+        .map-marker:after {
+            content: '';
+            width: 14px;
+            height: 14px;
+            margin: 8px 0 0 8px;
+            background-color: #fff;
+            position: absolute;
+            border-radius: 50%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="slide-container bg-white">
+        <!-- Top accent bar -->
+        <div class="flex">
+            <div class="blue-accent h-4 w-1/2"></div>
+            <div class="yellow-accent h-4 w-1/2"></div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="p-16">
+            <!-- Title section -->
+            <div class="page-title">
+                <h2 class="text-4xl font-bold text-gray-800">Разделы сайта: Карта помощи</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Map visualization -->
+                <div>
+                    <div class="map-container relative bg-blue-50">
+                        <div id="map" style="height: 100%; width: 100%; position: relative;">
+                            <!-- Map will be initialized here by JavaScript -->
+                            <!-- We'll use a simple placeholder instead of actual Leaflet for the slide -->
+                            <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                                <img src="https://i.imgur.com/lKjeaEu.png" alt="Карта Украины" class="object-cover h-full w-full opacity-25">
+                                
+                                <!-- Sample markers -->
+                                <div class="map-marker absolute" style="left: 35%; top: 40%; transform: rotate(-45deg) scale(0.8);"></div>
+                                <div class="map-marker absolute" style="left: 48%; top: 60%; transform: rotate(-45deg) scale(0.8);"></div>
+                                <div class="map-marker absolute" style="left: 65%; top: 45%; transform: rotate(-45deg) scale(0.8);"></div>
+                                
+                                <div class="absolute top-4 left-4 bg-white p-2 rounded shadow-md text-sm">
+                                    <i class="fas fa-search mr-1"></i> Поиск по региону
+                                </div>
+                                
+                                <div class="absolute top-4 right-4 bg-white p-2 rounded shadow-md text-sm flex items-center">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div> Критическая помощь
+                                </div>
+                                
+                                <div class="absolute bottom-4 left-4 bg-white p-2 rounded shadow-md text-sm flex items-center">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div> Медицинская помощь
+                                </div>
+                                
+                                <div class="absolute bottom-4 right-4 bg-white p-2 rounded shadow-md text-sm flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div> Гуманитарная помощь
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <div class="inline-block bg-blue-100 py-2 px-4 rounded-full">
+                            <i class="fas fa-map-marked-alt mr-2 text-blue-600"></i>
+                            <span class="font-semibold">Интерактивная карта потребностей</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Features list -->
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6 text-gray-700">Возможности карты помощи:</h3>
+                    
+                    <div class="feature-item">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-pin text-2xl mr-3 text-blue-600"></i>
+                            <div>
+                                <h4 class="text-xl font-semibold">Отметки о нужной помощи</h4>
+                                <p class="text-gray-600">Пользователи могут отмечать локации, где требуется помощь</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="flex items-center">
+                            <i class="fas fa-search-location text-2xl mr-3 text-blue-600"></i>
+                            <div>
+                                <h4 class="text-xl font-semibold">Быстрый поиск по региону</h4>
+                                <p class="text-gray-600">Фильтрация запросов о помощи по областям и населенным пунктам</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="flex items-center">
+                            <i class="fas fa-project-diagram text-2xl mr-3 text-blue-600"></i>
+                            <div>
+                                <h4 class="text-xl font-semibold">Визуализация актуальных нужд</h4>
+                                <p class="text-gray-600">Наглядное представление категорий и срочности запросов</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-check text-2xl mr-3 text-blue-600"></i>
+                            <div>
+                                <h4 class="text-xl font-semibold">Подтверждение помощи</h4>
+                                <p class="text-gray-600">Волонтеры могут отмечать взятые на выполнение запросы</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom accent bar -->
+        <div class="absolute bottom-0 left-0 right-0 flex">
+            <div class="yellow-accent h-4 w-1/2"></div>
+            <div class="blue-accent h-4 w-1/2"></div>
+        </div>
+    </div>
+</body>
+</html>
