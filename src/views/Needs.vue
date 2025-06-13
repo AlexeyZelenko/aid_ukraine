@@ -337,11 +337,13 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useNeedsStore } from '@/stores/needs'
 import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router'
 
 const toast = useToast()
   
   const needsStore = useNeedsStore()
   const authStore = useAuthStore()
+  const router = useRouter()
   
   // Reactive data
   const searchQuery = ref('')
@@ -665,7 +667,7 @@ const toast = useToast()
   }
   
   const viewDetails = (need: Need) => {
-    toast.add({ severity: 'info', summary: 'Деталі потреби', detail: `Назва: ${need.title}\nОпис: ${need.description}\nКатегорія: ${need.category}\nПріоритет: ${need.priority}\nМісце: ${need.location}\nКонтакт: ${need.contactPerson}\nТелефон: ${need.contactPhone}\nEmail: ${need.contactEmail}${need.quantity ? `\nКількість: ${need.quantity}` : ''}`, life: 5000 })
+    router.push({ name: 'NeedDetail', params: { id: need.id } })
   }
   
   onMounted(() => {

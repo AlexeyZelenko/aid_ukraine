@@ -143,7 +143,7 @@
           <div 
             v-for="volunteer in filteredVolunteers" 
             :key="volunteer.id"
-            class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 card-hover"
+            class="flex flex-col justify-between border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 card-hover"
           >
             <div class="flex items-start justify-between mb-4">
               <div class="flex-1">
@@ -436,35 +436,36 @@ const mockVolunteers: (Volunteer & {
   rating?: number, 
   experience?: number, 
   website?: string 
-})[] = [
+})[] = [  
   {
     id: '1',
-    name: 'Марія Коваленко',
-    email: 'maria.kovalenko@email.com',
-    phone: '+38 (050) 123-45-67',
-    organization: 'Волонтер-медик',
-    type: 'volunteer',
-    description: 'Медична сестра з 10-річним досвідом. Надаю першу медичну допомогу, консультації з догляду за хворими.',
-    location: 'Київ',
-    verified: true,
-    createdAt: new Date('2024-01-15'),
-    specializations: ['медична допомога', 'перша допомога', 'догляд за хворими'],
-    rating: 5,
-    experience: 10
-  },
-  {
-    id: '2',
-    name: 'Фонд "Серце України"',
+    name: 'Фонд "Сила Доброти"',
     email: 'info@heart-ukraine.org',
     phone: '+38 (044) 234-56-78',
-    organization: 'Благодійний фонд "Серце України"',
+    organization: 'Благодійний фонд "Сила Доброти"',
     type: 'fund',
-    description: 'Благодійний фонд, що займається допомогою переселенцям, забезпеченням медикаментами та продуктами харчування.',
-    location: 'Київ',
+    description: 'Благодійний фонд, що займається допомогою переселенцям.',
+    location: 'Черкаси',
     verified: true,
     createdAt: new Date('2024-01-10'),
     website: 'https://heart-ukraine.org',
     specializations: ['фінансова допомога', 'медикаменти', 'продукти харчування'],
+    rating: 5,
+    experience: 20
+  },
+  {
+    id: '2',
+    name: 'Центр реабілітації "Надія"',
+    email: 'info@nadia-rehab.com',
+    phone: '+38 (056) 456-78-90',
+    organization: 'Центр реабілітації "Надія"',
+    type: 'rehabilitation',
+    description: 'Спеціалізований центр реабілітації для військових та цивільних. Фізична та психологічна реабілітація.',
+    location: 'Медведівка',
+    verified: true,
+    createdAt: new Date('2024-01-08'),
+    website: 'https://nadia-rehab.com',
+    specializations: ['фізична реабілітація', 'психологічна допомога', 'медична реабілітація'],
     rating: 5
   },
   {
@@ -481,24 +482,9 @@ const mockVolunteers: (Volunteer & {
     specializations: ['транспорт', 'логістика', 'доставка'],
     rating: 4,
     experience: 3
-  },
+  },  
   {
     id: '4',
-    name: 'Центр реабілітації "Надія"',
-    email: 'info@nadia-rehab.com',
-    phone: '+38 (056) 456-78-90',
-    organization: 'Центр реабілітації "Надія"',
-    type: 'rehabilitation',
-    description: 'Спеціалізований центр реабілітації для військових та цивільних. Фізична та психологічна реабілітація.',
-    location: 'Дніпро',
-    verified: true,
-    createdAt: new Date('2024-01-08'),
-    website: 'https://nadia-rehab.com',
-    specializations: ['фізична реабілітація', 'психологічна допомога', 'медична реабілітація'],
-    rating: 5
-  },
-  {
-    id: '5',
     name: 'Ірина Сидоренко',
     email: 'irina.sydorenko@email.com',
     phone: '+38 (093) 567-89-01',
@@ -511,23 +497,9 @@ const mockVolunteers: (Volunteer & {
     specializations: ['психологічна підтримка', 'травма війни', 'консультації'],
     rating: 5,
     experience: 8
-  },
+  },  
   {
-    id: '6',
-    name: 'Фонд "Допомога дітям"',
-    email: 'help@children-fund.org',
-    phone: '+38 (032) 678-90-12',
-    organization: 'Благодійний фонд "Допомога дітям"',
-    type: 'fund',
-    description: 'Спеціалізуємося на допомозі дітям-переселенцям. Забезпечуємо одягом, іграшками, навчальними матеріалами.',
-    location: 'Львів',
-    verified: false,
-    createdAt: new Date('2024-01-11'),
-    website: 'https://children-fund.org',
-    specializations: ['допомога дітям', 'одяг', 'навчальні матеріали', 'іграшки']
-  },
-  {
-    id: '7',
+    id: '5',
     name: 'Віктор Мельник',
     email: 'viktor.melnyk@email.com',
     phone: '+38 (095) 789-01-23',
@@ -542,7 +514,7 @@ const mockVolunteers: (Volunteer & {
     experience: 5
   },
   {
-    id: '8',
+    id: '6',
     name: 'Анна Шевченко',
     email: 'anna.shevchenko@email.com',
     phone: '+38 (096) 890-12-34',
@@ -555,66 +527,7 @@ const mockVolunteers: (Volunteer & {
     specializations: ['юридичні консультації', 'соціальне право', 'документообіг'],
     rating: 5,
     experience: 12
-  },
-  {
-    id: '9',
-    name: 'Центр "Відновлення"',
-    email: 'info@recovery-center.ua',
-    phone: '+38 (048) 901-23-45',
-    organization: 'Реабілітаційний центр "Відновлення"',
-    type: 'rehabilitation',
-    description: 'Комплексна реабілітація для постраждалих від війни. Медична, психологічна та соціальна підтримка.',
-    location: 'Одеса',
-    verified: false,
-    createdAt: new Date('2024-01-07'),
-    website: 'https://recovery-center.ua',
-    specializations: ['комплексна реабілітація', 'медична допомога', 'соціальна адаптація']
-  },
-  {
-    id: '10',
-    name: 'Тетяна Гриценко',
-    email: 'tetyana.hrytsenko@email.com',
-    phone: '+38 (099) 012-34-56',
-    organization: 'Вчитель-волонтер',
-    type: 'volunteer',
-    description: 'Вчитель початкових класів. Допомагаю дітям-переселенцям з навчанням, адаптацією в новій школі.',
-    location: 'Вінниця',
-    verified: true,
-    createdAt: new Date('2024-01-06'),
-    specializations: ['освіта', 'робота з дітьми', 'адаптація'],
-    rating: 5,
-    experience: 15
-  },
-  {
-    id: '11',
-    name: 'Сергій Бондаренко',
-    email: 'sergiy.bondarenko@email.com',
-    phone: '+38 (097) 123-45-67',
-    organization: 'Кулінар-волонтер',
-    type: 'volunteer',
-    description: 'Професійний кухар. Організовую приготування їжі для нужденних, навчаю готувати з обмеженого набору продуктів.',
-    location: 'Полтава',
-    verified: true,
-    createdAt: new Date('2024-01-05'),
-    specializations: ['приготування їжі', 'організація харчування', 'кулінарні майстер-класи'],
-    rating: 4,
-    experience: 7
-  },
-  {
-    id: '12',
-    name: 'Фонд "Єдність"',
-    email: 'unity@unity-fund.org',
-    phone: '+38 (061) 234-56-78',
-    organization: 'Благодійний фонд "Єдність"',
-    type: 'fund',
-    description: 'Міжнародний благодійний фонд. Координуємо допомогу від закордонних партнерів, забезпечуємо гуманітарними вантажами.',
-    location: 'Запоріжжя',
-    verified: true,
-    createdAt: new Date('2024-01-04'),
-    website: 'https://unity-fund.org',
-    specializations: ['міжнародна допомога', 'гуманітарні вантажі', 'координація'],
-    rating: 5
-  }
+  }  
 ]
 
 // Computed properties

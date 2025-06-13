@@ -10,6 +10,8 @@ import BlogTopicDetail from '../components/Blog/BlogTopicDetail.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import About from '../views/About.vue';
+import NeedDetail from '../views/NeedDetail.vue';
+
 var router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -68,6 +70,12 @@ var router = createRouter({
             path: '/about',
             name: 'about',
             component: About
+        },
+        {
+            path: '/need/:id',
+            name: 'NeedDetail',
+            component: NeedDetail,
+            props: true
         }
     ]
 });
