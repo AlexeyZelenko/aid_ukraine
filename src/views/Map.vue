@@ -11,7 +11,7 @@
 
     <!-- Map Container -->
     <div class="h-[600px] relative">
-          <LMap ref="map" :zoom="zoom" :center="[50.4501, 30.5234]" :use-global-leaflet="false">
+          <LMap ref="map" :zoom="zoom" :center="[49.444433, 32.059767]" :use-global-leaflet="false">
             <LTileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="<a href=&quot;https://www.openstreetmap.org/copyright>OpenStreetMap</a> contributors"
