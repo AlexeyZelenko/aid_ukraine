@@ -1,6 +1,10 @@
 <template>
   <div class="bg-white p-6 rounded-lg shadow-md mt-6">
     <h3 class="text-xl font-semibold text-ukraine-blue mb-4">Додати коментар</h3>
+    <div v-if="parentCommentId" class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+      <p class="font-bold">Відповідь на коментар:</p>
+      <p>Ви відповідаєте на коментар з ID: {{ parentCommentId }} <button @click="cancelReply" class="text-blue-700 hover:text-blue-900 font-bold ml-2">Скасувати</button></p>
+    </div>
     <form @submit.prevent="submitComment">
       <div class="mb-4">
         <label for="commentContent" class="block text-gray-700 text-sm font-bold mb-2">Ваш коментар:</label>
@@ -35,13 +39,30 @@ const props = defineProps({
     type: String,
     required: true
   }
-})
+});
+
+const parentCommentId = ref<string | null>(null);
+
+const setParentCommentId = (commentId: string) => {
+  parentCommentId.value = commentId;
+  // toast.add({ severity: 'info', summary: 'Відповідь', detail: `Ви відповідаєте на коментар: ${commentId}`, life: 3000 }); // Removed toast as visual indicator is added
+};
+
+const cancelReply = () => {
+  parentCommentId.value = null;
+  toast.add({ severity: 'info', summary: 'Скасовано', detail: 'Відповідь скасовано.', life: 3000 });
+};
+
+defineExpose({
+  setParentCommentId
+});
 
 interface Comment {
   content: string;
   createdAt: any;
   authorId: string; // Placeholder for user ID
   authorName: string; // Placeholder for user name
+  parentCommentId?: string; // Optional: for nested comments
 }
 
 const comment = ref<Comment>({
@@ -54,10 +75,15 @@ const comment = ref<Comment>({
 const submitComment = async () => {
   try {
     // In a real app, you'd get the current user's ID and name
-    comment.value.createdAt = serverTimestamp()
-    await push(dbRef(rtdb, `topics/${props.topicId}/comments`), comment.value)
-    comment.value.content = ''
-    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Коментар успішно опубліковано!', life: 3000 })
+    comment.value.createdAt = serverTimestamp();
+    const newComment: Comment = {
+      ...comment.value,
+      ...(parentCommentId.value && { parentCommentId: parentCommentId.value })
+    };
+    await push(dbRef(rtdb, `topics/${props.topicId}/comments`), newComment);
+    comment.value.content = '';
+    parentCommentId.value = null; // Clear parentCommentId after submission
+    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Коментар успішно опубліковано!', life: 3000 });
   } catch (error) {
     console.error('Помилка при публікації коментаря:', error)
     toast.add({ severity: 'error', summary: 'Помилка', detail: 'Не вдалося опублікувати коментар. Спробуйте ще раз.', life: 3000 })

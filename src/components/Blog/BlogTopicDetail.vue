@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+  <div class="min-h-screen bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
     <div v-if="topic">
       <h1 class="text-3xl font-bold text-ukraine-blue mb-4">{{ topic.title }}</h1>
       <p class="text-gray-700 mb-4">{{ topic.content }}</p>
@@ -8,11 +10,13 @@
         <span>Опубліковано: {{ formatDate(topic.createdAt) }}</span>
       </div>
 
-      <BlogCommentList :topicId="topicId" />
-      <BlogCommentForm :topicId="topicId" />
+      <BlogCommentList :topicId="topicId" @reply="handleReply" />
+      <BlogCommentForm :topicId="topicId" ref="commentFormRef" />
     </div>
     <div v-else class="text-center py-8">
       <p class="text-gray-600">Завантаження теми або тема не знайдена...</p>
+    </div>
+      </div>
     </div>
   </div>
 </template>
@@ -24,6 +28,14 @@ import { rtdb } from '@/config/firebase'
 import { ref as dbRef, onValue, off } from 'firebase/database'
 import BlogCommentList from './BlogCommentList.vue'
 import BlogCommentForm from './BlogCommentForm.vue'
+
+const commentFormRef = ref<InstanceType<typeof BlogCommentForm> | null>(null);
+
+const handleReply = (commentId: string) => {
+  if (commentFormRef.value) {
+    commentFormRef.value.setParentCommentId(commentId);
+  }
+};
 
 interface Topic {
   id: string;
