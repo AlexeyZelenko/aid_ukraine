@@ -11,7 +11,9 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import About from '../views/About.vue';
 import NeedDetail from '../views/NeedDetail.vue';
-import VolunteerProfile from '../views/VolunteerProfile.vue'
+import VolunteerProfile from '../views/VolunteerProfile.vue';
+import AdminPanel from '../views/AdminPanel.vue';
+import { useAuthStore } from '../stores/auth'; // Add this line
 
 var router = createRouter({
     history: createWebHistory(),
@@ -83,7 +85,28 @@ var router = createRouter({
             name: 'VolunteerProfile',
             component: VolunteerProfile,
             props: true
+        },
+        {
+            path: '/admin',
+            name: 'admin',
+            component: AdminPanel,
+            meta: { requiresAuth: true, adminOnly: true } // Add this line for route protection
         }
     ]
 });
+
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const adminOnly = to.matched.some(record => record.meta.adminOnly);
+
+    if (requiresAuth && !authStore.user) {
+        next('/login');
+    } else if (adminOnly && authStore.user.uid !== '5C4AFwtxF1TpyQEdGXEKPfDk2K73') {
+        next('/'); // Redirect to home if not admin
+    } else {
+        next();
+    }
+});
+
 export default router;

@@ -35,6 +35,13 @@
             <option value="en">🇺🇸 English</option>
           </select>
           <div v-if="authStore.user" class="flex items-center gap-2">
+            <router-link
+              v-if="authStore.user.uid === '5C4AFwtxF1TpyQEdGXEKPfDk2K73'"
+              to="/admin"
+              class="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium px-2 py-1"
+            >
+              Admin Panel
+            </router-link>
             <span class="text-xs sm:text-sm text-gray-700 truncate max-w-[120px]">{{ authStore.user.email }}</span>
             <button 
               @click="logout"
@@ -123,6 +130,13 @@
             <option value="en">🇺🇸 English</option>
           </select>
           <div v-if="authStore.user" class="flex items-center gap-2">
+            <router-link
+              v-if="authStore.user.uid === '5C4AFwtxF1TpyQEdGXEKPfDk2K73'"
+              to="/admin"
+              class="text-blue-600 hover:text-blue-700 text-xs font-medium px-2 py-1 w-full text-center"
+            >
+              Admin Panel
+            </router-link>
             <span class="text-xs text-gray-700 truncate max-w-[120px]">{{ authStore.user.email }}</span>
             <button 
               @click="logout"
