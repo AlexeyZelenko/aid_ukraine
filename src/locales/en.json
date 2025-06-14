@@ -74,5 +74,8 @@
     "search": "Search",
     "filter": "Filter",
     "all": "All"
-  }
+  },
+  "document": {
+    "download": "Download Document"
+  }  
 }
