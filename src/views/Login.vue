@@ -62,6 +62,12 @@
             </router-link>
           </p>
         </div>
+
+        <div class="mt-6">
+          <button @click="loginWithGoogle" class="btn-google w-full py-3 mb-2">Увійти через Google</button>
+          <!-- <button @click="loginWithFacebook" class="btn-facebook w-full py-3 mb-2">Увійти через Facebook</button>
+          <button @click="loginWithPhone" class="btn-phone w-full py-3">Увійти через Телефон</button> -->
+        </div>
       </form>
     </div>
   </div>
@@ -71,6 +77,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { auth, googleProvider, facebookProvider } from '../config/firebase'
+import { signInWithPopup, signInWithPhoneNumber } from 'firebase/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -97,4 +105,31 @@ const handleLogin = async () => {
 
   loading.value = false
 }
+
+const loginWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    console.log('Google sign-in successful:', result);
+    router.push('/');
+  } catch (error) {
+    console.error('Google sign-in error:', error);
+    error.value = 'Помилка входу через Google';
+  }
+};
+
+const loginWithFacebook = async () => {
+  try {
+    const result = await signInWithPopup(auth, facebookProvider);
+    console.log('Facebook sign-in successful:', result);
+    router.push('/');
+  } catch (error) {
+    console.error('Facebook sign-in error:', error);
+    error.value = 'Помилка входу через Facebook';
+  }
+};
+
+const loginWithPhone = async () => {
+  // Implement phone authentication logic here
+  console.log('Phone authentication not yet implemented');
+};
 </script>

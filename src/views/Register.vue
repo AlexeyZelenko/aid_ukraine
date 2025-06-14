@@ -90,6 +90,12 @@
             </router-link>
           </p>
         </div>
+
+        <div class="mt-6">
+          <button @click="registerWithGoogle" class="btn-google w-full py-3 mb-2">Зареєструватися через Google</button>
+          <!-- <button @click="registerWithFacebook" class="btn-facebook w-full py-3 mb-2">Зареєструватися через Facebook</button>
+          <button @click="registerWithPhone" class="btn-phone w-full py-3">Зареєструватися через Телефон</button> -->
+        </div>
       </form>
     </div>
   </div>
@@ -99,6 +105,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { auth, googleProvider, facebookProvider } from '../config/firebase'
+import { signInWithPopup, signInWithPhoneNumber } from 'firebase/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -132,4 +140,31 @@ const handleRegister = async () => {
 
   loading.value = false
 }
+
+const registerWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    console.log('Google registration successful:', result);
+    router.push('/');
+  } catch (error) {
+    console.error('Google registration error:', error);
+    error.value = 'Помилка реєстрації через Google';
+  }
+};
+
+const registerWithFacebook = async () => {
+  try {
+    const result = await signInWithPopup(auth, facebookProvider);
+    console.log('Facebook registration successful:', result);
+    router.push('/');
+  } catch (error) {
+    console.error('Facebook registration error:', error);
+    error.value = 'Помилка реєстрації через Facebook';
+  }
+};
+
+const registerWithPhone = async () => {
+  // Implement phone registration logic here
+  console.log('Phone registration not yet implemented');
+};
 </script>

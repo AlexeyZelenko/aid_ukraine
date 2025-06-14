@@ -76,6 +76,7 @@
     "all": "All"
   },
   "document": {
-    "download": "Download Document"
+    "download": "Download Document",
+    "loading": "Loading document..."
   }  
 }
