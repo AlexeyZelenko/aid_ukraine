@@ -9,6 +9,21 @@
           </div>
           <span class="text-lg sm:text-xl font-bold text-ukraine-blue">{{ $t('home.title') }}</span>
         </router-link>
+
+        <!-- Desktop: компактное меню -->
+        <div class="hidden lg:flex items-center space-x-1 flex-1 justify-center max-w-2xl">
+          <router-link
+            v-for="item in mainNavItems"
+            :key="item.name"
+            :to="item.to"
+            class="text-gray-700 hover:text-ukraine-blue hover:bg-gray-50 px-2 py-1 rounded-md text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+            active-class="text-ukraine-blue bg-ukraine-blue/10"
+          >
+            <i :class="item.icon" class="mr-1 text-xs"></i>
+            {{ $t(item.label) }}
+          </router-link>
+        </div>
+
         <!-- Desktop: язык и кнопки справа -->
         <div class="hidden md:flex items-center gap-3">
           <select 
@@ -43,8 +58,9 @@
             </router-link>
           </div>
         </div>
-        <!-- Бургер-меню -->
-        <div class="md:hidden flex items-center justify-end ml-2">
+
+        <!-- Tablet: кнопка меню -->
+        <div class="md:hidden lg:hidden flex items-center justify-end ml-2">
           <button
             @click="mobileMenuOpen = !mobileMenuOpen"
             class="text-gray-700 hover:text-ukraine-blue p-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
@@ -52,8 +68,36 @@
             <i class="fas fa-bars"></i>
           </button>
         </div>
+
+        <!-- Medium screens: выпадающее меню -->
+        <div class="hidden md:block lg:hidden relative">
+          <button
+            @click="desktopMenuOpen = !desktopMenuOpen"
+            class="text-gray-700 hover:text-ukraine-blue p-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue rounded-md"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
+          
+          <!-- Dropdown menu -->
+          <div v-if="desktopMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+            <div class="py-1">
+              <router-link
+                v-for="item in mainNavItems"
+                :key="item.name"
+                :to="item.to"
+                @click="desktopMenuOpen = false"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-ukraine-blue"
+                active-class="text-ukraine-blue bg-ukraine-blue/10"
+              >
+                <i :class="item.icon" class="mr-2 text-xs"></i>
+                {{ $t(item.label) }}
+              </router-link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
     <!-- Mobile menu -->
     <div v-if="mobileMenuOpen" class="md:hidden bg-white border-t">
       <div class="px-2 pt-2 pb-3 space-y-1">
@@ -63,6 +107,7 @@
           :to="item.to"
           @click="mobileMenuOpen = false"
           class="block px-3 py-3 text-gray-700 hover:text-ukraine-blue hover:bg-gray-50 rounded-md text-base"
+          active-class="text-ukraine-blue bg-ukraine-blue/10"
         >
           <i :class="item.icon" class="mr-2"></i>
           {{ $t(item.label) }}
@@ -107,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 
@@ -115,15 +160,16 @@ const { locale } = useI18n()
 const authStore = useAuthStore()
 
 const mobileMenuOpen = ref(false)
+const desktopMenuOpen = ref(false)
 const currentLocale = ref(locale.value)
 
 const mainNavItems = [
   { name: 'volunteers', to: '/volunteers', label: 'nav.volunteers', icon: 'fas fa-hands-helping' },
   { name: 'needs', to: '/needs', label: 'nav.needs', icon: 'fas fa-list' },
   { name: 'financial', to: '/financial', label: 'nav.financial', icon: 'fas fa-credit-card' },
-  { name: 'map', to: '/map', label: 'nav.map', icon: 'fas fa-map-marker-alt' },
+  // { name: 'map', to: '/map', label: 'nav.map', icon: 'fas fa-map-marker-alt' },
   { name: 'blog', to: '/blog', label: 'nav.blog', icon: 'fas fa-comments' },
-  { name: 'articles', to: '/articles', label: 'nav.articles', icon: 'fas fa-newspaper' },
+  // { name: 'articles', to: '/articles', label: 'nav.articles', icon: 'fas fa-newspaper' },
   { name: 'about', to: '/about', label: 'nav.about', icon: 'fas fa-info-circle' }  
 ]
 
@@ -134,4 +180,20 @@ const changeLanguage = () => {
 const logout = async () => {
   await authStore.signOut()
 }
+
+// Закрытие выпадающего меню при клике вне его
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.relative')) {
+    desktopMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
