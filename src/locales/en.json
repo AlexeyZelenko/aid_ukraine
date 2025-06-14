@@ -26,7 +26,8 @@
     "types": {
       "volunteer": "Volunteer",
       "fund": "Fund",
-      "rehabilitation": "Rehabilitation Center"
+      "rehabilitation": "Rehabilitation Center",
+      "church": "Church/Religious Group"
     }
   },
   "needs": {
