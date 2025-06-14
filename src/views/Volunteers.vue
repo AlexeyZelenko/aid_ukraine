@@ -2,416 +2,64 @@
   <div class="min-h-screen bg-gray-50 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="text-center mb-12">
+      <header class="text-center mb-12">
         <h1 class="text-4xl font-bold text-ukraine-blue mb-4">{{ $t('volunteers.title') }}</h1>
         <p class="text-xl text-gray-600">{{ $t('volunteers.subtitle') }}</p>
         <div class="ukraine-accent-bar w-24 mx-auto mt-6"></div>
-      </div>
+      </header>
 
       <!-- Statistics -->
-      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <div class="text-2xl font-bold text-ukraine-blue">{{ totalVolunteers }}</div>
-          <div class="text-sm text-gray-600">Всього волонтерів</div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <div class="text-2xl font-bold text-blue-600">{{ individualVolunteers }}</div>
-          <div class="text-sm text-gray-600">Індивідуальні</div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <div class="text-2xl font-bold text-yellow-600">{{ fundsCount }}</div>
-          <div class="text-sm text-gray-600">Фонди</div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-          <div class="text-2xl font-bold text-green-600">{{ rehabilitationCenters }}</div>
-          <div class="text-sm text-gray-600">Центри реабілітації</div>
-        </div>
-      </div>
+      <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <StatCard 
+          v-for="stat in statistics" 
+          :key="stat.label"
+          :value="stat.value"
+          :label="stat.label"
+          :color="stat.color"
+        />
+      </section>
 
       <!-- Volunteer Types -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 mb-8 sm:mb-12">
-        <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="flex flex-col justify-between h-full text-center">
-            <div class="w-16 h-16 bg-ukraine-blue rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-hand-heart text-2xl text-white"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">{{ $t('volunteers.types.volunteer') }}</h3>
-            <p class="text-gray-600 mb-4">Індивідуальні волонтери, готові допомагати у різних сферах</p>
-            <button 
-              @click="openRegistrationModal('volunteer')"
-              class="btn-ukraine w-full"
-            >
-              Зареєструватися
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="flex flex-col justify-between h-full text-center">
-            <div class="w-16 h-16 bg-ukraine-yellow rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-building text-2xl text-ukraine-blue"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">{{ $t('volunteers.types.fund') }}</h3>
-            <p class="text-gray-600 mb-4">Благодійні фонди та організації</p>
-            <button 
-              @click="openRegistrationModal('fund')"
-              class="btn-ukraine w-full"
-            >
-              Зареєструватися
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="flex flex-col justify-between h-full text-center">
-            <div class="w-16 h-16 bg-ukraine-blue rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-hospital text-2xl text-white"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">{{ $t('volunteers.types.rehabilitation') }}</h3>
-            <p class="text-gray-600 mb-4">Центри реабілітації та медичні заклади</p>
-            <button 
-              @click="openRegistrationModal('rehabilitation')"
-              class="btn-ukraine w-full"
-            >
-              Зареєструватися
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover">
-          <div class="flex flex-col justify-between h-full text-center">
-            <div class="w-16 h-16 bg-purple-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-church text-2xl text-purple-700"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">{{ $t('volunteers.types.church') }}</h3>
-            <p class="text-gray-600 mb-4">Релігійні громади, церкви, парафії, що допомагають людям</p>
-            <button 
-              @click="openRegistrationModal('church')"
-              class="btn-ukraine w-full"
-            >
-              Зареєструватися
-            </button>
-          </div>
-        </div>
-      </div>
+      <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <VolunteerTypeCard
+          v-for="type in volunteerTypes"
+          :key="type.id"
+          :type="type"
+          @register="openRegistrationModal"
+        />
+      </section>
 
       <!-- Search and Filters -->
-      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4">
-          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 flex-1 w-full">
-            <div class="relative flex-1">
-              <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-              <input
-                v-model="searchQuery"
-                type="text"
-                placeholder="Пошук волонтерів..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
-              >
-            </div>
-            
-            <select 
-              v-model="selectedType"
-              class="border border-gray-300 rounded-md px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
-            >
-              <option value="">Всі типи</option>
-              <option value="volunteer">Волонтери</option>
-              <option value="fund">Фонди</option>
-              <option value="rehabilitation">Центри реабілітації</option>
-              <option value="church">Церкви</option>
-            </select>
-
-            <select 
-              v-model="selectedLocation"
-              class="border border-gray-300 rounded-md px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
-            >
-              <option value="">Всі міста</option>
-              <option v-for="location in uniqueLocations" :key="location" :value="location">
-                {{ location }}
-              </option>
-            </select>
-
-            <select 
-              v-model="selectedVerification"
-              class="border border-gray-300 rounded-md px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
-            >
-              <option value="">Всі</option>
-              <option value="verified">Верифіковані</option>
-              <option value="pending">Очікують верифікації</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <SearchFilters
+          v-model:search="searchQuery"
+          v-model:type="selectedType"
+          v-model:location="selectedLocation"
+          v-model:verification="selectedVerification"
+          :locations="uniqueLocations"
+        />
+      </section>
 
       <!-- Volunteers List -->
-      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
-          <h2 class="text-lg sm:text-2xl font-semibold">Зареєстровані волонтери та організації</h2>
-          <div class="text-xs sm:text-sm text-gray-600">
-            Знайдено: {{ filteredVolunteers.length }} з {{ mockVolunteers.length }}
-          </div>
-        </div>
-
-        <div v-if="volunteersStore.loading" class="text-center py-8">
-          <i class="fas fa-spinner fa-spin text-2xl text-ukraine-blue"></i>
-          <p class="mt-2 text-gray-600">{{ $t('common.loading') }}</p>
-        </div>
-
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div 
-            v-for="volunteer in filteredVolunteers" 
-            :key="volunteer.id"
-            class="flex flex-col justify-between border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 card-hover"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex-1">
-                <div class="flex items-center mb-2">
-                  <h3 class="font-semibold text-lg text-gray-900">{{ volunteer.name }}</h3>
-                  <div v-if="volunteer.verified" class="ml-2">
-                    <i class="fas fa-check-circle text-green-500" title="Верифіковано"></i>
-                  </div>
-                </div>
-                <p class="text-sm text-gray-600 mb-1">{{ volunteer.organization }}</p>
-                <div class="flex items-center text-xs text-gray-500">
-                  <i class="fas fa-map-marker-alt mr-1"></i>
-                  {{ volunteer.location }}
-                </div>
-              </div>
-              <span 
-                class="px-3 py-1 text-xs rounded-full font-medium"
-                :class="getTypeClass(volunteer.type)"
-              >
-                {{ $t(`volunteers.types.${volunteer.type}`) }}
-              </span>
-            </div>
-
-            <p class="text-sm text-gray-700 mb-4 line-clamp-3">{{ volunteer.description }}</p>
-
-            <!-- Specializations -->
-            <div v-if="volunteer.specializations && volunteer.specializations.length > 0" class="mb-4">
-              <div class="flex flex-wrap gap-1">
-                <span 
-                  v-for="spec in volunteer.specializations.slice(0, 3)" 
-                  :key="spec"
-                  class="px-2 py-1 bg-ukraine-blue bg-opacity-10 text-ukraine-blue text-xs rounded-full"
-                >
-                  {{ spec }}
-                </span>
-                <span 
-                  v-if="volunteer.specializations.length > 3"
-                  class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
-                >
-                  +{{ volunteer.specializations.length - 3 }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="space-y-2 text-sm text-gray-600 mb-4">
-              <div class="flex items-center">
-                <i class="fas fa-envelope mr-2 text-ukraine-blue"></i>
-                <span class="truncate">{{ volunteer.email }}</span>
-              </div>
-              <div class="flex items-center">
-                <i class="fas fa-phone mr-2 text-ukraine-blue"></i>
-                {{ volunteer.phone }}
-              </div>
-              <div v-if="volunteer.website" class="flex items-center">
-                <i class="fas fa-globe mr-2 text-ukraine-blue"></i>
-                <a :href="volunteer.website" target="_blank" class="text-ukraine-blue hover:underline truncate">
-                  {{ volunteer.website }}
-                </a>
-              </div>
-            </div>
-
-            <!-- Rating and Experience -->
-            <div class="flex items-center justify-between text-sm mb-4">
-              <div v-if="volunteer.rating" class="flex items-center">
-                <div class="flex text-yellow-400 mr-1">
-                  <i v-for="star in 5" :key="star" 
-                     :class="star <= volunteer.rating ? 'fas fa-star' : 'far fa-star'"></i>
-                </div>
-                <span class="text-gray-600">({{ volunteer.rating }})</span>
-              </div>
-              <div v-if="volunteer.experience" class="text-gray-600">
-                {{ volunteer.experience }} років досвіду
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex space-x-2">
-              <button 
-                @click="contactVolunteer(volunteer)"
-                class="flex-1 bg-ukraine-blue text-white py-2 px-4 rounded-md hover:bg-ukraine-blue-light transition-colors text-sm"
-              >
-                <i class="fas fa-envelope mr-1"></i>
-                Зв'язатися
-              </button>
-              <button 
-                @click="viewProfile(volunteer)"
-                class="flex-1 border border-ukraine-blue text-ukraine-blue py-2 px-4 rounded-md hover:bg-ukraine-blue hover:text-white transition-colors text-sm"
-              >
-                <i class="fas fa-user mr-1"></i>
-                Профіль
-              </button>
-            </div>
-
-            <!-- Registration Date -->
-            <div class="text-xs text-gray-500 mt-3 text-center">
-              Зареєстровано: {{ formatDate(volunteer.createdAt) }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Empty State -->
-        <div v-if="!volunteersStore.loading && filteredVolunteers.length === 0" class="text-center py-12">
-          <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
-          <h3 class="text-xl font-semibold text-gray-600 mb-2">Волонтерів не знайдено</h3>
-          <p class="text-gray-500">Спробуйте змінити фільтри або зареєструйтеся як волонтер</p>
-        </div>
-      </div>
+      <section class="bg-white rounded-lg shadow-lg p-6">
+        <VolunteersList
+          :volunteers="filteredVolunteers"
+          :loading="volunteersStore.loading"
+          :total="mockVolunteers.length"
+          @contact="contactVolunteer"
+          @view-profile="viewProfile"
+        />
+      </section>
     </div>
 
     <!-- Registration Modal -->
-    <div 
-      v-if="showRegistrationModal" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      @click="closeRegistrationModal"
-    >
-      <div class="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto" @click.stop>
-        <div class="p-6">
-          <h3 class="text-2xl font-semibold mb-6">
-            Реєстрація: {{ $t(`volunteers.types.${registrationType}`) }}
-          </h3>
-          
-          <form @submit.prevent="submitRegistration">
-            <div class="grid md:grid-cols-2 gap-4">
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  {{ registrationType === 'volunteer' ? 'Ім\'я та прізвище' : 'Назва організації' }} *
-                </label>
-                <input 
-                  v-model="registrationForm.name"
-                  type="text" 
-                  required
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  :placeholder="registrationType === 'volunteer' ? 'Іван Петренко' : 'Назва фонду/організації'"
-                >
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                <input 
-                  v-model="registrationForm.email"
-                  type="email" 
-                  required
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  placeholder="email@example.com"
-                >
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Телефон *</label>
-                <input 
-                  v-model="registrationForm.phone"
-                  type="tel" 
-                  required
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  placeholder="+38 (0XX) XXX-XX-XX"
-                >
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  {{ registrationType === 'volunteer' ? 'Організація (опціонально)' : 'Повна назва організації' }}
-                </label>
-                <input 
-                  v-model="registrationForm.organization"
-                  type="text" 
-                  :required="registrationType !== 'volunteer'"
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  :placeholder="registrationType === 'volunteer' ? 'Назва організації (якщо є)' : 'Повна офіційна назва'"
-                >
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Місцезнаходження *</label>
-                <input 
-                  v-model="registrationForm.location"
-                  type="text" 
-                  required
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  placeholder="Місто, область"
-                >
-              </div>
-
-              <div v-if="registrationType !== 'volunteer'">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Веб-сайт</label>
-                <input 
-                  v-model="registrationForm.website"
-                  type="url" 
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  placeholder="https://example.com"
-                >
-              </div>
-
-              <div v-if="registrationType === 'volunteer'">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Досвід (років)</label>
-                <input 
-                  v-model.number="registrationForm.experience"
-                  type="number" 
-                  min="0"
-                  max="50"
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  placeholder="0"
-                >
-              </div>
-
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Опис діяльності *</label>
-                <textarea 
-                  v-model="registrationForm.description"
-                  rows="4"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  :placeholder="getDescriptionPlaceholder()"
-                ></textarea>
-              </div>
-
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Спеціалізації (через кому)
-                </label>
-                <input 
-                  v-model="registrationForm.specializationsText"
-                  type="text" 
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue"
-                  placeholder="медична допомога, психологічна підтримка, логістика"
-                >
-              </div>
-            </div>
-
-            <div class="flex justify-end space-x-3 mt-6">
-              <button 
-                type="button"
-                @click="closeRegistrationModal"
-                class="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                {{ $t('common.cancel') }}
-              </button>
-              <button 
-                type="submit"
-                class="btn-ukraine"
-                :disabled="submitting"
-              >
-                <i v-if="submitting" class="fas fa-spinner fa-spin mr-2"></i>
-                <i v-else class="fas fa-user-plus mr-2"></i>
-                {{ submitting ? 'Реєструю...' : $t('common.save') }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <RegistrationModal
+      v-if="showRegistrationModal"
+      :type="registrationType"
+      :submitting="submitting"
+      @close="closeRegistrationModal"
+      @submit="submitRegistration"
+    />
   </div>
 </template>
 
@@ -421,10 +69,15 @@ import { useVolunteersStore, type Volunteer } from '../stores/volunteers'
 import { useAuthStore } from '../stores/auth'
 import { useToast } from 'primevue/usetoast'
 import { useRouter } from 'vue-router'
+import { MOCK_VOLUNTEERS, VOLUNTEER_TYPES } from '../constants/volunteers'
+import StatCard from '@/components/StatCard.vue'
+import VolunteerTypeCard from '@/components/VolunteerTypeCard.vue'
+import SearchFilters from '@/components/SearchFilters.vue'
+import VolunteersList from '@/components/VolunteersList.vue'
+import RegistrationModal from '@/components/RegistrationModal.vue'
 
 const toast = useToast()
 const router = useRouter()
-
 const volunteersStore = useVolunteersStore()
 const authStore = useAuthStore()
 
@@ -437,261 +90,99 @@ const selectedType = ref('')
 const selectedLocation = ref('')
 const selectedVerification = ref('')
 
-const registrationForm = ref({
-  name: '',
-  email: '',
-  phone: '',
-  organization: '',
-  description: '',
-  location: '',
-  website: '',
-  experience: undefined as number | undefined,
-  specializationsText: ''
-})
-
-// Extended mock data
-const mockVolunteers: (Volunteer & { 
-  specializations?: string[], 
-  rating?: number, 
-  experience?: number, 
-  website?: string 
-})[] = [  
-  {
-    id: '1',
-    name: 'Фонд "Сила Доброти"',
-    email: 'info@heart-ukraine.org',
-    phone: '+38 (044) 234-56-78',
-    organization: 'Благодійний фонд "Сила Доброти"',
-    type: 'fund',
-    description: 'Благодійний фонд, що займається допомогою переселенцям.',
-    location: 'Черкаси',
-    verified: true,
-    createdAt: new Date('2024-01-10'),
-    website: 'https://heart-ukraine.org',
-    specializations: ['фінансова допомога', 'медикаменти', 'продукти харчування'],
-    rating: 5,
-    experience: 20
-  },
-  {
-    id: '2',
-    name: 'Центр реабілітації "Надія"',
-    email: 'info@nadia-rehab.com',
-    phone: '+38 (056) 456-78-90',
-    organization: 'Центр реабілітації "Надія"',
-    type: 'rehabilitation',
-    description: 'Спеціалізований центр реабілітації для військових та цивільних. Фізична та психологічна реабілітація.',
-    location: 'Медведівка',
-    verified: true,
-    createdAt: new Date('2024-01-08'),
-    website: 'https://nadia-rehab.com',
-    specializations: ['фізична реабілітація', 'психологічна допомога', 'медична реабілітація'],
-    rating: 5
-  },
-  {
-    id: '3',
-    name: 'Блага вість',
-    email: 'church.st.nicholas@email.com',
-    phone: '+38 (067) 111-22-33',
-    organization: 'Блага Вість',
-    type: 'church',
-    description: 'Церква, що організовує гуманітарну допомогу, підтримку переселенців, духовну підтримку та спільні заходи для громади.',
-    location: 'Черкаси',
-    verified: true,
-    createdAt: new Date('2024-01-03'),
-    website: 'https://st-nicholas-church.ua',
-    specializations: ['гуманітарна допомога', 'підтримка переселенців', 'духовна підтримка', 'соціальні заходи'],
-    rating: 5
-  },  
-  {
-    id: '4',
-    name: 'Ірина Сидоренко',
-    email: 'irina.sydorenko@email.com',
-    phone: '+38 (093) 567-89-01',
-    organization: 'Психолог-волонтер',
-    type: 'volunteer',
-    description: 'Практикуючий психолог. Надаю безкоштовні консультації для людей, що пережили травму війни.',
-    location: 'Одеса',
-    verified: true,
-    createdAt: new Date('2024-01-14'),
-    specializations: ['психологічна підтримка', 'травма війни', 'консультації'],
-    rating: 5,
-    experience: 8
-  },  
-  {
-    id: '5',
-    name: 'Віктор Мельник',
-    email: 'viktor.melnyk@email.com',
-    phone: '+38 (095) 789-01-23',
-    organization: 'IT-волонтер',
-    type: 'volunteer',
-    description: 'IT-спеціаліст. Допомагаю з налаштуванням комп\'ютерів, навчанням цифровій грамотності.',
-    location: 'Харків',
-    verified: true,
-    createdAt: new Date('2024-01-13'),
-    specializations: ['IT-підтримка', 'цифрова грамотність', 'налаштування техніки'],
-    rating: 4,
-    experience: 5
-  },
-  {
-    id: '6',
-    name: 'Анна Шевченко',
-    email: 'anna.shevchenko@email.com',
-    phone: '+38 (096) 890-12-34',
-    organization: 'Юрист-волонтер',
-    type: 'volunteer',
-    description: 'Юрист з досвідом роботи в сфері соціального права. Надаю безкоштовні юридичні консультації.',
-    location: 'Київ',
-    verified: true,
-    createdAt: new Date('2024-01-09'),
-    specializations: ['юридичні консультації', 'соціальне право', 'документообіг'],
-    rating: 5,
-    experience: 12
-  }  
-]
+// Constants
+const mockVolunteers = MOCK_VOLUNTEERS
+const volunteerTypes = VOLUNTEER_TYPES
 
 // Computed properties
 const filteredVolunteers = computed(() => {
-  let filtered = [...mockVolunteers]
+  return mockVolunteers.filter(volunteer => {
+    const matchesSearch = !searchQuery.value || 
+      volunteer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      volunteer.organization.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      volunteer.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      volunteer.location.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      volunteer.specializations?.some(spec => 
+        spec.toLowerCase().includes(searchQuery.value.toLowerCase())
+      )
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(volunteer => 
-      volunteer.name.toLowerCase().includes(query) ||
-      volunteer.organization.toLowerCase().includes(query) ||
-      volunteer.description.toLowerCase().includes(query) ||
-      volunteer.location.toLowerCase().includes(query) ||
-      (volunteer.specializations && volunteer.specializations.some(spec => 
-        spec.toLowerCase().includes(query)
-      ))
-    )
-  }
+    const matchesType = !selectedType.value || volunteer.type === selectedType.value
+    const matchesLocation = !selectedLocation.value || volunteer.location === selectedLocation.value
+    const matchesVerification = !selectedVerification.value || 
+      (selectedVerification.value === 'verified' && volunteer.verified) ||
+      (selectedVerification.value === 'pending' && !volunteer.verified)
 
-  if (selectedType.value) {
-    filtered = filtered.filter(volunteer => volunteer.type === selectedType.value)
-  }
-
-  if (selectedLocation.value) {
-    filtered = filtered.filter(volunteer => volunteer.location === selectedLocation.value)
-  }
-
-  if (selectedVerification.value) {
-    if (selectedVerification.value === 'verified') {
-      filtered = filtered.filter(volunteer => volunteer.verified)
-    } else if (selectedVerification.value === 'pending') {
-      filtered = filtered.filter(volunteer => !volunteer.verified)
-    }
-  }
-
-  return filtered
+    return matchesSearch && matchesType && matchesLocation && matchesVerification
+  })
 })
 
 const uniqueLocations = computed(() => {
-  const locations = mockVolunteers.map(v => v.location)
-  return [...new Set(locations)].sort()
+  const locations = new Set(mockVolunteers.map(v => v.location))
+  return Array.from(locations).sort()
 })
 
-const totalVolunteers = computed(() => mockVolunteers.length)
-const individualVolunteers = computed(() => mockVolunteers.filter(v => v.type === 'volunteer').length)
-const fundsCount = computed(() => mockVolunteers.filter(v => v.type === 'fund').length)
-const rehabilitationCenters = computed(() => mockVolunteers.filter(v => v.type === 'rehabilitation').length)
+const statistics = computed(() => [
+  { value: mockVolunteers.length, label: 'Всього волонтерів', color: 'ukraine-blue' },
+  { value: mockVolunteers.filter(v => v.type === 'volunteer').length, label: 'Індивідуальні', color: 'blue-600' },
+  { value: mockVolunteers.filter(v => v.type === 'fund').length, label: 'Фонди', color: 'yellow-600' },
+  { value: mockVolunteers.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' }
+])
 
 // Methods
-const getTypeClass = (type: string) => {
-  const classes = {
-    volunteer: 'bg-blue-100 text-blue-800',
-    fund: 'bg-yellow-100 text-yellow-800',
-    rehabilitation: 'bg-green-100 text-green-800',
-    church: 'bg-purple-100 text-purple-800'
-  }
-  return classes[type as keyof typeof classes] || 'bg-gray-100 text-gray-800'
-}
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('uk-UA', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).format(date)
-}
-
-const getDescriptionPlaceholder = () => {
-  const placeholders = {
-    volunteer: 'Опишіть ваші навички, досвід та як ви можете допомогти...',
-    fund: 'Опишіть діяльність фонду, основні напрямки роботи...',
-    rehabilitation: 'Опишіть послуги центру, спеціалізацію, можливості...',
-    church: 'Опишіть діяльність релігійної громади, церкви, парафії...'
-  }
-  return placeholders[registrationType.value]
-}
-
 const openRegistrationModal = (type: 'volunteer' | 'fund' | 'rehabilitation' | 'church') => {
   registrationType.value = type
   showRegistrationModal.value = true
-  // Reset form
-  registrationForm.value = {
-    name: '',
-    email: '',
-    phone: '',
-    organization: '',
-    description: '',
-    location: '',
-    website: '',
-    experience: undefined,
-    specializationsText: ''
-  }
 }
 
 const closeRegistrationModal = () => {
   showRegistrationModal.value = false
 }
 
-const submitRegistration = async () => {
+const submitRegistration = async (formData: any) => {
   submitting.value = true
   
   const volunteerData = {
-    ...registrationForm.value,
+    ...formData,
     type: registrationType.value,
-    specializations: registrationForm.value.specializationsText
-      ? registrationForm.value.specializationsText.split(',').map(s => s.trim())
+    specializations: formData.specializationsText
+      ? formData.specializationsText.split(',').map((s: string) => s.trim())
       : []
   }
 
-  // Remove specializationsText from the data
-  delete (volunteerData as any).specializationsText
+  delete volunteerData.specializationsText
 
   const result = await volunteersStore.addVolunteer(volunteerData)
   
   if (result.success) {
     closeRegistrationModal()
-    await volunteersStore.fetchVolunteers()
-    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Реєстрацію успішно подано! Очікуйте на верифікацію.', life: 3000 })
+    toast.add({ 
+      severity: 'success', 
+      summary: 'Успіх', 
+      detail: 'Реєстрацію успішно подано! Очікуйте на верифікацію.', 
+      life: 3000 
+    })
   } else {
-    toast.add({ severity: 'error', summary: 'Помилка', detail: 'Помилка при реєстрації. Спробуйте пізніше.', life: 3000 })
+    toast.add({ 
+      severity: 'error', 
+      summary: 'Помилка', 
+      detail: 'Помилка при реєстрації. Спробуйте пізніше.', 
+      life: 3000 
+    })
   }
   
   submitting.value = false
 }
 
-const contactVolunteer = (volunteer: any) => {
+const contactVolunteer = (volunteer: Volunteer) => {
   const message = `Привіт! Я знайшов ваш профіль на платформі "Допомога Україні" і хотів би обговорити можливість співпраці.`
   const emailUrl = `mailto:${volunteer.email}?subject=Співпраця через платформу "Допомога Україні"&body=${encodeURIComponent(message)}`
   
-  toast.add({
-    severity: 'info',
-    summary: 'Зв\'язатися з волонтером',
-    detail: `Зв'язатися з ${volunteer.name}?\n\nEmail: ${volunteer.email}\nТелефон: ${volunteer.phone}`,
-    life: 5000,
-    group: 'confirm',
-    onClose: (event) => {
-      if (event.type === 'confirm') {
-        window.open(emailUrl)
-      }
-    }
-  })
-
+  if (confirm(`Зв'язатися з ${volunteer.name}?\n\nEmail: ${volunteer.email}\nТелефон: ${volunteer.phone}`)) {
+    window.open(emailUrl)
+  }
 }
 
-const viewProfile = (volunteer: any) => {
+const viewProfile = (volunteer: Volunteer) => {
   router.push({ name: 'VolunteerProfile', params: { id: volunteer.id } })
 }
 
@@ -700,12 +191,3 @@ onMounted(() => {
   // volunteersStore.fetchVolunteers()
 })
 </script>
-
-<style scoped>
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
