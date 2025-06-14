@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import Slide1 from '@components/AboutPage/Slide1.vue'
+
 
 </script>
 
-<template>
-    <!-- <div>        
-        <Slide1 />
-    </div> -->    
+<template>     
 
     <iframe
-      src="/humanitarian_aid_website_en.pdf"
+      src="/help_website_presentation_ua.pdf"
       width="100%"
       height="600px"
       style="border: none;"
       title="Документ PDF"
     ></iframe>
 
-    <!-- <a href="/humanitarian_aid_website_en.pdf" target="_blank">скачать документ здесь</a> -->
+    <a href="/help_website_presentation_ua.pdf" target="_blank">завантажити документ</a>
 </template>
