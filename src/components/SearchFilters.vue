@@ -44,16 +44,7 @@
           <option value="verified">Верифіковані</option>
           <option value="pending">Очікують верифікації</option>
         </select>
-
-        <select 
-          :value="dataSource"
-          @change="$emit('update:dataSource', ($event.target as HTMLSelectElement).value)"
-          class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ukraine-blue text-sm sm:text-base"
-        >
-          <option value="">Всі дані</option>
-          <option value="firebase">Firebase</option>
-          <option value="mock">Мокові</option>
-        </select>
+        
       </div>
     </div>
   </template>

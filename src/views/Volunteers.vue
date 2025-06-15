@@ -9,7 +9,7 @@
       </header>
 
       <!-- Statistics -->
-      <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <section class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
         <StatCard 
           v-for="stat in statistics" 
           :key="stat.label"
@@ -149,7 +149,8 @@ const statistics = computed(() => [
   { value: volunteers.value.length, label: 'Всього волонтерів', color: 'ukraine-blue' },
   { value: volunteers.value.filter(v => v.type === 'volunteer').length, label: 'Індивідуальні', color: 'blue-600' },
   { value: volunteers.value.filter(v => v.type === 'fund').length, label: 'Фонди', color: 'yellow-600' },
-  { value: volunteers.value.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' }
+  { value: volunteers.value.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' },
+  { value: volunteers.value.filter(v => v.type === 'church').length, label: 'Церкви', color: 'red-600' }
 ])
 
 // Methods
