@@ -14,10 +14,10 @@
             {{ $t('home.description') }}
           </p>
           <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <router-link to="/register" class="btn-ukraine text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4">
+            <!-- <router-link to="/register" class="btn-ukraine text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4">
               <i class="fas fa-heart mr-2"></i>
               {{ $t('home.joinUs') }}
-            </router-link>
+            </router-link> -->
             <router-link to="/about" class="btn-ukraine text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white text-ukraine-blue border-2 border-ukraine-blue hover:bg-ukraine-blue hover:text-white">
               <i class="fas fa-info-circle mr-2"></i>
               {{ $t('home.learnMore') }}
@@ -72,23 +72,59 @@
     <!-- Statistics Section -->
     <section class="py-12 sm:py-20 ukraine-gradient">
       <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 text-center">
-          <div>
-            <div class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">1,250+</div>
+        <div class="text-center mb-8">
+          <h2 class="text-2xl sm:text-3xl font-bold text-ukraine-blue mb-2">Наші досягнення</h2>
+          <p class="text-gray-700 text-sm sm:text-base">Актуальна статистика нашої діяльності</p>
+        </div>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-2 gap-4 sm:gap-8 text-center">
+          <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              {{ totalVolunteers.toLocaleString() }}+
+            </div>
             <div class="text-gray-700 text-xs sm:text-base">Волонтерів</div>
           </div>
-          <div>
-            <div class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">850+</div>
+          
+          <!-- <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              {{ fulfilledRequests.toLocaleString() }}
+            </div>
             <div class="text-gray-700 text-xs sm:text-base">Виконаних запитів</div>
-          </div>
-          <div>
-            <div class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">45+</div>
+          </div> -->
+          
+          <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              {{ activeCities }}+
+            </div>
             <div class="text-gray-700 text-xs sm:text-base">Міст</div>
           </div>
-          <div>
-            <div class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">24/7</div>
+          
+          <!-- <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+              {{ supportAvailable }}
+            </div>
             <div class="text-gray-700 text-xs sm:text-base">Підтримка</div>
-          </div>
+          </div> -->
+        </div>
+        
+        <!-- Last Updated Info -->
+        <div v-if="!statsLoading" class="text-center mt-6">
+          <p class="text-gray-600 text-xs sm:text-sm">
+            <i class="fas fa-sync-alt mr-1"></i>
+            Дані оновлено: {{ new Date().toLocaleDateString('uk-UA') }}
+          </p>
         </div>
       </div>
     </section>
@@ -115,4 +151,104 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useVolunteersStore } from '@/stores/volunteers'
+import { useNeedsStore } from '@/stores/needs'
+
+// Stores
+const volunteersStore = useVolunteersStore()
+const needsStore = useNeedsStore()
+
+// Loading state
+const statsLoading = ref(true)
+
+// Computed stats from real data
+const totalVolunteers = computed(() => {
+  return volunteersStore.volunteers?.length || 0
+})
+
+const fulfilledRequests = computed(() => {
+  return needsStore.needs?.filter(need => need.status === 'fulfilled').length || 0
+})
+
+const activeCities = computed(() => {
+  const cities = new Set()
+  
+  // Cities from volunteers
+  volunteersStore.volunteers?.forEach(volunteer => {
+    if (volunteer.location) {
+      const city = volunteer.location.split(',')[0].trim()
+      cities.add(city)
+    }
+  })
+  
+  // Cities from needs
+  needsStore.needs?.forEach(need => {
+    if (need.location) {
+      const city = need.location.split(',')[0].trim()
+      cities.add(city)
+    }
+  })
+  
+  return cities.size
+})
+
+const supportAvailable = computed(() => {
+  const openNeeds = needsStore.needs?.filter(need => need.status === 'open').length || 0
+  const inProgressNeeds = needsStore.needs?.filter(need => need.status === 'in-progress').length || 0
+  return openNeeds + inProgressNeeds > 0 ? '24/7' : 'Доступна'
+})
+
+// Additional stats for enhanced information
+const totalRequests = computed(() => {
+  return needsStore.needs?.length || 0
+})
+
+const urgentRequests = computed(() => {
+  return needsStore.needs?.filter(need => need.priority === 'urgent' && need.status === 'open').length || 0
+})
+
+const verifiedVolunteers = computed(() => {
+  return volunteersStore.volunteers?.filter(volunteer => volunteer.verified).length || 0
+})
+
+// Load data on mount
+onMounted(async () => {
+  try {
+    statsLoading.value = true
+    
+    // Load data from both stores in parallel
+    const [volunteersResult, needsResult] = await Promise.allSettled([
+      volunteersStore.fetchVolunteers(),
+      needsStore.fetchNeeds()
+    ])
+    
+    // Log results
+    if (volunteersResult.status === 'fulfilled') {
+      console.log('Волонтери завантажені:', volunteersStore.volunteers?.length || 0)
+    } else {
+      console.error('Помилка завантаження волонтерів:', volunteersResult.reason)
+    }
+    
+    if (needsResult.status === 'fulfilled') {
+      console.log('Потреби завантажені:', needsStore.needs?.length || 0)
+    } else {
+      console.error('Помилка завантаження потреб:', needsResult.reason)
+    }
+    
+    console.log('Статистика домашньої сторінки:', {
+      volunteers: totalVolunteers.value,
+      verifiedVolunteers: verifiedVolunteers.value,
+      totalRequests: totalRequests.value,
+      fulfilledRequests: fulfilledRequests.value,
+      urgentRequests: urgentRequests.value,
+      cities: activeCities.value,
+      support: supportAvailable.value
+    })
+  } catch (error) {
+    console.error('Загальна помилка завантаження статистики:', error)
+  } finally {
+    statsLoading.value = false
+  }
+})
 </script>
