@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { db } from '../config/firebase'
-import { collection, addDoc, getDocs, query, orderBy, where } from 'firebase/firestore'
+import { collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore'
 
 export interface Need {
   id?: string
@@ -17,6 +17,8 @@ export interface Need {
   status: 'open' | 'in-progress' | 'fulfilled'
   createdBy: string
   createdAt: Date
+  updatedAt?: Date
+  verified?: boolean
 }
 
 export const useNeedsStore = defineStore('needs', () => {
@@ -33,7 +35,9 @@ export const useNeedsStore = defineStore('needs', () => {
       const querySnapshot = await getDocs(q)
       needs.value = querySnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate()
       })) as Need[]
     } catch (error) {
       console.error('Error fetching needs:', error)
@@ -46,6 +50,7 @@ export const useNeedsStore = defineStore('needs', () => {
       const docRef = await addDoc(collection(db, 'needs'), {
         ...need,
         status: 'open',
+        verified: false,
         createdAt: new Date()
       })
       return { success: true, id: docRef.id }
@@ -55,10 +60,90 @@ export const useNeedsStore = defineStore('needs', () => {
     }
   }
 
+  const updateNeed = async (id: string, data: Partial<Need>) => {
+    try {
+      const needRef = doc(db, 'needs', id)
+      await updateDoc(needRef, {
+        ...data,
+        updatedAt: new Date()
+      })
+      return { success: true }
+    } catch (error) {
+      console.error('Error updating need:', error)
+      return { success: false, error }
+    }
+  }
+
+  const deleteNeed = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'needs', id))
+      return { success: true }
+    } catch (error) {
+      console.error('Error deleting need:', error)
+      return { success: false, error }
+    }
+  }
+
+  const verifyNeed = async (id: string, verified: boolean) => {
+    try {
+      const needRef = doc(db, 'needs', id)
+      await updateDoc(needRef, {
+        verified,
+        updatedAt: new Date()
+      })
+      return { success: true }
+    } catch (error) {
+      console.error('Error verifying need:', error)
+      return { success: false, error }
+    }
+  }
+
+  const getNeedById = async (id: string) => {
+    try {
+      const needDoc = await getDoc(doc(db, 'needs', id))
+      if (needDoc.exists()) {
+        const data = needDoc.data()
+        return {
+          id: needDoc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate()
+        } as Need
+      }
+      return null
+    } catch (error) {
+      console.error('Error getting need:', error)
+      return null
+    }
+  }
+
+  const getStats = () => {
+    const totalNeeds = needs.value.length
+    const openNeeds = needs.value.filter(need => need.status === 'open').length
+    const inProgressNeeds = needs.value.filter(need => need.status === 'in-progress').length
+    const fulfilledNeeds = needs.value.filter(need => need.status === 'fulfilled').length
+    const urgentNeeds = needs.value.filter(need => need.priority === 'urgent').length
+    const verifiedNeeds = needs.value.filter(need => need.verified).length
+
+    return {
+      totalNeeds,
+      openNeeds,
+      inProgressNeeds,
+      fulfilledNeeds,
+      urgentNeeds,
+      verifiedNeeds
+    }
+  }
+
   return {
     needs,
     loading,
     fetchNeeds,
-    addNeed
+    addNeed,
+    updateNeed,
+    deleteNeed,
+    verifyNeed,
+    getNeedById,
+    getStats
   }
 })
