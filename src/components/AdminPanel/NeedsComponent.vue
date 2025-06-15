@@ -272,13 +272,13 @@
             </div>
 
             <div class="form-group full-width">
-              <label>Email *</label>
+              <label>Telegram *</label>
               <input 
-                type="email" 
-                v-model="form.contactEmail" 
+                type="text" 
+                v-model="form.contactTelegram" 
                 required 
                 class="form-control"
-                placeholder="email@example.com"
+                placeholder="@username або username"
               >
             </div>
 
@@ -369,8 +369,8 @@
                 <span>{{ viewingNeed.contactPhone }}</span>
               </div>
               <div class="detail-item">
-                <strong>Email:</strong>
-                <span>{{ viewingNeed.contactEmail }}</span>
+                <strong>Telegram:</strong>
+                <span>{{ viewingNeed.contactTelegram }}</span>
               </div>
             </div>
           </div>
@@ -442,7 +442,7 @@ const form = ref({
   location: '',
   contactPerson: '',
   contactPhone: '',
-  contactEmail: '',
+  contactTelegram: '',
   quantity: undefined as number | undefined,
   status: 'open' as Need['status']
 })
@@ -574,7 +574,7 @@ const editNeed = (need: Need) => {
     location: need.location,
     contactPerson: need.contactPerson,
     contactPhone: need.contactPhone,
-    contactEmail: need.contactEmail,
+    contactTelegram: need.contactTelegram,
     quantity: need.quantity,
     status: need.status
   }
@@ -646,7 +646,7 @@ const resetForm = () => {
     location: '',
     contactPerson: '',
     contactPhone: '',
-    contactEmail: '',
+    contactTelegram: '',
     quantity: undefined,
     status: 'open'
   }

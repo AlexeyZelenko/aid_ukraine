@@ -108,7 +108,7 @@
               <i class="fas fa-phone-alt mr-2 text-yellow-700"></i> {{ need.contactPhone }}
             </div>
             <div class="mb-2 flex items-center text-gray-700">
-              <i class="fas fa-envelope mr-2 text-yellow-700"></i> {{ need.contactEmail }}
+              <i class="fab fa-telegram mr-2 text-yellow-700"></i> {{ need.contactTelegram }}
             </div>
             <div class="space-y-2">
               <button class="w-full bg-ukraine-blue hover:bg-ukraine-yellow text-white font-bold py-2 px-4 rounded transition duration-300 flex items-center justify-center text-base shadow" @click="contactPerson(need)">
@@ -215,7 +215,7 @@ const getCategoryIcon = (category: string) => {
     legal: 'fas fa-balance-scale',
     psychological: 'fas fa-heart',
     education: 'fas fa-graduation-cap',
-    other: 'fas fa-question-circle'
+    other: 'fas fa-heart'
   }
   return icons[category] || 'fas fa-circle'
 }
@@ -251,54 +251,104 @@ const getCategoryLabel = (category: string) => {
 const contactPerson = (need: Need) => {
   const message = `Привіт! Я побачив вашу потребу "${need.title}" на платформі "Допомога Україні" і хочу допомогти.`
   const phoneUrl = `tel:${need.contactPhone}`
-  const emailUrl = `mailto:${need.contactEmail}?subject=Допомога з "${need.title}"&body=${encodeURIComponent(message)}`
+  const telegramUrl = `https://t.me/${need.contactTelegram.replace('@', '')}`
   
   if (confirm(`Зв'язатися з ${need.contactPerson}?
 
 Телефон: ${need.contactPhone}
-Email: ${need.contactEmail}`)) {
-    const choice = prompt('Оберіть спосіб зв\'язку:\n1 - Телефон\n2 - Email\n\nВведіть 1 або 2:')
+Telegram: ${need.contactTelegram}`)) {
+    const choice = prompt('Оберіть спосіб зв\'язку:\n1 - Телефон\n2 - Telegram\n\nВведіть 1 або 2:')
     if (choice === '1') {
       window.open(phoneUrl)
     } else if (choice === '2') {
-      window.open(emailUrl)
+      window.open(telegramUrl)
     }
   }
 }
 
-const shareNeed = async (need: Need) => {
+const shareNeed = (need: Need) => {
   const url = window.location.href
-  const text = `${need.title}\n\n${need.description}\n\nЛокація: ${need.location}\nКонтакт: ${need.contactPerson}`
-  
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: need.title,
-        text: text,
-        url: url
-      })
-    } catch (error) {
-      console.log('Помилка поділитися:', error)
-      copyToClipboard(url)
-    }
-  } else {
-    copyToClipboard(url)
-  }
+  copyToClipboard(url)
 }
 
 const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text).then(() => {
-    alert('Посилання скопійовано в буфер обміну!')
-  }).catch(() => {
-    // Fallback для старих браузерів
-    const textArea = document.createElement('textarea')
-    textArea.value = text
-    document.body.appendChild(textArea)
-    textArea.select()
+  if (navigator.clipboard && window.isSecureContext) {
+    // Сучасний API для безпечних контекстів (HTTPS)
+    navigator.clipboard.writeText(text).then(() => {
+      showSuccessMessage()
+    }).catch(() => {
+      fallbackCopy(text)
+    })
+  } else {
+    // Fallback для старих браузерів або HTTP
+    fallbackCopy(text)
+  }
+}
+
+const fallbackCopy = (text: string) => {
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+  textArea.style.position = 'fixed'
+  textArea.style.left = '-999999px'
+  textArea.style.top = '-999999px'
+  document.body.appendChild(textArea)
+  textArea.focus()
+  textArea.select()
+  
+  try {
     document.execCommand('copy')
-    document.body.removeChild(textArea)
-    alert('Посилання скопійовано в буфер обміну!')
-  })
+    showSuccessMessage()
+  } catch (error) {
+    console.error('Помилка копіювання:', error)
+    alert('Не вдалося скопіювати посилання. Скопіюйте його вручну: ' + text)
+  }
+  
+  document.body.removeChild(textArea)
+}
+
+const showSuccessMessage = () => {
+  // Створюємо стильне повідомлення замість звичайного alert
+  const notification = document.createElement('div')
+  notification.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 9999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: slideIn 0.3s ease-out;
+    ">
+      <i class="fas fa-check-circle"></i>
+      Посилання успішно скопійовано!
+    </div>
+    <style>
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    </style>
+  `
+  
+  document.body.appendChild(notification)
+  
+  // Видаляємо повідомлення через 3 секунди
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s ease-out reverse'
+    setTimeout(() => {
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification)
+      }
+    }, 300)
+  }, 3000)
 }
 
 const loadNeedData = async () => {

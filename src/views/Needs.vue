@@ -317,7 +317,7 @@ import { useRouter } from 'vue-router'
       legal: 'fas fa-balance-scale',
       psychological: 'fas fa-heart',
       education: 'fas fa-graduation-cap',
-      other: 'fas fa-question-circle'
+      other: 'fas fa-heart'
     }
     return icons[category as keyof typeof icons] || 'fas fa-circle'
   }
@@ -369,15 +369,15 @@ import { useRouter } from 'vue-router'
   const contactPerson = (need: Need) => {
     const message = `Привіт! Я побачив вашу потребу "${need.title}" на платформі "Допомога Україні" і хочу допомогти.`
     const phoneUrl = `tel:${need.contactPhone}`
-    const emailUrl = `mailto:${need.contactEmail}?subject=Допомога з "${need.title}"&body=${encodeURIComponent(message)}`
+    const telegramUrl = `https://t.me/${need.contactTelegram.replace('@', '')}`
     
-    if (confirm(`Зв'язатися з ${need.contactPerson}?\n\nТелефон: ${need.contactPhone}\nEmail: ${need.contactEmail}`)) {
+    if (confirm(`Зв'язатися з ${need.contactPerson}?\n\nТелефон: ${need.contactPhone}\nTelegram: ${need.contactTelegram}`)) {
       // User can choose how to contact
-      const choice = prompt('Оберіть спосіб зв\'язку:\n1 - Телефон\n2 - Email\n\nВведіть 1 або 2:')
+      const choice = prompt('Оберіть спосіб зв\'язку:\n1 - Телефон\n2 - Telegram\n\nВведіть 1 або 2:')
       if (choice === '1') {
         window.open(phoneUrl)
       } else if (choice === '2') {
-        window.open(emailUrl)
+        window.open(telegramUrl)
       }
     }
   }

@@ -12,7 +12,7 @@ export interface Need {
   location: string
   contactPerson: string
   contactPhone: string
-  contactEmail: string
+  contactTelegram: string
   quantity?: number
   status: 'open' | 'in-progress' | 'fulfilled'
   createdBy: string
