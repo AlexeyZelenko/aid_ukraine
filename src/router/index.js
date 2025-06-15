@@ -87,6 +87,12 @@ var router = createRouter({
             props: true
         },
         {
+            path: '/volunteers/projects/:id',
+            name: 'organization-projects',
+            component: () => import('../views/VolunteerProjects.vue'),
+            props: true
+        },
+        {
             path: '/admin',
             name: 'admin',
             component: AdminPanel,

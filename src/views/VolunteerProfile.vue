@@ -24,6 +24,25 @@
             </div>
           </div>
         </div>
+
+        <!-- Кнопки дій -->
+        <div class="mb-8 flex flex-wrap gap-4">
+          <button 
+            @click="goToFinancialHelp" 
+            class="bg-ukraine-blue hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center shadow-md"
+          >
+            <i class="fas fa-hand-holding-usd mr-2"></i>
+            ФІНАНСОВА ДОПОМОГА
+          </button>
+          <button 
+            @click="goToOrganizationProjects" 
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center shadow-md"
+          >
+            <i class="fas fa-project-diagram mr-2"></i>
+            ПРОЄКТИ ОРГАНІЗАЦІЇ
+          </button>
+        </div>
+
         <div class="mb-6 text-gray-700 text-lg leading-relaxed border-l-4 border-ukraine-blue pl-4 bg-blue-50/50 py-2">
           {{ volunteer.description }}
         </div>
@@ -220,6 +239,16 @@ const goBack = () => {
   router.push({ name: 'volunteers' })
 }
 
+// Новые функции навигации
+const goToFinancialHelp = () => {
+  router.push('/financial')
+}
+
+const goToOrganizationProjects = () => {
+  // Переход на страницу проектов конкретной организации
+  router.push(`/organization-projects/${volunteer.value.id}`)
+}
+
 const formatDate = (date: Date) => {
   if (!date) return '—'
   const d = new Date(date)
@@ -274,4 +303,4 @@ onMounted(() => {
 .card-shadow {
   box-shadow: 0 8px 32px 0 rgba(0,87,184,0.15);
 }
-</style> 
+</style>

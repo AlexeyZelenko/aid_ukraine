@@ -71,9 +71,9 @@ import { useToast } from 'primevue/usetoast'
 import { useRouter } from 'vue-router'
 import { MOCK_VOLUNTEERS, VOLUNTEER_TYPES } from '../constants/volunteers'
 import StatCard from '@/components/StatCard.vue'
-import VolunteerTypeCard from '@/components/VolunteerTypeCard.vue'
+import VolunteerTypeCard from '@/components/Volunteers/VolunteerTypeCard.vue'
 import SearchFilters from '@/components/SearchFilters.vue'
-import VolunteersList from '@/components/VolunteersList.vue'
+import VolunteersList from '@/components/Volunteers/VolunteersList.vue'
 import RegistrationModal from '@/components/RegistrationModal.vue'
 
 const toast = useToast()

@@ -101,8 +101,8 @@
 </template>
   
 <script setup lang="ts">
-  import type { ExtendedVolunteer } from '../constants/volunteers'
-  import { TYPE_COLORS } from '../constants/volunteers'
+  import type { ExtendedVolunteer } from '../../constants/volunteers'
+  import { TYPE_COLORS } from '../../constants/volunteers'
   
   interface Props {
     volunteer: ExtendedVolunteer

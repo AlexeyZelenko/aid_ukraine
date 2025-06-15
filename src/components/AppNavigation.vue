@@ -180,7 +180,7 @@ const currentLocale = ref(locale.value)
 const mainNavItems = [
   { name: 'volunteers', to: '/volunteers', label: 'nav.volunteers', icon: 'fas fa-hands-helping' },
   { name: 'needs', to: '/needs', label: 'nav.needs', icon: 'fas fa-list' },
-  { name: 'financial', to: '/financial', label: 'nav.financial', icon: 'fas fa-credit-card' },
+  // { name: 'financial', to: '/financial', label: 'nav.financial', icon: 'fas fa-credit-card' },
   // { name: 'map', to: '/map', label: 'nav.map', icon: 'fas fa-map-marker-alt' },
   { name: 'blog', to: '/blog', label: 'nav.blog', icon: 'fas fa-comments' },
   // { name: 'articles', to: '/articles', label: 'nav.articles', icon: 'fas fa-newspaper' },
