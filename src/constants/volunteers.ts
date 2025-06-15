@@ -6,6 +6,7 @@ export interface ExtendedVolunteer extends Volunteer {
   rating?: number
   experience?: number
   website?: string
+  dataSource?: 'mock' | 'firebase'
 }
 
 export const MOCK_VOLUNTEERS: ExtendedVolunteer[] = [

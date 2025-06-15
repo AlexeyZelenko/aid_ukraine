@@ -100,7 +100,6 @@
 <script>
 import DashboardComponent from '@/components/AdminPanel/DashboardComponent.vue'
 import VolunteersComponent from '@/components/AdminPanel/VolunteersComponent.vue'
-import OrganizationsComponent from '@/components/AdminPanel/OrganizationsComponent.vue'
 import NeedsComponent from '@/components/AdminPanel/NeedsComponent.vue'
 import ProjectsComponent from '@/components/AdminPanel/ProjectsComponent.vue'
 import AnalyticsComponent from '@/components/AdminPanel/AnalyticsComponent.vue'
@@ -113,8 +112,7 @@ export default {
   name: 'AdminPanel',
   components: {
     DashboardComponent,
-    VolunteersComponent,
-    OrganizationsComponent,
+    VolunteersComponent,    
     NeedsComponent,
     ProjectsComponent,
     AnalyticsComponent,
@@ -136,53 +134,46 @@ export default {
         },
         {
           id: 2,
-          label: 'Волонтери',
+          label: 'Організації/Волонтери',
           icon: 'pi pi-users',
           component: 'volunteers',
           badge: '24'
-        },
+        },        
         {
           id: 3,
-          label: 'Організації',
-          icon: 'pi pi-building',
-          component: 'organizations',
-          badge: '8'
-        },
-        {
-          id: 4,
           label: 'Потреби',
           icon: 'pi pi-heart',
           component: 'needs',
           badge: '15'
         },
         {
-          id: 5,
+          id: 4,
           label: 'Проєкти',
           icon: 'pi pi-chart-bar',
           component: 'projects',
           badge: '12'
         },
         {
-          id: 6,
+          id: 5,
           label: 'Аналітика',
           icon: 'pi pi-chart-line',
           component: 'analytics'
         },
         {
-          id: 7,
+          id: 6,
           label: 'Сповіщення',
           icon: 'pi pi-bell',
           component: 'notifications',
           badge: '3'
         },
         {
-          id: 8,
+          id: 7,
           label: 'Користувачі',
           icon: 'pi pi-user',
           component: 'users'
         },
         {
-          id: 9,
+          id: 8,
           label: 'Статті',
           icon: 'pi pi-file-text',
           component: 'articles'
@@ -190,7 +181,7 @@ export default {
       ],
       managementItems: [
         {
-          id: 10,
+          id: 9,
           label: 'Налаштування',
           icon: 'pi pi-cog',
           component: 'settings'

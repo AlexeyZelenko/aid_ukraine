@@ -7,6 +7,16 @@
             <div v-if="volunteer.verified" class="ml-2">
               <i class="fas fa-check-circle text-green-500" title="Верифіковано"></i>
             </div>
+            <!-- Індикатор джерела даних -->
+            <div v-if="volunteer.dataSource" class="ml-2">
+              <span 
+                :class="volunteer.dataSource === 'firebase' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'"
+                class="px-2 py-1 text-xs rounded-full font-medium"
+                :title="volunteer.dataSource === 'firebase' ? 'Дані з Firebase' : 'Мокові дані'"
+              >
+                {{ volunteer.dataSource === 'firebase' ? 'FB' : 'Mock' }}
+              </span>
+            </div>
           </div>
           <p class="text-sm text-gray-600 mb-1">{{ volunteer.organization }}</p>
           <div class="flex items-center text-xs text-gray-500">

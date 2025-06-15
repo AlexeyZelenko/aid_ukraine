@@ -16,7 +16,10 @@
         </div>
         <div class="stat-info">
           <div class="stat-value">{{ totalVolunteers }}</div>
-          <div class="stat-label">Всього волонтерів</div>
+          <div class="stat-label">
+            Всього волонтерів
+            <small class="source-info">(Firebase: {{ firebaseCount }}, Mock: {{ mockCount }})</small>
+          </div>
         </div>
       </div>
       <div class="stat-card">
@@ -35,6 +38,22 @@
         <div class="stat-info">
           <div class="stat-value">{{ pendingVolunteers }}</div>
           <div class="stat-label">Очікують верифікації</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon bg-purple-500">
+          <i class="pi pi-refresh"></i>
+        </div>
+        <div class="stat-info">
+          <button 
+            @click="refreshData" 
+            :disabled="loading"
+            class="refresh-btn"
+          >
+            <i v-if="!loading" class="pi pi-refresh"></i>
+            <i v-else class="pi pi-spin pi-spinner"></i>
+            {{ loading ? 'Оновлення...' : 'Оновити дані' }}
+          </button>
         </div>
       </div>
     </div>
@@ -68,6 +87,14 @@
           <option value="pending">Очікує верифікації</option>
         </select>
       </div>
+      <div class="filter-group">
+        <label>Джерело даних:</label>
+        <select v-model="selectedDataSource" class="form-control">
+          <option value="">Усі дані</option>
+          <option value="firebase">Firebase</option>
+          <option value="mock">Мокові дані</option>
+        </select>
+      </div>
     </div>
 
     <!-- Список волонтерів -->
@@ -96,6 +123,14 @@
               </span>
               <span v-else class="badge badge-warning">
                 <i class="pi pi-clock mr-1"></i>Очікує
+              </span>
+              <!-- Індикатор джерела даних -->
+              <span 
+                v-if="volunteer.dataSource"
+                :class="['badge', volunteer.dataSource === 'firebase' ? 'badge-firebase' : 'badge-mock']"
+                :title="volunteer.dataSource === 'firebase' ? 'Дані з Firebase' : 'Мокові дані'"
+              >
+                {{ volunteer.dataSource === 'firebase' ? 'FB' : 'Mock' }}
               </span>
             </div>
           </div>
@@ -303,6 +338,7 @@ const submitting = ref(false)
 const searchQuery = ref('')
 const selectedType = ref('')
 const selectedStatus = ref('')
+const selectedDataSource = ref('')
 
 // Form data
 const form = ref({
@@ -322,12 +358,37 @@ const form = ref({
 const editingId = ref(null)
 
 // Computed
+// Об'єднуємо мокові дані та дані з Firebase (уникаючи дублікатів по email)
 const allVolunteers = computed(() => {
-  // В реальному додатку це буде завантажуватися з Firebase
-  // Поки що використовуємо моки
-  return MOCK_VOLUNTEERS
+  const firebaseVolunteers = volunteersStore.volunteers || []
+  
+  // Позначаємо мокові дані як такі
+  const mockVolunteersWithSource = MOCK_VOLUNTEERS.map(vol => ({
+    ...vol,
+    dataSource: 'mock' as const
+  }))
+  
+  // Позначаємо Firebase дані як такі
+  const firebaseVolunteersWithSource = firebaseVolunteers.map(vol => ({
+    ...vol,
+    dataSource: 'firebase' as const
+  }))
+  
+  const combined = [...mockVolunteersWithSource]
+  
+  // Додаємо волонтерів з Firebase, якщо їх немає в мокових даних
+  firebaseVolunteersWithSource.forEach(fbVolunteer => {
+    const exists = combined.some(mockVol => mockVol.email === fbVolunteer.email)
+    if (!exists) {
+      combined.push(fbVolunteer)
+    }
+  })
+  
+  return combined
 })
 
+const firebaseCount = computed(() => (volunteersStore.volunteers || []).length)
+const mockCount = computed(() => MOCK_VOLUNTEERS.length)
 const totalVolunteers = computed(() => allVolunteers.value.length)
 const verifiedVolunteers = computed(() => allVolunteers.value.filter(v => v.verified).length)
 const pendingVolunteers = computed(() => allVolunteers.value.filter(v => !v.verified).length)
@@ -343,8 +404,10 @@ const filteredVolunteers = computed(() => {
     const matchesStatus = !selectedStatus.value || 
       (selectedStatus.value === 'verified' && volunteer.verified) ||
       (selectedStatus.value === 'pending' && !volunteer.verified)
+    const matchesDataSource = !selectedDataSource.value || 
+      volunteer.dataSource === selectedDataSource.value
 
-    return matchesSearch && matchesType && matchesStatus
+    return matchesSearch && matchesType && matchesStatus && matchesDataSource
   })
 })
 
@@ -399,25 +462,57 @@ const editVolunteer = (volunteer) => {
 
 const verifyVolunteer = async (id) => {
   if (confirm('Верифікувати цього волонтера?')) {
-    // Тут буде логіка верифікації в Firebase
-    toast.add({
-      severity: 'success',
-      summary: 'Успіх',
-      detail: 'Волонтер успішно верифікований',
-      life: 3000
-    })
+    try {
+      const result = await volunteersStore.verifyVolunteer(id)
+      if (result.success) {
+        toast.add({
+          severity: 'success',
+          summary: 'Успіх',
+          detail: 'Волонтер успішно верифікований',
+          life: 3000
+        })
+        // Оновлюємо дані після верифікації
+        await volunteersStore.fetchVolunteers()
+      } else {
+        throw new Error('Помилка верифікації')
+      }
+    } catch (error) {
+      console.error('Помилка верифікації волонтера:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Помилка',
+        detail: 'Не вдалося верифікувати волонтера',
+        life: 3000
+      })
+    }
   }
 }
 
 const deleteVolunteer = async (id) => {
   if (confirm('Ви впевнені, що хочете видалити цього волонтера?')) {
-    // Тут буде логіка видалення з Firebase
-    toast.add({
-      severity: 'success',
-      summary: 'Успіх',
-      detail: 'Волонтер успішно видалений',
-      life: 3000
-    })
+    try {
+      const result = await volunteersStore.deleteVolunteer(id)
+      if (result.success) {
+        toast.add({
+          severity: 'success',
+          summary: 'Успіх',
+          detail: 'Волонтер успішно видалений',
+          life: 3000
+        })
+        // Оновлюємо дані після видалення
+        await volunteersStore.fetchVolunteers()
+      } else {
+        throw new Error('Помилка видалення')
+      }
+    } catch (error) {
+      console.error('Помилка видалення волонтера:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Помилка',
+        detail: 'Не вдалося видалити волонтера',
+        life: 3000
+      })
+    }
   }
 }
 
@@ -444,6 +539,29 @@ const resetForm = () => {
   editingId.value = null
 }
 
+const refreshData = async () => {
+  loading.value = true
+  try {
+    await volunteersStore.fetchVolunteers()
+    toast.add({
+      severity: 'success',
+      summary: 'Успіх',
+      detail: 'Дані успішно оновлено!',
+      life: 2000
+    })
+  } catch (error) {
+    console.error('Помилка оновлення даних:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Помилка',
+      detail: 'Не вдалося оновити дані з Firebase.',
+      life: 3000
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
 const submitForm = async () => {
   submitting.value = true
   
@@ -457,14 +575,22 @@ const submitForm = async () => {
     
     delete volunteerData.specializationsText
 
-    if (showEditModal.value) {
+    if (showEditModal.value && editingId.value) {
       // Логіка оновлення
-      toast.add({
-        severity: 'success',
-        summary: 'Успіх',
-        detail: 'Дані волонтера успішно оновлено',
-        life: 3000
-      })
+      const result = await volunteersStore.updateVolunteer(editingId.value, volunteerData)
+      
+      if (result.success) {
+        toast.add({
+          severity: 'success',
+          summary: 'Успіх',
+          detail: 'Дані волонтера успішно оновлено',
+          life: 3000
+        })
+        // Оновлюємо дані після редагування
+        await volunteersStore.fetchVolunteers()
+      } else {
+        throw new Error('Помилка при оновленні')
+      }
     } else {
       // Додавання нового волонтера
       const result = await volunteersStore.addVolunteer(volunteerData)
@@ -476,6 +602,8 @@ const submitForm = async () => {
           detail: 'Волонтер успішно доданий до бази даних',
           life: 3000
         })
+        // Оновлюємо дані після додавання
+        await volunteersStore.fetchVolunteers()
       } else {
         throw new Error('Помилка при додаванні')
       }
@@ -494,9 +622,23 @@ const submitForm = async () => {
   submitting.value = false
 }
 
-onMounted(() => {
-  // В реальному додатку тут буде завантаження з Firebase
-  // volunteersStore.fetchVolunteers()
+onMounted(async () => {
+  // Завантажуємо волонтерів з Firebase
+  loading.value = true
+  try {
+    await volunteersStore.fetchVolunteers()
+    console.log('Волонтери завантажені з Firebase:', volunteersStore.volunteers.length)
+  } catch (error) {
+    console.error('Помилка завантаження волонтерів з Firebase:', error)
+    toast.add({
+      severity: 'warn',
+      summary: 'Попередження',
+      detail: 'Не вдалося завантажити дані з Firebase. Відображаються лише мокові дані.',
+      life: 5000
+    })
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
@@ -548,6 +690,7 @@ onMounted(() => {
 .bg-blue-500 { background-color: #3b82f6; }
 .bg-green-500 { background-color: #10b981; }
 .bg-yellow-500 { background-color: #f59e0b; }
+.bg-purple-500 { background-color: #8b5cf6; }
 
 .stat-value {
   font-size: 2rem;
@@ -646,6 +789,8 @@ onMounted(() => {
 .badge-info { background: #ddd6fe; color: #7c3aed; }
 .badge-secondary { background: #f3f4f6; color: #6b7280; }
 .badge-success { background: #d1fae5; color: #065f46; }
+.badge-firebase { background: #d1fae5; color: #065f46; }
+.badge-mock { background: #dbeafe; color: #1d4ed8; }
 
 .volunteer-info p {
   margin: 0.25rem 0;
@@ -888,4 +1033,35 @@ onMounted(() => {
 
 .mr-1 { margin-right: 0.25rem; }
 .mr-2 { margin-right: 0.5rem; }
+
+.source-info {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: normal;
+  margin-top: 0.25rem;
+}
+
+.refresh-btn {
+  background: none;
+  border: none;
+  color: #8b5cf6;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 </style>
