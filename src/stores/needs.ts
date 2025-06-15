@@ -19,6 +19,12 @@ export interface Need {
   createdAt: Date
   updatedAt?: Date
   verified?: boolean
+  // Нові поля для організації/волонтера
+  createdByType: 'organization' | 'volunteer'
+  organizationId?: string
+  organizationName?: string
+  volunteerId?: string
+  volunteerName?: string
 }
 
 export const useNeedsStore = defineStore('needs', () => {
@@ -47,8 +53,13 @@ export const useNeedsStore = defineStore('needs', () => {
 
   const addNeed = async (need: Omit<Need, 'id' | 'status' | 'createdAt'>) => {
     try {
+      // Очищаємо undefined значення перед збереженням
+      const cleanedNeed = Object.fromEntries(
+        Object.entries(need).filter(([_, value]) => value !== undefined)
+      )
+      
       const docRef = await addDoc(collection(db, 'needs'), {
-        ...need,
+        ...cleanedNeed,
         status: 'open',
         verified: false,
         createdAt: new Date()
@@ -62,9 +73,14 @@ export const useNeedsStore = defineStore('needs', () => {
 
   const updateNeed = async (id: string, data: Partial<Need>) => {
     try {
+      // Очищаємо undefined значення перед збереженням
+      const cleanedData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== undefined)
+      )
+      
       const needRef = doc(db, 'needs', id)
       await updateDoc(needRef, {
-        ...data,
+        ...cleanedData,
         updatedAt: new Date()
       })
       return { success: true }

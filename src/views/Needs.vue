@@ -119,7 +119,7 @@
             <!-- Priority Badge -->
             <div class="relative">
               <div 
-                class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold"
+                class="top-4 right-4 px-3 py-1 full text-xs font-semibold"
                 :class="getPriorityClass(need.priority)"
               >
                 {{ getPriorityLabel(need.priority) }}
@@ -160,6 +160,12 @@
                   <div v-if="need.quantity" class="flex items-center">
                     <i class="fas fa-hashtag mr-2 text-ukraine-blue"></i>
                     Кількість: {{ need.quantity }}
+                  </div>
+                  <!-- Інформація про організацію/волонтера -->
+                  <div v-if="need.organizationName || need.volunteerName" class="flex items-center">
+                    <i :class="need.createdByType === 'organization' ? 'fas fa-building' : 'fas fa-users'" class="mr-2 text-ukraine-blue"></i>
+                    <span class="font-medium">{{ need.createdByType === 'organization' ? 'Організація:' : 'Волонтер:' }}</span>
+                    <span class="ml-1 text-ukraine-blue font-semibold">{{ need.organizationName || need.volunteerName }}</span>
                   </div>
                 </div>
   

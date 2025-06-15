@@ -4,7 +4,7 @@
     class="bg-gray-800 text-white"
   >
     <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- About -->
         <div>
           <h3 class="text-lg sm:text-xl font-semibold mb-4">{{ $t('home.title') }}</h3>
@@ -54,7 +54,7 @@
             </a>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="border-t border-gray-700 mt-8 pt-8 text-center">
         <div class="ukraine-accent-bar mb-4"></div>
@@ -81,8 +81,7 @@ const isAboutPage = computed(() => hiddenFooterPages.includes(route.path))
 // Данные для быстрых ссылок
 const quickLinks = [
   { to: '/volunteers', label: 'nav.volunteers' },
-  { to: '/needs', label: 'nav.needs' },
-  { to: '/financial', label: 'nav.financial' },
+  { to: '/needs', label: 'nav.needs' },  
   { to: '/map', label: 'nav.map' }
 ]
 

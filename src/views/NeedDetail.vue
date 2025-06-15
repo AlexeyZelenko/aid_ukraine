@@ -96,6 +96,12 @@
               <i class="fas fa-calendar-alt mr-2 text-ukraine-blue"></i>
               <span><strong>Створено:</strong> {{ formatDate(need.createdAt) }}</span>
             </div>
+            <!-- Інформація про організацію/волонтера -->
+            <div v-if="need.organizationName || need.volunteerName" class="mb-3 flex items-center text-gray-600">
+              <i :class="need.createdByType === 'organization' ? 'fas fa-building' : 'fas fa-users'" class="mr-2 text-ukraine-blue"></i>
+              <span><strong>{{ need.createdByType === 'organization' ? 'Організація:' : 'Волонтер:' }}</strong></span>
+              <span class="ml-1 text-ukraine-blue font-semibold">{{ need.organizationName || need.volunteerName }}</span>
+            </div>
           </div>
           <div class="bg-yellow-50 rounded-xl p-5 shadow flex flex-col justify-center">
             <div class="font-bold text-lg mb-2 text-yellow-900 flex items-center">

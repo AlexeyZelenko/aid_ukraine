@@ -150,6 +150,12 @@
             <i class="pi pi-user mr-2"></i>
             {{ need.contactPerson }} - {{ need.contactPhone }}
           </div>
+          <!-- Інформація про організацію/волонтера -->
+          <div v-if="need.organizationName || need.volunteerName" class="need-creator">
+            <i :class="need.createdByType === 'organization' ? 'pi pi-building' : 'pi pi-users'" class="mr-2"></i>
+            <span class="creator-type">{{ need.createdByType === 'organization' ? 'Організація:' : 'Волонтер:' }}</span>
+            <span class="creator-name">{{ need.organizationName || need.volunteerName }}</span>
+          </div>
         </div>
         
         <p class="need-description">{{ need.description }}</p>
@@ -214,6 +220,73 @@
                 <option value="high">Високий</option>
                 <option value="urgent">Терміново</option>
               </select>
+            </div>
+
+            <!-- Вибір організації або волонтера -->
+            <div class="form-group">
+              <label>Хто створює потребу *</label>
+              <div class="d-flex align-items-center gap-2">
+                <select v-model="form.createdByType" required class="form-control">
+                  <option value="organization">Організація</option>
+                  <option value="volunteer">Волонтер</option>
+                </select>
+                <button 
+                  type="button" 
+                  @click="refreshVolunteersData"
+                  class="btn btn-outline-secondary btn-sm"
+                  title="Оновити списки"
+                >
+                  <i class="pi pi-refresh"></i>
+                </button>
+              </div>
+            </div>
+
+            <div v-if="form.createdByType === 'organization'" class="form-group">
+              <label>Організація *</label>
+              <select 
+                v-model="form.organizationId" 
+                :required="form.createdByType === 'organization'" 
+                class="form-control"
+              >
+                <option value="">Оберіть організацію</option>
+                <option 
+                  v-for="org in availableOrganizations" 
+                  :key="org.id" 
+                  :value="org.id"
+                >
+                  {{ org.name }} ({{ org.organization }})
+                </option>
+              </select>
+              <small v-if="availableOrganizations.length === 0" class="text-muted">
+                Немає доступних організацій. Переконайтеся, що є верифіковані організації.
+              </small>
+              <small v-else class="text-muted">
+                Доступно організацій: {{ availableOrganizations.length }}
+              </small>
+            </div>
+
+            <div v-if="form.createdByType === 'volunteer'" class="form-group">
+              <label>Волонтер *</label>
+              <select 
+                v-model="form.volunteerId" 
+                :required="form.createdByType === 'volunteer'" 
+                class="form-control"
+              >
+                <option value="">Оберіть волонтера</option>
+                <option 
+                  v-for="volunteer in availableVolunteers" 
+                  :key="volunteer.id" 
+                  :value="volunteer.id"
+                >
+                  {{ volunteer.name }} ({{ volunteer.location }})
+                </option>
+              </select>
+              <small v-if="availableVolunteers.length === 0" class="text-muted">
+                Немає доступних волонтерів. Переконайтеся, що є верифіковані волонтери.
+              </small>
+              <small v-else class="text-muted">
+                Доступно волонтерів: {{ availableVolunteers.length }}
+              </small>
             </div>
 
             <div class="form-group full-width">
@@ -375,6 +448,17 @@
             </div>
           </div>
 
+          <!-- Інформація про створювача -->
+          <div v-if="viewingNeed.organizationName || viewingNeed.volunteerName" class="view-section">
+            <h4>Створено</h4>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <strong>{{ viewingNeed.createdByType === 'organization' ? 'Організація:' : 'Волонтер:' }}</strong>
+                <span class="creator-name">{{ viewingNeed.organizationName || viewingNeed.volunteerName }}</span>
+              </div>
+            </div>
+          </div>
+
           <div class="view-section">
             <h4>Додаткова інформація</h4>
             <div class="detail-grid">
@@ -397,10 +481,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useNeedsStore, type Need } from '@/stores/needs'
+import { useVolunteersStore } from '@/stores/volunteers'
 import { useToast } from 'primevue/usetoast'
 
 // Stores
 const needsStore = useNeedsStore()
+const volunteersStore = useVolunteersStore()
 const toast = useToast()
 
 // Debug: перевірка методів store
@@ -444,7 +530,11 @@ const form = ref({
   contactPhone: '',
   contactTelegram: '',
   quantity: undefined as number | undefined,
-  status: 'open' as Need['status']
+  status: 'open' as Need['status'],
+  // Нові поля для організації/волонтера
+  createdByType: 'organization' as 'organization' | 'volunteer',
+  organizationId: '',
+  volunteerId: ''
 })
 
 const editingId = ref<string | null>(null)
@@ -494,6 +584,20 @@ const filteredNeeds = computed(() => {
 
     return matchesSearch && matchesCategory && matchesStatus && matchesPriority
   })
+})
+
+// Computed для організацій та волонтерів
+const availableOrganizations = computed(() => {
+  // Спробуємо отримати організації з обох джерел
+  const orgsFromOrganizations = volunteersStore.organizations.filter(org => org.verified)
+  const orgsFromVolunteers = volunteersStore.volunteers.filter(vol => vol.verified && vol.type !== 'volunteer')
+  
+  // Повертаємо організації з обох джерел, віддаючи перевагу organizations store
+  return orgsFromOrganizations.length > 0 ? orgsFromOrganizations : orgsFromVolunteers
+})
+
+const availableVolunteers = computed(() => {
+  return volunteersStore.volunteers.filter(vol => vol.verified && vol.type === 'volunteer')
 })
 
 // Methods
@@ -576,7 +680,10 @@ const editNeed = (need: Need) => {
     contactPhone: need.contactPhone,
     contactTelegram: need.contactTelegram,
     quantity: need.quantity,
-    status: need.status
+    status: need.status,
+    createdByType: need.createdByType || 'organization',
+    organizationId: need.organizationId || '',
+    volunteerId: need.volunteerId || ''
   }
   editingId.value = need.id!
   showEditModal.value = true
@@ -629,6 +736,31 @@ const toggleVerification = async (id: string, verified: boolean) => {
   }
 }
 
+const refreshVolunteersData = async () => {
+  console.log('🔄 Оновлення даних волонтерів та організацій...')
+  try {
+    await Promise.all([
+      volunteersStore.fetchVolunteers(),
+      volunteersStore.fetchOrganizations()
+    ])
+    console.log('✅ Дані волонтерів оновлено')
+    toast.add({
+      severity: 'success',
+      summary: 'Успіх',
+      detail: 'Списки волонтерів та організацій оновлено',
+      life: 3000
+    })
+  } catch (error) {
+    console.error('❌ Помилка оновлення даних волонтерів:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Помилка',
+      detail: 'Помилка оновлення списків',
+      life: 3000
+    })
+  }
+}
+
 const closeModals = () => {
   showAddModal.value = false
   showEditModal.value = false
@@ -648,7 +780,10 @@ const resetForm = () => {
     contactPhone: '',
     contactTelegram: '',
     quantity: undefined,
-    status: 'open'
+    status: 'open',
+    createdByType: 'organization',
+    organizationId: '',
+    volunteerId: ''
   }
   editingId.value = null
 }
@@ -657,10 +792,75 @@ const submitForm = async () => {
   submitting.value = true
   
   try {
-    const needData = {
-      ...form.value,
-      createdBy: 'admin' // В реальному додатку тут буде ID адміністратора
+    // Валідація обов'язкових полів
+    if (form.value.createdByType === 'organization' && !form.value.organizationId) {
+      toast.add({
+        severity: 'error',
+        summary: 'Помилка',
+        detail: 'Оберіть організацію',
+        life: 3000
+      })
+      submitting.value = false
+      return
     }
+    
+    if (form.value.createdByType === 'volunteer' && !form.value.volunteerId) {
+      toast.add({
+        severity: 'error',
+        summary: 'Помилка',
+        detail: 'Оберіть волонтера',
+        life: 3000
+      })
+      submitting.value = false
+      return
+    }
+
+    // Знаходимо вибрану організацію або волонтера
+    let selectedEntity = null
+    if (form.value.createdByType === 'organization' && form.value.organizationId) {
+      selectedEntity = availableOrganizations.value.find(org => org.id === form.value.organizationId)
+    } else if (form.value.createdByType === 'volunteer' && form.value.volunteerId) {
+      selectedEntity = availableVolunteers.value.find(vol => vol.id === form.value.volunteerId)
+    }
+
+    // Підготовка даних без undefined значень
+    const needData: any = {
+      title: form.value.title,
+      description: form.value.description,
+      category: form.value.category,
+      priority: form.value.priority,
+      location: form.value.location,
+      contactPerson: form.value.contactPerson,
+      contactPhone: form.value.contactPhone,
+      contactTelegram: form.value.contactTelegram,
+      status: form.value.status,
+      createdBy: 'admin', // В реальному додатку тут буде ID адміністратора
+      createdByType: form.value.createdByType
+    }
+
+    // Додаємо quantity тільки якщо воно не undefined
+    if (form.value.quantity !== undefined && form.value.quantity !== null) {
+      needData.quantity = form.value.quantity
+    }
+
+    // Додаємо поля організації або волонтера залежно від типу
+    if (form.value.createdByType === 'organization' && form.value.organizationId) {
+      needData.organizationId = form.value.organizationId
+      needData.organizationName = selectedEntity?.name || ''
+      console.log('🏢 Додано дані організації:', { 
+        organizationId: needData.organizationId, 
+        organizationName: needData.organizationName 
+      })
+    } else if (form.value.createdByType === 'volunteer' && form.value.volunteerId) {
+      needData.volunteerId = form.value.volunteerId
+      needData.volunteerName = selectedEntity?.name || ''
+      console.log('👤 Додано дані волонтера:', { 
+        volunteerId: needData.volunteerId, 
+        volunteerName: needData.volunteerName 
+      })
+    }
+
+    console.log('💾 Фінальні дані для збереження:', needData)
 
     if (showEditModal.value && editingId.value) {
       // Оновлення існуючої потреби
@@ -709,7 +909,23 @@ const submitForm = async () => {
 
 onMounted(async () => {
   loading.value = true
-  await needsStore.fetchNeeds()
+  console.log('🚀 Завантаження даних...')
+  
+  try {
+    await Promise.all([
+      needsStore.fetchNeeds(),
+      volunteersStore.fetchVolunteers(),
+      volunteersStore.fetchOrganizations()
+    ])
+    
+    console.log('✅ Дані завантажено:')
+    console.log('📋 Needs:', needsStore.needs.length)
+    console.log('👤 Volunteers:', volunteersStore.volunteers.length)
+    console.log('🏢 Organizations:', volunteersStore.organizations.length)
+  } catch (error) {
+    console.error('❌ Помилка завантаження даних:', error)
+  }
+  
   loading.value = false
 })
 </script>
@@ -863,6 +1079,39 @@ onMounted(async () => {
   margin-bottom: 1rem;
   font-size: 0.9rem;
   color: #6c757d;
+}
+
+.need-creator {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.creator-type {
+  font-weight: 500;
+  color: #374151;
+}
+
+.creator-name {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.text-muted {
+  color: #6c757d;
+  font-size: 0.875rem;
 }
 
 .need-description {
