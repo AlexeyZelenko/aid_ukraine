@@ -25,9 +25,9 @@
               <div class="bg-gray-50 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Номер картки (UAH)</label>
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-lg">5168 7422 3581 4025</span>
+                  <span class="font-mono text-lg">0000 0000 0000 0000</span>
                   <button 
-                    @click="copyToClipboard('5168742235814025')"
+                    @click="copyToClipboard('0000000000000000')"
                     class="text-ukraine-blue hover:text-ukraine-blue-light"
                     title="Копіювати"
                   >
@@ -39,9 +39,9 @@
               <div class="bg-gray-50 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">IBAN (UAH)</label>
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-sm">UA813052990000026007022018794</span>
+                  <span class="font-mono text-sm">UA000000000000000000000000000</span>
                   <button 
-                    @click="copyToClipboard('UA813052990000026007022018794')"
+                    @click="copyToClipboard('000000000000000000000000000')"
                     class="text-ukraine-blue hover:text-ukraine-blue-light"
                     title="Копіювати"
                   >
@@ -53,7 +53,7 @@
               <div class="bg-gray-50 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Номер картки (USD)</label>
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-lg">4731 2196 8874 1039</span>
+                  <span class="font-mono text-lg">0000 0000 0000 0000</span>
                   <button 
                     @click="copyToClipboard('4731219688741039')"
                     class="text-ukraine-blue hover:text-ukraine-blue-light"
@@ -87,9 +87,9 @@
               <div class="bg-gray-50 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Номер картки (UAH)</label>
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-lg">5375 4114 1077 8265</span>
+                  <span class="font-mono text-lg">0000 0000 0000 0000</span>
                   <button 
-                    @click="copyToClipboard('5375411410778265')"
+                    @click="copyToClipboard('0000000000000000')"
                     class="text-ukraine-blue hover:text-ukraine-blue-light"
                     title="Копіювати"
                   >
@@ -101,9 +101,9 @@
               <div class="bg-gray-50 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Номер телефону</label>
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-lg">+38 050 123 45 67</span>
+                  <span class="font-mono text-lg">+3800000000000</span>
                   <button 
-                    @click="copyToClipboard('+380501234567')"
+                    @click="copyToClipboard('+3800000000000')"
                     class="text-ukraine-blue hover:text-ukraine-blue-light"
                     title="Копіювати"
                   >
@@ -115,9 +115,9 @@
               <div class="bg-gray-50 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Номер картки (EUR)</label>
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-lg">5375 4114 1088 9376</span>
+                  <span class="font-mono text-lg">0000 0000 0000 0000</span>
                   <button 
-                    @click="copyToClipboard('5375411410889376')"
+                    @click="copyToClipboard('0000000000000000')"
                     class="text-ukraine-blue hover:text-ukraine-blue-light"
                     title="Копіювати"
                   >
