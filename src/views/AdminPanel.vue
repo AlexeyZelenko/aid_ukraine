@@ -102,6 +102,7 @@ import DashboardComponent from '@/components/AdminPanel/DashboardComponent.vue'
 import VolunteersComponent from '@/components/AdminPanel/VolunteersComponent.vue'
 import OrganizationsComponent from '@/components/AdminPanel/OrganizationsComponent.vue'
 import NeedsComponent from '@/components/AdminPanel/NeedsComponent.vue'
+import ProjectsComponent from '@/components/AdminPanel/ProjectsComponent.vue'
 import AnalyticsComponent from '@/components/AdminPanel/AnalyticsComponent.vue'
 import NotificationsComponent from '@/components/AdminPanel/NotificationsComponent.vue'
 import UsersComponent from '@/components/AdminPanel/UsersComponent.vue'
@@ -115,6 +116,7 @@ export default {
     VolunteersComponent,
     OrganizationsComponent,
     NeedsComponent,
+    ProjectsComponent,
     AnalyticsComponent,
     NotificationsComponent,
     UsersComponent,
@@ -155,25 +157,32 @@ export default {
         },
         {
           id: 5,
+          label: 'Проєкти',
+          icon: 'pi pi-chart-bar',
+          component: 'projects',
+          badge: '12'
+        },
+        {
+          id: 6,
           label: 'Аналітика',
           icon: 'pi pi-chart-line',
           component: 'analytics'
         },
         {
-          id: 6,
+          id: 7,
           label: 'Сповіщення',
           icon: 'pi pi-bell',
           component: 'notifications',
           badge: '3'
         },
         {
-          id: 7,
+          id: 8,
           label: 'Користувачі',
           icon: 'pi pi-user',
           component: 'users'
         },
         {
-          id: 8,
+          id: 9,
           label: 'Статті',
           icon: 'pi pi-file-text',
           component: 'articles'
@@ -181,7 +190,7 @@ export default {
       ],
       managementItems: [
         {
-          id: 9,
+          id: 10,
           label: 'Налаштування',
           icon: 'pi pi-cog',
           component: 'settings'
@@ -196,6 +205,7 @@ export default {
         volunteers: 'VolunteersComponent',
         organizations: 'OrganizationsComponent',
         needs: 'NeedsComponent',
+        projects: 'ProjectsComponent',
         analytics: 'AnalyticsComponent',
         notifications: 'NotificationsComponent',
         users: 'UsersComponent',
