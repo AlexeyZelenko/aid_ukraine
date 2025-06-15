@@ -12,6 +12,10 @@
           <i v-else class="pi pi-spin pi-spinner mr-2"></i>
           {{ loading ? 'Оновлення...' : 'Оновити' }}
         </button>
+        <button class="btn btn-outline-primary mr-2" @click="showMapModal = true">
+          <i class="pi pi-map mr-2"></i>
+          Переглянути на карті
+        </button>
         <button class="btn btn-primary" @click="showAddModal = true">
           <i class="pi pi-plus mr-2"></i>
           Додати волонтера
@@ -123,6 +127,18 @@
           <p><i class="pi pi-map-marker mr-2"></i>{{ volunteer.location }}</p>
           <p><i class="pi pi-envelope mr-2"></i>{{ volunteer.email }}</p>
           <p><i class="pi pi-phone mr-2"></i>{{ volunteer.phone }}</p>
+          <p v-if="volunteer.latitude && volunteer.longitude" class="coordinates-info">
+            <i class="pi pi-map mr-2"></i>
+            {{ volunteer.latitude.toFixed(6) }}, {{ volunteer.longitude.toFixed(6) }}
+            <a 
+              :href="`https://www.google.com/maps?q=${volunteer.latitude},${volunteer.longitude}`" 
+              target="_blank" 
+              class="coordinates-link"
+              title="Відкрити на Google Maps"
+            >
+              <i class="pi pi-external-link"></i>
+            </a>
+          </p>
           <div v-if="volunteer.rating || volunteer.experience" class="volunteer-stats">
             <span v-if="volunteer.rating" class="stat-item">
               <i class="pi pi-star-fill mr-1" style="color: #fbbf24;"></i>
@@ -249,6 +265,110 @@
               >
             </div>
 
+            <div class="form-group">
+              <label>Широта (Latitude)</label>
+              <input 
+                type="number" 
+                v-model="form.latitude" 
+                class="form-control"
+                step="any"
+                min="-90"
+                max="90"
+                placeholder="49.444433"
+              >
+              <small class="form-hint">Географічна широта для відображення на карті</small>
+            </div>
+
+            <div class="form-group">
+              <label>Довгота (Longitude)</label>
+              <input 
+                type="number" 
+                v-model="form.longitude" 
+                class="form-control"
+                step="any"
+                min="-180"
+                max="180"
+                placeholder="32.059767"
+              >
+              <small class="form-hint">Географічна довгота для відображення на карті</small>
+            </div>
+
+            <!-- Інтерактивна карта для вибору місця -->
+            <div class="form-group full-width">
+              <label>Виберіть місце на карті</label>
+              <div class="map-container" style="height: 300px; border-radius: 8px; overflow: hidden; border: 1px solid #d1d5db;">
+                <l-map 
+                  :zoom="10" 
+                  :center="mapCenter" 
+                  style="height: 100%; width: 100%;"
+                  @click="onMapClick"
+                >
+                  <l-tile-layer :url="tileUrl" :attribution="tileAttribution" />
+                  <l-marker 
+                    v-if="form.latitude && form.longitude" 
+                    :lat-lng="[form.latitude, form.longitude]"
+                    :draggable="true"
+                    @dragend="onMarkerDragEnd"
+                  >
+                    <l-popup>
+                      {{ form.location || 'Обране місце' }}<br>
+                      Координати: {{ form.latitude?.toFixed(6) }}, {{ form.longitude?.toFixed(6) }}
+                    </l-popup>
+                  </l-marker>
+                </l-map>
+              </div>
+              <small class="form-hint">Натисніть на карту щоб обрати точне розташування, або перетягніть маркер</small>
+              
+              <!-- Швидкий вибір міст -->
+              <div class="quick-cities" style="margin-top: 1rem;">
+                <label style="font-size: 0.875rem; margin-bottom: 0.5rem;">Швидкий вибір популярних міст:</label>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <button 
+                    type="button" 
+                    class="city-btn" 
+                    @click="setCoordinates(50.4501, 30.5234, 'Київ')"
+                  >
+                    Київ
+                  </button>
+                  <button 
+                    type="button" 
+                    class="city-btn" 
+                    @click="setCoordinates(49.2331, 28.4682, 'Вінниця')"
+                  >
+                    Вінниця
+                  </button>
+                  <button 
+                    type="button" 
+                    class="city-btn" 
+                    @click="setCoordinates(49.444433, 32.059767, 'Черкаси')"
+                  >
+                    Черкаси
+                  </button>
+                  <button 
+                    type="button" 
+                    class="city-btn" 
+                    @click="setCoordinates(46.4775, 30.7326, 'Одеса')"
+                  >
+                    Одеса
+                  </button>
+                  <button 
+                    type="button" 
+                    class="city-btn" 
+                    @click="setCoordinates(49.9935, 36.2304, 'Харків')"
+                  >
+                    Харків
+                  </button>
+                  <button 
+                    type="button" 
+                    class="city-btn" 
+                    @click="setCoordinates(48.4647, 35.0462, 'Дніпро')"
+                  >
+                    Дніпро
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div class="form-group full-width">
               <label>Опис діяльності *</label>
               <textarea 
@@ -327,6 +447,52 @@
         </form>
       </div>
     </div>
+
+    <!-- Модальне вікно з картою всіх волонтерів -->
+    <div v-if="showMapModal" class="modal-overlay" @click="showMapModal = false">
+      <div class="modal-content map-modal" @click.stop>
+        <div class="modal-header">
+          <h3>Волонтери на карті ({{ volunteersWithCoordinates.length }})</h3>
+          <button class="close-btn" @click="showMapModal = false">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body" style="padding: 0; height: 80vh;">
+          <l-map 
+            :zoom="6" 
+            :center="[49.0, 32.0]" 
+            style="height: 100%; width: 100%;"
+          >
+            <l-tile-layer :url="tileUrl" :attribution="tileAttribution" />
+            <l-marker 
+              v-for="volunteer in volunteersWithCoordinates" 
+              :key="volunteer.id"
+              :lat-lng="[volunteer.latitude, volunteer.longitude]"
+            >
+              <l-popup>
+                <div class="volunteer-popup">
+                  <h4>{{ volunteer.name }}</h4>
+                  <p><strong>{{ volunteer.organization }}</strong></p>
+                  <p><i class="pi pi-map-marker mr-1"></i>{{ volunteer.location }}</p>
+                  <p><i class="pi pi-envelope mr-1"></i>{{ volunteer.email }}</p>
+                  <p><i class="pi pi-phone mr-1"></i>{{ volunteer.phone }}</p>
+                  <div class="volunteer-badges mt-2">
+                    <span :class="['badge', getTypeBadgeClass(volunteer.type)]">
+                      {{ getTypeLabel(volunteer.type) }}
+                    </span>
+                    <span v-if="volunteer.verified" class="badge badge-success">
+                      Верифіковано
+                    </span>
+                  </div>
+                </div>
+              </l-popup>
+            </l-marker>
+          </l-map>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -334,6 +500,21 @@
 import { ref, computed, onMounted } from 'vue'
 import { useVolunteersStore } from '@/stores/volunteers'
 import { useToast } from 'primevue/usetoast'
+import { LMap, LTileLayer, LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+
+// Fix default icon path for leaflet
+delete L.Icon.Default.prototype._getIconUrl
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+})
 
 // Stores
 const volunteersStore = useVolunteersStore()
@@ -343,6 +524,7 @@ const toast = useToast()
 const loading = ref(false)
 const showAddModal = ref(false)
 const showEditModal = ref(false)
+const showMapModal = ref(false)
 const submitting = ref(false)
 const searchQuery = ref('')
 const selectedType = ref('')
@@ -357,6 +539,8 @@ const form = ref({
   type: '',
   description: '',
   location: '',
+  latitude: null,
+  longitude: null,
   website: '',
   experience: null,
   rating: null,
@@ -365,6 +549,11 @@ const form = ref({
 })
 
 const editingId = ref(null)
+
+// Map data
+const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+const tileAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+const mapCenter = ref([49.444433, 32.059767]) // Координати Черкас
 
 // Computed
 const volunteers = computed(() => volunteersStore.volunteers || [])
@@ -392,6 +581,13 @@ const filteredVolunteers = computed(() => {
 
     return matchesSearch && matchesType && matchesStatus
   })
+})
+
+const volunteersWithCoordinates = computed(() => {
+  return volunteers.value.filter(volunteer => 
+    volunteer.latitude && volunteer.longitude && 
+    !isNaN(volunteer.latitude) && !isNaN(volunteer.longitude)
+  )
 })
 
 // Methods
@@ -434,6 +630,8 @@ const editVolunteer = (volunteer) => {
     type: volunteer.type,
     description: volunteer.description,
     location: volunteer.location,
+    latitude: volunteer.latitude || null,
+    longitude: volunteer.longitude || null,
     website: volunteer.website || '',
     experience: volunteer.experience || null,
     rating: volunteer.rating || null,
@@ -503,6 +701,7 @@ const deleteVolunteer = async (id) => {
 const closeModals = () => {
   showAddModal.value = false
   showEditModal.value = false
+  showMapModal.value = false
   resetForm()
 }
 
@@ -515,6 +714,8 @@ const resetForm = () => {
     type: '',
     description: '',
     location: '',
+    latitude: null,
+    longitude: null,
     website: '',
     experience: null,
     rating: null,
@@ -606,6 +807,26 @@ const submitForm = async () => {
   }
   
   submitting.value = false
+}
+
+// Map methods
+const onMapClick = (e) => {
+  form.value.latitude = e.latlng.lat
+  form.value.longitude = e.latlng.lng
+  console.log('Обрано координати:', e.latlng.lat, e.latlng.lng)
+}
+
+const onMarkerDragEnd = (e) => {
+  form.value.latitude = e.target.getLatLng().lat
+  form.value.longitude = e.target.getLatLng().lng
+  console.log('Маркер переміщено:', e.target.getLatLng().lat, e.target.getLatLng().lng)
+}
+
+const setCoordinates = (lat, lng, cityName) => {
+  form.value.latitude = lat
+  form.value.longitude = lng
+  mapCenter.value = [lat, lng]
+  console.log(`Встановлено координати для ${cityName}:`, lat, lng)
 }
 
 onMounted(async () => {
@@ -793,6 +1014,62 @@ onMounted(async () => {
 .volunteer-info p i {
   width: 16px;
 }
+
+.coordinates-info {
+  position: relative;
+}
+
+.coordinates-link {
+  margin-left: 0.5rem;
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.coordinates-link:hover {
+  color: #1d4ed8;
+}
+
+.city-btn {
+  padding: 0.375rem 0.75rem;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.city-btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.map-modal .modal-content {
+  max-width: 95vw;
+  max-height: 95vh;
+}
+
+.volunteer-popup h4 {
+  margin: 0 0 0.5rem 0;
+  color: #111827;
+  font-size: 1rem;
+}
+
+.volunteer-popup p {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.volunteer-popup .volunteer-badges {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.mt-2 { margin-top: 0.5rem; }
 
 .volunteer-description {
   margin: 0.75rem 0 !important;

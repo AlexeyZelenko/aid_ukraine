@@ -23,6 +23,8 @@ export interface Volunteer {
   type: 'volunteer' | 'fund' | 'rehabilitation' | 'church' | 'ngo'
   description: string
   location: string
+  latitude?: number
+  longitude?: number
   verified: boolean
   createdAt: Date
   updatedAt?: Date
