@@ -77,10 +77,10 @@
 
                 <!-- Title -->
                 <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 flex items-center gap-2">
-                  <span>{{ topic.title }}</span>
+                  <span class="pr-2">{{ topic.title }}</span>
                   <span 
                     v-if="(topic.commentsCount || 0) > 0"
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-ukraine-blue text-white"
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-ukraine-blue text-white"
                   >
                     {{ topic.commentsCount }}
                   </span>
@@ -337,7 +337,7 @@ const loadCommentsCount = () => {
         ...data[id]
       }))
       
-      // Update comments count for each topic
+      // Update comments count for each topic (including replies)
       topics.value.forEach(topic => {
         topic.commentsCount = comments.filter(comment => comment.topicId === topic.id).length
       })

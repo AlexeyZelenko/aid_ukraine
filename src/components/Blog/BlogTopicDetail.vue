@@ -133,7 +133,7 @@
               <!-- Comments Count -->
               <div class="flex items-center gap-2 text-sm text-gray-600">
                 <i class="far fa-comment"></i>
-                <span>{{ comments.length }} коментарів</span>
+                <span>{{ totalCommentsCount }} коментарів</span>
               </div>
 
               <!-- Views Count -->
@@ -167,7 +167,7 @@
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
               <i class="fas fa-comments text-ukraine-blue"></i>
-              Коментарі ({{ comments.length }})
+              Коментарі ({{ totalCommentsCount }})
             </h2>
           </div>
 
@@ -256,7 +256,7 @@
 
           <!-- Comments List -->
           <div class="divide-y divide-gray-100">
-            <div v-if="comments.length === 0" class="p-8 text-center">
+            <div v-if="rootComments.length === 0" class="p-8 text-center">
               <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-comment text-2xl text-gray-400"></i>
               </div>
@@ -266,55 +266,186 @@
               </p>
             </div>
 
+            <!-- Root Comments with Replies -->
             <div
-              v-for="comment in comments"
+              v-for="comment in rootComments"
               :key="comment.id"
-              class="p-6 hover:bg-gray-50 transition-colors"
+              class="comment-thread"
             >
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
-                  <img 
-                    v-if="comment.authorPhotoURL" 
-                    :src="comment.authorPhotoURL" 
-                    :alt="comment.authorName"
-                    class="w-full h-full object-cover"
-                    @error="handleImageError"
-                  />
-                  <i v-else class="fas fa-user text-white text-sm"></i>
-                </div>
-
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-1">
-                    <span class="font-medium text-gray-900">{{ comment.authorName }}</span>
-                    <span class="text-xs text-gray-500">{{ formatDate(comment.createdAt) }}</span>
+              <!-- Main Comment -->
+              <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
+                    <img 
+                      v-if="comment.authorPhotoURL" 
+                      :src="comment.authorPhotoURL" 
+                      :alt="comment.authorName"
+                      class="w-full h-full object-cover"
+                      @error="handleImageError"
+                    />
+                    <i v-else class="fas fa-user text-white text-sm"></i>
                   </div>
-                  <p class="text-gray-700" style="white-space: pre-wrap;">{{ comment.content }}</p>
 
-                  <!-- Comment Actions -->
-                  <div class="flex items-center gap-4 mt-2">
-                    <!-- Like Comment -->
-                    <button
-                      @click="toggleCommentLike(comment)"
-                      :disabled="!authStore.user"
-                      :class="[
-                        'flex items-center gap-1 text-xs transition-colors',
-                        comment.isLiked ? 'text-red-600' : 'text-gray-500 hover:text-red-600',
-                        !authStore.user && 'opacity-50 cursor-not-allowed'
-                      ]"
-                    >
-                      <i :class="comment.isLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
-                      <span>{{ comment.likesCount || 0 }}</span>
-                    </button>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="font-medium text-gray-900">{{ comment.authorName }}</span>
+                      <span class="text-xs text-gray-500">{{ formatDate(comment.createdAt) }}</span>
+                    </div>
+                    <p class="text-gray-700 mb-2" style="white-space: pre-wrap;">{{ comment.content }}</p>
 
-                    <!-- Delete Comment (for comment author) -->
-                    <button
-                      v-if="authStore.user && comment.authorId === authStore.user.uid"
-                      @click="deleteComment(comment)"
-                      class="text-xs text-gray-500 hover:text-red-600 transition-colors"
-                    >
-                      <i class="fas fa-trash mr-1"></i>
-                      Видалити
-                    </button>
+                    <!-- Comment Actions -->
+                    <div class="flex items-center gap-4">
+                      <!-- Like Comment -->
+                      <button
+                        @click="toggleCommentLike(comment)"
+                        :disabled="!authStore.user"
+                        :class="[
+                          'flex items-center gap-1 text-xs transition-colors',
+                          comment.isLiked ? 'text-red-600' : 'text-gray-500 hover:text-red-600',
+                          !authStore.user && 'opacity-50 cursor-not-allowed'
+                        ]"
+                      >
+                        <i :class="comment.isLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
+                        <span>{{ comment.likesCount || 0 }}</span>
+                      </button>
+
+                      <!-- Reply Button -->
+                      <button
+                        v-if="authStore.user && !topic.archived"
+                        @click="toggleReplyForm(comment.id)"
+                        class="text-xs text-gray-500 hover:text-ukraine-blue transition-colors"
+                      >
+                        <i class="fas fa-reply mr-1"></i>
+                        Відповісти
+                      </button>
+
+                      <!-- Delete Comment (for comment author) -->
+                      <button
+                        v-if="authStore.user && comment.authorId === authStore.user.uid"
+                        @click="deleteComment(comment)"
+                        class="text-xs text-gray-500 hover:text-red-600 transition-colors"
+                      >
+                        <i class="fas fa-trash mr-1"></i>
+                        Видалити
+                      </button>
+                    </div>
+
+                    <!-- Reply Form -->
+                    <div v-if="replyingTo === comment.id" class="mt-4 pl-4 border-l-2 border-ukraine-blue">
+                      <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
+                          <img 
+                            v-if="authStore.user?.photoURL" 
+                            :src="authStore.user.photoURL" 
+                            :alt="authStore.user.displayName"
+                            class="w-full h-full object-cover"
+                            @error="handleImageError"
+                          />
+                          <i v-else class="fas fa-user text-white text-xs"></i>
+                        </div>
+
+                        <div class="flex-1">
+                          <form @submit.prevent="submitReply(comment.id)" class="space-y-3">
+                            <textarea
+                              v-model="replyContent"
+                              :placeholder="`Відповісти ${comment.authorName}...`"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ukraine-blue focus:border-transparent resize-none min-h-[60px] max-h-[150px] text-sm"
+                              rows="2"
+                              maxlength="500"
+                              required
+                              @input="autoResizeReply"
+                              ref="replyTextarea"
+                            ></textarea>
+                            <div class="flex items-center justify-between">
+                              <span 
+                                :class="[
+                                  'text-xs transition-colors',
+                                  replyContent.length > 450 ? 'text-red-500' : 
+                                  replyContent.length > 400 ? 'text-orange-500' : 'text-gray-500'
+                                ]"
+                              >
+                                {{ replyContent.length }}/500
+                              </span>
+                              <div class="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  @click="cancelReply"
+                                  class="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                                >
+                                  Скасувати
+                                </button>
+                                <button
+                                  type="submit"
+                                  :disabled="submittingReply || !replyContent.trim()"
+                                  class="px-4 py-1 bg-ukraine-blue text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1"
+                                >
+                                  <i v-if="submittingReply" class="fas fa-spinner fa-spin text-xs"></i>
+                                  <i v-else class="fas fa-paper-plane text-xs"></i>
+                                  {{ submittingReply ? 'Відправляється...' : 'Відповісти' }}
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Replies -->
+              <div v-if="getReplies(comment.id).length > 0" class="ml-12 border-l-2 border-gray-100">
+                <div
+                  v-for="reply in getReplies(comment.id)"
+                  :key="reply.id"
+                  class="p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                >
+                  <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
+                      <img 
+                        v-if="reply.authorPhotoURL" 
+                        :src="reply.authorPhotoURL" 
+                        :alt="reply.authorName"
+                        class="w-full h-full object-cover"
+                        @error="handleImageError"
+                      />
+                      <i v-else class="fas fa-user text-white text-xs"></i>
+                    </div>
+
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-medium text-gray-900 text-sm">{{ reply.authorName }}</span>
+                        <span class="text-xs text-gray-500">{{ formatDate(reply.createdAt) }}</span>
+                      </div>
+                      <p class="text-gray-700 text-sm mb-2" style="white-space: pre-wrap;">{{ reply.content }}</p>
+
+                      <!-- Reply Actions -->
+                      <div class="flex items-center gap-4">
+                        <!-- Like Reply -->
+                        <button
+                          @click="toggleCommentLike(reply)"
+                          :disabled="!authStore.user"
+                          :class="[
+                            'flex items-center gap-1 text-xs transition-colors',
+                            reply.isLiked ? 'text-red-600' : 'text-gray-500 hover:text-red-600',
+                            !authStore.user && 'opacity-50 cursor-not-allowed'
+                          ]"
+                        >
+                          <i :class="reply.isLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
+                          <span>{{ reply.likesCount || 0 }}</span>
+                        </button>
+
+                        <!-- Delete Reply (for reply author) -->
+                        <button
+                          v-if="authStore.user && reply.authorId === authStore.user.uid"
+                          @click="deleteComment(reply)"
+                          class="text-xs text-gray-500 hover:text-red-600 transition-colors"
+                        >
+                          <i class="fas fa-trash mr-1"></i>
+                          Видалити
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -347,10 +478,85 @@ const newComment = ref('')
 const submittingComment = ref(false)
 const commentTextarea = ref<HTMLTextAreaElement | null>(null)
 
+// Reply state
+const replyingTo = ref<string | null>(null)
+const replyContent = ref('')
+const submittingReply = ref(false)
+const replyTextarea = ref<HTMLTextAreaElement | null>(null)
+
 // Computed
 const topicId = computed(() => route.params.id as string)
 
+const rootComments = computed(() => {
+  return comments.value
+    .filter(comment => !comment.parentId)
+    .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+})
+
+const totalCommentsCount = computed(() => {
+  return comments.value.length
+})
+
 // Methods
+const getReplies = (parentId: string) => {
+  return comments.value
+    .filter(comment => comment.parentId === parentId)
+    .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+}
+
+const toggleReplyForm = (commentId: string) => {
+  if (replyingTo.value === commentId) {
+    cancelReply()
+  } else {
+    replyingTo.value = commentId
+    replyContent.value = ''
+  }
+}
+
+const cancelReply = () => {
+  replyingTo.value = null
+  replyContent.value = ''
+}
+
+const autoResizeReply = () => {
+  if (replyTextarea.value) {
+    replyTextarea.value.style.height = 'auto'
+    const scrollHeight = replyTextarea.value.scrollHeight
+    const maxHeight = 150 // max-h-[150px]
+    const minHeight = 60  // min-h-[60px]
+    
+    const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight)
+    replyTextarea.value.style.height = newHeight + 'px'
+  }
+}
+
+const submitReply = async (parentId: string) => {
+  if (!authStore.user || !replyContent.value.trim() || submittingReply.value) return
+
+  submittingReply.value = true
+
+  try {
+    const replyData = {
+      topicId: topicId.value,
+      parentId: parentId,
+      content: replyContent.value.trim(),
+      authorId: authStore.user.uid,
+      authorName: authStore.user.displayName || 'Користувач',
+      authorEmail: authStore.user.email || '',
+      authorPhotoURL: authStore.user.photoURL || '',
+      createdAt: Date.now(),
+      likesCount: 0
+    }
+
+    await push(dbRef(rtdb, 'comments'), replyData)
+    cancelReply()
+  } catch (error) {
+    console.error('Error submitting reply:', error)
+  } finally {
+    submittingReply.value = false
+  }
+}
+
 const loadTopic = async () => {
   loading.value = true
   error.value = ''
@@ -402,7 +608,6 @@ const loadComments = () => {
           likesCount: data[id].likes ? Object.keys(data[id].likes).length : 0
         }))
         .filter(comment => comment.topicId === topicId.value)
-        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
     } else {
       comments.value = []
     }
@@ -572,8 +777,22 @@ const toggleCommentLike = async (comment: any) => {
 const deleteComment = async (comment: any) => {
   if (!authStore.user || comment.authorId !== authStore.user.uid) return
 
-  if (confirm('Ви впевнені, що хочете видалити цей коментар?')) {
+  const isReply = comment.parentId
+  const confirmMessage = isReply 
+    ? 'Ви впевнені, що хочете видалити цю відповідь?' 
+    : 'Ви впевнені, що хочете видалити цей коментар?'
+
+  if (confirm(confirmMessage)) {
     try {
+      // If deleting a parent comment, also delete all its replies
+      if (!isReply) {
+        const replies = getReplies(comment.id)
+        for (const reply of replies) {
+          const replyRef = dbRef(rtdb, `comments/${reply.id}`)
+          await remove(replyRef)
+        }
+      }
+
       const commentRef = dbRef(rtdb, `comments/${comment.id}`)
       await remove(commentRef)
     } catch (error) {
@@ -713,5 +932,51 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .bg-gradient-to-br:hover {
   transform: scale(1.05);
+}
+
+/* Comment thread styling */
+.comment-thread {
+  position: relative;
+}
+
+.comment-thread:not(:last-child) {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* Reply form animation */
+.comment-thread .border-l-2 {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hover effects for replies */
+.comment-thread .ml-12 .p-4:hover {
+  background-color: #f9fafb;
+  border-left-color: #3b82f6;
+}
+
+/* Reply indicator line */
+.comment-thread .ml-12 {
+  position: relative;
+}
+
+.comment-thread .ml-12::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #e5e7eb, transparent);
 }
 </style>
