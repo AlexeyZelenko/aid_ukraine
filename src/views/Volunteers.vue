@@ -36,7 +36,6 @@
           v-model:type="selectedType"
           v-model:location="selectedLocation"
           v-model:verification="selectedVerification"
-          v-model:data-source="selectedDataSource"
           :locations="uniqueLocations"
         />
       </section>
@@ -47,8 +46,7 @@
           <h3 class="text-lg font-semibold text-gray-900">Список волонтерів</h3>
           <div class="flex items-center gap-4">
             <div class="text-sm text-gray-600">
-              Всього: {{ allVolunteers.length }} 
-              (Firebase: {{ volunteersStore.volunteers.length }}, Мокові: {{ mockVolunteers.length }})
+              Всього: {{ volunteers.length }}
             </div>
             <button
               @click="refreshData"
@@ -68,7 +66,7 @@
         <VolunteersList
           :volunteers="filteredVolunteers"
           :loading="volunteersStore.loading"
-          :total="allVolunteers.length"
+          :total="volunteers.length"
           @contact="contactVolunteer"
           @view-profile="viewProfile"
         />
@@ -92,7 +90,7 @@ import { useVolunteersStore, type Volunteer } from '../stores/volunteers'
 import { useAuthStore } from '../stores/auth'
 import { useToast } from 'primevue/usetoast'
 import { useRouter } from 'vue-router'
-import { MOCK_VOLUNTEERS, VOLUNTEER_TYPES } from '../constants/volunteers'
+import { VOLUNTEER_TYPES } from '../constants/volunteers'
 import StatCard from '@/components/StatCard.vue'
 import VolunteerTypeCard from '@/components/Volunteers/VolunteerTypeCard.vue'
 import SearchFilters from '@/components/SearchFilters.vue'
@@ -112,44 +110,17 @@ const searchQuery = ref('')
 const selectedType = ref('')
 const selectedLocation = ref('')
 const selectedVerification = ref('')
-const selectedDataSource = ref('')
 
 // Constants
-const mockVolunteers = MOCK_VOLUNTEERS
 const volunteerTypes = VOLUNTEER_TYPES
 
 // Computed properties
-// Об'єднуємо мокові дані та дані з Firebase (уникаючи дублікатів по email)
-const allVolunteers = computed(() => {
-  const firebaseVolunteers = volunteersStore.volunteers || []
-  
-  // Позначаємо мокові дані як такі
-  const mockVolunteersWithSource = mockVolunteers.map(vol => ({
-    ...vol,
-    dataSource: 'mock' as const
-  }))
-  
-  // Позначаємо Firebase дані як такі
-  const firebaseVolunteersWithSource = firebaseVolunteers.map(vol => ({
-    ...vol,
-    dataSource: 'firebase' as const
-  }))
-  
-  const combined = [...mockVolunteersWithSource]
-  
-  // Додаємо волонтерів з Firebase, якщо їх немає в мокових даних
-  firebaseVolunteersWithSource.forEach(fbVolunteer => {
-    const exists = combined.some(mockVol => mockVol.email === fbVolunteer.email)
-    if (!exists) {
-      combined.push(fbVolunteer)
-    }
-  })
-  
-  return combined
+const volunteers = computed(() => {
+  return volunteersStore.volunteers || []
 })
 
 const filteredVolunteers = computed(() => {
-  return allVolunteers.value.filter(volunteer => {
+  return volunteers.value.filter(volunteer => {
     const matchesSearch = !searchQuery.value || 
       volunteer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       volunteer.organization.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -164,23 +135,21 @@ const filteredVolunteers = computed(() => {
     const matchesVerification = !selectedVerification.value || 
       (selectedVerification.value === 'verified' && volunteer.verified) ||
       (selectedVerification.value === 'pending' && !volunteer.verified)
-    const matchesDataSource = !selectedDataSource.value || 
-      volunteer.dataSource === selectedDataSource.value
 
-    return matchesSearch && matchesType && matchesLocation && matchesVerification && matchesDataSource
+    return matchesSearch && matchesType && matchesLocation && matchesVerification
   })
 })
 
 const uniqueLocations = computed(() => {
-  const locations = new Set(allVolunteers.value.map(v => v.location))
+  const locations = new Set(volunteers.value.map(v => v.location))
   return Array.from(locations).sort()
 })
 
 const statistics = computed(() => [
-  { value: allVolunteers.value.length, label: 'Всього волонтерів', color: 'ukraine-blue' },
-  { value: allVolunteers.value.filter(v => v.type === 'volunteer').length, label: 'Індивідуальні', color: 'blue-600' },
-  { value: allVolunteers.value.filter(v => v.type === 'fund').length, label: 'Фонди', color: 'yellow-600' },
-  { value: allVolunteers.value.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' }
+  { value: volunteers.value.length, label: 'Всього волонтерів', color: 'ukraine-blue' },
+  { value: volunteers.value.filter(v => v.type === 'volunteer').length, label: 'Індивідуальні', color: 'blue-600' },
+  { value: volunteers.value.filter(v => v.type === 'fund').length, label: 'Фонди', color: 'yellow-600' },
+  { value: volunteers.value.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' }
 ])
 
 // Methods
@@ -273,9 +242,9 @@ onMounted(async () => {
   } catch (error) {
     console.error('Помилка завантаження волонтерів з Firebase:', error)
     toast.add({ 
-      severity: 'warn', 
-      summary: 'Попередження', 
-      detail: 'Не вдалося завантажити дані з Firebase. Відображаються лише мокові дані.', 
+      severity: 'error', 
+      summary: 'Помилка', 
+      detail: 'Не вдалося завантажити дані з Firebase.', 
       life: 5000 
     })
   }

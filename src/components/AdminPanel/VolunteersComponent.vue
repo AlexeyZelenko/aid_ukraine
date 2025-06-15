@@ -2,10 +2,21 @@
   <div class="component-content">
     <div class="header-section">
       <h2>Управління волонтерами</h2>
-      <button class="btn btn-primary" @click="showAddModal = true">
-        <i class="pi pi-plus mr-2"></i>
-        Додати волонтера
-      </button>
+      <div class="header-actions">
+        <button 
+          @click="refreshData" 
+          :disabled="loading"
+          class="btn btn-secondary mr-2"
+        >
+          <i v-if="!loading" class="pi pi-refresh mr-2"></i>
+          <i v-else class="pi pi-spin pi-spinner mr-2"></i>
+          {{ loading ? 'Оновлення...' : 'Оновити' }}
+        </button>
+        <button class="btn btn-primary" @click="showAddModal = true">
+          <i class="pi pi-plus mr-2"></i>
+          Додати волонтера
+        </button>
+      </div>
     </div>
 
     <!-- Статистика -->
@@ -16,10 +27,7 @@
         </div>
         <div class="stat-info">
           <div class="stat-value">{{ totalVolunteers }}</div>
-          <div class="stat-label">
-            Всього волонтерів
-            <small class="source-info">(Firebase: {{ firebaseCount }}, Mock: {{ mockCount }})</small>
-          </div>
+          <div class="stat-label">Всього волонтерів</div>
         </div>
       </div>
       <div class="stat-card">
@@ -40,22 +48,15 @@
           <div class="stat-label">Очікують верифікації</div>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon bg-purple-500">
-          <i class="pi pi-refresh"></i>
+              <div class="stat-card">
+          <div class="stat-icon bg-orange-500">
+            <i class="pi pi-star"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ averageRating }}</div>
+            <div class="stat-label">Середній рейтинг</div>
+          </div>
         </div>
-        <div class="stat-info">
-          <button 
-            @click="refreshData" 
-            :disabled="loading"
-            class="refresh-btn"
-          >
-            <i v-if="!loading" class="pi pi-refresh"></i>
-            <i v-else class="pi pi-spin pi-spinner"></i>
-            {{ loading ? 'Оновлення...' : 'Оновити дані' }}
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- Фільтри -->
@@ -87,14 +88,6 @@
           <option value="pending">Очікує верифікації</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label>Джерело даних:</label>
-        <select v-model="selectedDataSource" class="form-control">
-          <option value="">Усі дані</option>
-          <option value="firebase">Firebase</option>
-          <option value="mock">Мокові дані</option>
-        </select>
-      </div>
     </div>
 
     <!-- Список волонтерів -->
@@ -124,20 +117,22 @@
               <span v-else class="badge badge-warning">
                 <i class="pi pi-clock mr-1"></i>Очікує
               </span>
-              <!-- Індикатор джерела даних -->
-              <span 
-                v-if="volunteer.dataSource"
-                :class="['badge', volunteer.dataSource === 'firebase' ? 'badge-firebase' : 'badge-mock']"
-                :title="volunteer.dataSource === 'firebase' ? 'Дані з Firebase' : 'Мокові дані'"
-              >
-                {{ volunteer.dataSource === 'firebase' ? 'FB' : 'Mock' }}
-              </span>
             </div>
           </div>
           <p><i class="pi pi-building mr-2"></i>{{ volunteer.organization }}</p>
           <p><i class="pi pi-map-marker mr-2"></i>{{ volunteer.location }}</p>
           <p><i class="pi pi-envelope mr-2"></i>{{ volunteer.email }}</p>
           <p><i class="pi pi-phone mr-2"></i>{{ volunteer.phone }}</p>
+          <div v-if="volunteer.rating || volunteer.experience" class="volunteer-stats">
+            <span v-if="volunteer.rating" class="stat-item">
+              <i class="pi pi-star-fill mr-1" style="color: #fbbf24;"></i>
+              {{ volunteer.rating }}/5
+            </span>
+            <span v-if="volunteer.experience" class="stat-item">
+              <i class="pi pi-briefcase mr-1" style="color: #6b7280;"></i>
+              {{ volunteer.experience }} р.
+            </span>
+          </div>
           <p class="volunteer-description">{{ volunteer.description }}</p>
           <div v-if="volunteer.specializations" class="specializations">
             <span 
@@ -283,7 +278,22 @@
                 class="form-control"
                 min="0"
                 max="50"
+                placeholder="Кількість років досвіду"
               >
+              <small class="form-hint">Кількість років досвіду в волонтерській діяльності</small>
+            </div>
+
+            <div class="form-group">
+              <label>Рейтинг</label>
+              <select v-model="form.rating" class="form-control">
+                <option value="">Оберіть рейтинг</option>
+                <option value="1">⭐ 1 зірка</option>
+                <option value="2">⭐⭐ 2 зірки</option>
+                <option value="3">⭐⭐⭐ 3 зірки</option>
+                <option value="4">⭐⭐⭐⭐ 4 зірки</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 зірок</option>
+              </select>
+              <small class="form-hint">Оцінка якості роботи волонтера/організації</small>
             </div>
 
             <div class="form-group full-width">
@@ -324,7 +334,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useVolunteersStore } from '@/stores/volunteers'
 import { useToast } from 'primevue/usetoast'
-import { MOCK_VOLUNTEERS } from '@/constants/volunteers'
 
 // Stores
 const volunteersStore = useVolunteersStore()
@@ -338,7 +347,6 @@ const submitting = ref(false)
 const searchQuery = ref('')
 const selectedType = ref('')
 const selectedStatus = ref('')
-const selectedDataSource = ref('')
 
 // Form data
 const form = ref({
@@ -351,6 +359,7 @@ const form = ref({
   location: '',
   website: '',
   experience: null,
+  rating: null,
   specializationsText: '',
   verified: false
 })
@@ -358,43 +367,19 @@ const form = ref({
 const editingId = ref(null)
 
 // Computed
-// Об'єднуємо мокові дані та дані з Firebase (уникаючи дублікатів по email)
-const allVolunteers = computed(() => {
-  const firebaseVolunteers = volunteersStore.volunteers || []
-  
-  // Позначаємо мокові дані як такі
-  const mockVolunteersWithSource = MOCK_VOLUNTEERS.map(vol => ({
-    ...vol,
-    dataSource: 'mock' as const
-  }))
-  
-  // Позначаємо Firebase дані як такі
-  const firebaseVolunteersWithSource = firebaseVolunteers.map(vol => ({
-    ...vol,
-    dataSource: 'firebase' as const
-  }))
-  
-  const combined = [...mockVolunteersWithSource]
-  
-  // Додаємо волонтерів з Firebase, якщо їх немає в мокових даних
-  firebaseVolunteersWithSource.forEach(fbVolunteer => {
-    const exists = combined.some(mockVol => mockVol.email === fbVolunteer.email)
-    if (!exists) {
-      combined.push(fbVolunteer)
-    }
-  })
-  
-  return combined
+const volunteers = computed(() => volunteersStore.volunteers || [])
+const totalVolunteers = computed(() => volunteers.value.length)
+const verifiedVolunteers = computed(() => volunteers.value.filter(v => v.verified).length)
+const pendingVolunteers = computed(() => volunteers.value.filter(v => !v.verified).length)
+const averageRating = computed(() => {
+  const volunteersWithRating = volunteers.value.filter(v => v.rating && v.rating > 0)
+  if (volunteersWithRating.length === 0) return '—'
+  const sum = volunteersWithRating.reduce((acc, v) => acc + v.rating, 0)
+  return (sum / volunteersWithRating.length).toFixed(1)
 })
 
-const firebaseCount = computed(() => (volunteersStore.volunteers || []).length)
-const mockCount = computed(() => MOCK_VOLUNTEERS.length)
-const totalVolunteers = computed(() => allVolunteers.value.length)
-const verifiedVolunteers = computed(() => allVolunteers.value.filter(v => v.verified).length)
-const pendingVolunteers = computed(() => allVolunteers.value.filter(v => !v.verified).length)
-
 const filteredVolunteers = computed(() => {
-  return allVolunteers.value.filter(volunteer => {
+  return volunteers.value.filter(volunteer => {
     const matchesSearch = !searchQuery.value || 
       volunteer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       volunteer.organization.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -404,10 +389,8 @@ const filteredVolunteers = computed(() => {
     const matchesStatus = !selectedStatus.value || 
       (selectedStatus.value === 'verified' && volunteer.verified) ||
       (selectedStatus.value === 'pending' && !volunteer.verified)
-    const matchesDataSource = !selectedDataSource.value || 
-      volunteer.dataSource === selectedDataSource.value
 
-    return matchesSearch && matchesType && matchesStatus && matchesDataSource
+    return matchesSearch && matchesType && matchesStatus
   })
 })
 
@@ -453,6 +436,7 @@ const editVolunteer = (volunteer) => {
     location: volunteer.location,
     website: volunteer.website || '',
     experience: volunteer.experience || null,
+    rating: volunteer.rating || null,
     specializationsText: volunteer.specializations ? volunteer.specializations.join(', ') : '',
     verified: volunteer.verified
   }
@@ -533,6 +517,7 @@ const resetForm = () => {
     location: '',
     website: '',
     experience: null,
+    rating: null,
     specializationsText: '',
     verified: false
   }
@@ -605,17 +590,18 @@ const submitForm = async () => {
         // Оновлюємо дані після додавання
         await volunteersStore.fetchVolunteers()
       } else {
-        throw new Error('Помилка при додаванні')
+        throw new Error('Помилка при додаванні: ' + result.error)
       }
     }
     
     closeModals()
   } catch (error) {
+    console.error('Помилка в submitForm:', error)
     toast.add({
       severity: 'error',
       summary: 'Помилка',
-      detail: 'Сталася помилка. Спробуйте пізніше.',
-      life: 3000
+      detail: `Сталася помилка: ${error.message}`,
+      life: 5000
     })
   }
   
@@ -631,15 +617,15 @@ onMounted(async () => {
   } catch (error) {
     console.error('Помилка завантаження волонтерів з Firebase:', error)
     toast.add({
-      severity: 'warn',
-      summary: 'Попередження',
-      detail: 'Не вдалося завантажити дані з Firebase. Відображаються лише мокові дані.',
+      severity: 'error',
+      summary: 'Помилка',
+      detail: 'Не вдалося завантажити дані з Firebase.',
       life: 5000
     })
   } finally {
     loading.value = false
   }
-})
+});
 </script>
 
 <style scoped>
@@ -657,6 +643,12 @@ onMounted(async () => {
 .header-section h2 {
   margin: 0;
   color: #212529;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .stats-grid {
@@ -690,7 +682,7 @@ onMounted(async () => {
 .bg-blue-500 { background-color: #3b82f6; }
 .bg-green-500 { background-color: #10b981; }
 .bg-yellow-500 { background-color: #f59e0b; }
-.bg-purple-500 { background-color: #8b5cf6; }
+.bg-orange-500 { background-color: #f97316; }
 
 .stat-value {
   font-size: 2rem;
@@ -789,8 +781,6 @@ onMounted(async () => {
 .badge-info { background: #ddd6fe; color: #7c3aed; }
 .badge-secondary { background: #f3f4f6; color: #6b7280; }
 .badge-success { background: #d1fae5; color: #065f46; }
-.badge-firebase { background: #d1fae5; color: #065f46; }
-.badge-mock { background: #dbeafe; color: #1d4ed8; }
 
 .volunteer-info p {
   margin: 0.25rem 0;
@@ -815,6 +805,20 @@ onMounted(async () => {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.75rem;
+}
+
+.volunteer-stats {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  color: #374151;
+  font-weight: 500;
 }
 
 .specialization-tag {
@@ -939,6 +943,14 @@ onMounted(async () => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.form-hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
 .checkbox-label {
   display: flex !important;
   flex-direction: row !important;
@@ -986,7 +998,7 @@ onMounted(async () => {
   color: white;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: #4b5563;
 }
 
@@ -995,7 +1007,7 @@ onMounted(async () => {
   color: white;
 }
 
-.btn-success:hover {
+.btn-success:hover:not(:disabled) {
   background: #059669;
 }
 
@@ -1005,7 +1017,7 @@ onMounted(async () => {
   border: 1px solid #3b82f6;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover:not(:disabled) {
   background: #3b82f6;
   color: white;
 }
@@ -1016,7 +1028,7 @@ onMounted(async () => {
   border: 1px solid #ef4444;
 }
 
-.btn-outline-danger:hover {
+.btn-outline-danger:hover:not(:disabled) {
   background: #ef4444;
   color: white;
 }
@@ -1033,35 +1045,4 @@ onMounted(async () => {
 
 .mr-1 { margin-right: 0.25rem; }
 .mr-2 { margin-right: 0.5rem; }
-
-.source-info {
-  display: block;
-  font-size: 0.75rem;
-  color: #6b7280;
-  font-weight: normal;
-  margin-top: 0.25rem;
-}
-
-.refresh-btn {
-  background: none;
-  border: none;
-  color: #8b5cf6;
-  font-size: 0.875rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  background: rgba(139, 92, 246, 0.1);
-}
-
-.refresh-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
 </style>

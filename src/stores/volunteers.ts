@@ -104,13 +104,20 @@ export const useVolunteersStore = defineStore('volunteers', () => {
 
   // Додавання волонтера/організації
   const addVolunteer = async (volunteerData: Omit<Volunteer, 'id' | 'verified' | 'createdAt' | 'updatedAt'>) => {
+    console.log('🏪 Store addVolunteer викликано з даними:', volunteerData)
+    
     try {
-      const docRef = await addDoc(collection(db, 'volunteers'), {
+      const dataToSave = {
         ...volunteerData,
         verified: false,
         createdAt: new Date(),
         updatedAt: new Date()
-      })
+      }
+      
+      console.log('💾 Дані для збереження в Firebase:', dataToSave)
+      
+      const docRef = await addDoc(collection(db, 'volunteers'), dataToSave)
+      console.log('✅ Документ створено з ID:', docRef.id)
       
       // Оновлюємо локальний стан
       const newVolunteer: Volunteer = {
@@ -121,15 +128,20 @@ export const useVolunteersStore = defineStore('volunteers', () => {
         updatedAt: new Date()
       }
       
+      console.log('📋 Новий волонтер створено:', newVolunteer)
+      
       if (volunteerData.type === 'volunteer') {
         volunteers.value.unshift(newVolunteer)
+        console.log('👤 Додано до списку волонтерів')
       } else {
         organizations.value.unshift(newVolunteer)
+        console.log('🏢 Додано до списку організацій')
       }
       
+      console.log('🎉 Успішно додано волонтера!')
       return { success: true, id: docRef.id, data: newVolunteer }
     } catch (err) {
-      console.error('Error adding volunteer:', err)
+      console.error('🚨 Помилка додавання волонтера в store:', err)
       return { success: false, error: err }
     }
   }
