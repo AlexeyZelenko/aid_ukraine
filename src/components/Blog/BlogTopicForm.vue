@@ -1,124 +1,266 @@
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-    <h2 class="text-2xl font-semibold text-ukraine-blue mb-4">Створити нову тему</h2>
-    <form @submit.prevent="submitTopic">
-      <div class="mb-4">
-        <label for="topicTitle" class="block text-gray-700 text-sm font-bold mb-2">Заголовок теми:</label>
+  <div class="bg-white rounded-lg shadow-sm">
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-ukraine-blue rounded-full flex items-center justify-center">
+          <i class="fas fa-plus text-white"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Створити нову тему</h2>
+          <p class="text-sm text-gray-600">Поділіться своїми думками зі спільнотою</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form @submit.prevent="submitTopic" class="p-6 space-y-6">
+      <!-- Topic Category -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-tag mr-2 text-ukraine-blue"></i>
+          Категорія
+        </label>
+        <select 
+          v-model="topic.category"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-ukraine-blue focus:border-transparent"
+          required
+        >
+          <option value="">Оберіть категорію</option>
+          <option value="general">Загальне обговорення</option>
+          <option value="help">Допомога та підтримка</option>
+          <option value="news">Новини</option>
+          <option value="ideas">Ідеї та пропозиції</option>
+          <option value="questions">Питання</option>
+          <option value="announcements">Оголошення</option>
+        </select>
+      </div>
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-heading mr-2 text-ukraine-blue"></i>
+          Заголовок теми *
+        </label>
         <input
           type="text"
-          id="topicTitle"
           v-model="topic.title"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Введіть заголовок теми"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-ukraine-blue focus:border-transparent"
+          placeholder="Введіть описовий заголовок теми..."
           required
+          maxlength="100"
         />
+        <div class="mt-1 text-right">
+          <span class="text-xs text-gray-500">{{ topic.title.length }}/100</span>
+        </div>
       </div>
-      <div class="mb-4">
-        <label for="topicContent" class="block text-gray-700 text-sm font-bold mb-2">Зміст теми:</label>
+
+      <!-- Content -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-align-left mr-2 text-ukraine-blue"></i>
+          Зміст теми *
+        </label>
         <textarea
-          id="topicContent"
           v-model="topic.content"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
-          placeholder="Введіть зміст теми"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-ukraine-blue focus:border-transparent"
+          rows="6"
+          placeholder="Детально опишіть тему для обговорення..."
           required
+          maxlength="1000"
         ></textarea>
+        <div class="mt-1 text-right">
+          <span class="text-xs text-gray-500">{{ topic.content.length }}/1000</span>
+        </div>
       </div>
-      <button
-        type="submit"
-        class="bg-ukraine-blue hover:bg-ukraine-yellow text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
-      >
-        Опублікувати тему
-      </button>
+
+      <!-- Tags -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-hashtag mr-2 text-ukraine-blue"></i>
+          Теги (опціонально)
+        </label>
+        <div class="flex items-center gap-2 mb-2">
+          <input
+            type="text"
+            v-model="newTag"
+            @keydown.enter.prevent="addTag"
+            class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-ukraine-blue focus:border-transparent"
+            placeholder="Додайте тег та натисніть Enter"
+            maxlength="20"
+          />
+          <button
+            type="button"
+            @click="addTag"
+            class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+          >
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span
+            v-for="(tag, index) in topic.tags"
+            :key="index"
+            class="inline-flex items-center gap-1 px-2 py-1 bg-ukraine-blue bg-opacity-10 text-ukraine-blue rounded-full text-xs"
+          >
+            #{{ tag }}
+            <button
+              type="button"
+              @click="removeTag(index)"
+              class="text-ukraine-blue hover:text-red-500 transition-colors"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <div class="w-6 h-6 rounded-full overflow-hidden">
+            <img 
+              v-if="authStore.user?.photoURL" 
+              :src="authStore.user.photoURL" 
+              :alt="authStore.user.displayName"
+              class="w-full h-full object-cover"
+            />
+            <div v-else class="w-full h-full bg-ukraine-blue flex items-center justify-center">
+              <i class="fas fa-user text-white text-xs"></i>
+            </div>
+          </div>
+          <span>{{ authStore.user?.displayName || 'Користувач' }}</span>
+        </div>
+        
+        <button
+          type="submit"
+          :disabled="submitting || !topic.title.trim() || !topic.content.trim()"
+          class="px-6 py-2 bg-ukraine-blue text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+        >
+          <i v-if="submitting" class="fas fa-spinner fa-spin"></i>
+          <i v-else class="fas fa-paper-plane"></i>
+          {{ submitting ? 'Публікується...' : 'Опублікувати тему' }}
+        </button>
+      </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { rtdb } from '@/config/firebase'
 import { push, ref as dbRef, serverTimestamp } from 'firebase/database'
 
+// Emits
+const emit = defineEmits<{
+  topicCreated: []
+}>()
+
+// Store
+const authStore = useAuthStore()
+
+// State
+const submitting = ref(false)
+const newTag = ref('')
+
 interface Topic {
-  title: string;
-  content: string;
-  createdAt: any;
-  authorId: string; // Placeholder for user ID
-  authorName: string; // Placeholder for user name
+  title: string
+  content: string
+  category: string
+  tags: string[]
+  createdAt: any
+  authorId: string
+  authorName: string
+  authorEmail: string
+  archived: boolean
+  commentsCount: number
+  likesCount: number
 }
 
 const topic = ref<Topic>({
   title: '',
   content: '',
+  category: '',
+  tags: [],
   createdAt: null,
-  authorId: 'anonymous',
-  authorName: 'Анонім'
+  authorId: authStore.user?.uid || '',
+  authorName: authStore.user?.displayName || 'Користувач',
+  authorEmail: authStore.user?.email || '',
+  archived: false,
+  commentsCount: 0,
+  likesCount: 0
 })
 
+// Methods
+const addTag = () => {
+  const tag = newTag.value.trim().toLowerCase()
+  if (tag && !topic.value.tags.includes(tag) && topic.value.tags.length < 5) {
+    topic.value.tags.push(tag)
+    newTag.value = ''
+  }
+}
+
+const removeTag = (index: number) => {
+  topic.value.tags.splice(index, 1)
+}
+
 const submitTopic = async () => {
-  console.log('Спроба опублікувати тему:', topic.value);
-
-  // 1. Перевірка наявності даних
-  if (!topic.value.title || topic.value.title.trim() === '') {
-    toast.add({ severity: 'warn', summary: 'Попередження', detail: 'Будь ласка, введіть заголовок теми.', life: 3000 });
-    console.warn('Публікація скасована: відсутній заголовок.');
-    return; // Зупиняємо виконання функції
+  if (submitting.value) return
+  
+  // Validation
+  if (!topic.value.title.trim() || !topic.value.content.trim() || !topic.value.category) {
+    return
   }
 
-  if (!topic.value.content || topic.value.content.trim() === '') {
-    toast.add({ severity: 'warn', summary: 'Попередження', detail: 'Будь ласка, введіть зміст теми.', life: 3000 });
-    console.warn('Публікація скасована: відсутній зміст.');
-    return; // Зупиняємо виконання функції
-  }
-
-  // Обрізаємо пробіли з початку та кінця, щоб уникнути порожніх рядків
-  topic.value.title = topic.value.title.trim();
-  topic.value.content = topic.value.content.trim();
-
+  submitting.value = true
 
   try {
-    // 2. Додавання відмітки часу створення
-    topic.value.createdAt = serverTimestamp();
-    console.log('Дані для відправки:', topic.value);
-
-    // 3. Відправка до Firebase Realtime Database
-    const newTopicRef = await push(dbRef(rtdb, 'topics'), topic.value);
-    console.log('Тему успішно опубліковано в Firebase!');
-    console.log('Ідентифікатор нової теми:', newTopicRef.key); // ID нової теми
-
-    // 4. Очищення форми після успішної публікації
-    topic.value.title = '';
-    topic.value.content = '';
-
-    // 5. Повідомлення користувача про успіх
-    toast.add({ severity: 'success', summary: 'Успіх', detail: 'Тему успішно опубліковано!', life: 3000 });
-
-  } catch (error) {
-    // 6. Обробка помилок Firebase та інших можливих помилок
-    console.error('Помилка при публікації теми:', error);
-
-    let errorMessage = 'Не вдалося опублікувати тему. Спробуйте ще раз.';
-
-    // Приклад розширеної обробки помилок Firebase
-    if (error.code) {
-      switch (error.code) {
-        case 'PERMISSION_DENIED':
-          errorMessage = 'Відмовлено у доступі. Можливо, у вас недостатньо прав для публікації.';
-          break;
-        case 'NETWORK_REQUEST_FAILED':
-          errorMessage = 'Проблема з мережею. Перевірте ваше підключення до Інтернету.';
-          break;
-        // Додайте інші коди помилок Firebase, які ви хочете обробляти
-        default:
-          errorMessage = `Помилка: ${error.message || error.code}`;
-          break;
-      }
-    } else if (error.message) {
-      errorMessage = `Помилка: ${error.message}`;
+    // Prepare topic data
+    const topicData = {
+      ...topic.value,
+      title: topic.value.title.trim(),
+      content: topic.value.content.trim(),
+      createdAt: serverTimestamp(),
+      authorId: authStore.user?.uid || '',
+      authorName: authStore.user?.displayName || 'Користувач',
+      authorEmail: authStore.user?.email || '',
+      archived: false,
+      commentsCount: 0,
+      likesCount: 0
     }
 
-    toast.add({ severity: 'error', summary: 'Помилка', detail: errorMessage, life: 3000 });
+    // Save to Firebase
+    await push(dbRef(rtdb, 'topics'), topicData)
+
+    // Reset form
+    topic.value = {
+      title: '',
+      content: '',
+      category: '',
+      tags: [],
+      createdAt: null,
+      authorId: authStore.user?.uid || '',
+      authorName: authStore.user?.displayName || 'Користувач',
+      authorEmail: authStore.user?.email || '',
+      archived: false,
+      commentsCount: 0,
+      likesCount: 0
+    }
+
+    // Emit success event
+    emit('topicCreated')
+
+    // Show success notification
+    // You can add a toast notification here if you have a toast system
+
+  } catch (error) {
+    console.error('Error creating topic:', error)
+    // You can add error notification here
+  } finally {
+    submitting.value = false
   }
-};
+}
 </script>
 
 <style scoped>
