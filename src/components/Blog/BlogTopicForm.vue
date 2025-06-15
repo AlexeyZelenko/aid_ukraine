@@ -118,16 +118,15 @@
       <!-- Submit Button -->
       <div class="flex items-center justify-between pt-4 border-t border-gray-200">
         <div class="flex items-center gap-2 text-sm text-gray-600">
-          <div class="w-6 h-6 rounded-full overflow-hidden">
+          <div class="w-6 h-6 rounded-full overflow-hidden bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
             <img 
               v-if="authStore.user?.photoURL" 
               :src="authStore.user.photoURL" 
               :alt="authStore.user.displayName"
               class="w-full h-full object-cover"
+              @error="handleImageError"
             />
-            <div v-else class="w-full h-full bg-ukraine-blue flex items-center justify-center">
-              <i class="fas fa-user text-white text-xs"></i>
-            </div>
+            <i v-else class="fas fa-user text-white text-xs"></i>
           </div>
           <span>{{ authStore.user?.displayName || 'Користувач' }}</span>
         </div>
@@ -203,6 +202,11 @@ const addTag = () => {
 
 const removeTag = (index: number) => {
   topic.value.tags.splice(index, 1)
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
 }
 
 const submitTopic = async () => {

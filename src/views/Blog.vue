@@ -152,7 +152,7 @@
                   >
                     {{ topic.title }}
                   </router-link>
-                  <p class="text-xs text-gray-500 mt-1">{{ topic.commentsCount }} коментарів</p>
+                  <p class="text-xs text-gray-500 mt-1">{{ topic.commentsCount || 0 }} {{ getCommentsText(topic.commentsCount || 0) }}</p>
                 </div>
               </div>
             </div>
@@ -279,6 +279,10 @@ const loadCommentsStats = () => {
       })
     } else {
       comments.value = []
+      // Reset comments count if no comments
+      topics.value.forEach(topic => {
+        topic.commentsCount = 0
+      })
     }
     
     statsLoading.value = false
@@ -291,6 +295,13 @@ const updateStats = () => {
 
 const refreshTopics = () => {
   loadTopics()
+}
+
+const getCommentsText = (count: number) => {
+  if (count === 0) return 'коментарів'
+  if (count === 1) return 'коментар'
+  if (count >= 2 && count <= 4) return 'коментарі'
+  return 'коментарів'
 }
 
 // Lifecycle

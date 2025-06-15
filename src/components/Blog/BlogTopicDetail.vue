@@ -39,16 +39,15 @@
             <div class="flex items-start justify-between gap-4 mb-4">
               <div class="flex items-start gap-3 flex-1">
                 <!-- Author Avatar -->
-                <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
                   <img 
                     v-if="topic.authorPhotoURL" 
                     :src="topic.authorPhotoURL" 
                     :alt="topic.authorName"
                     class="w-full h-full object-cover"
+                    @error="handleImageError"
                   />
-                  <div v-else class="w-full h-full bg-ukraine-blue flex items-center justify-center">
-                    <i class="fas fa-user text-white"></i>
-                  </div>
+                  <i v-else class="fas fa-user text-white"></i>
                 </div>
 
                 <!-- Topic Info -->
@@ -175,16 +174,15 @@
           <!-- Comment Form (for authenticated users) -->
           <div v-if="authStore.user && !topic.archived" class="p-6 border-b border-gray-100">
             <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+              <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
                 <img 
                   v-if="authStore.user?.photoURL" 
                   :src="authStore.user.photoURL" 
                   :alt="authStore.user.displayName"
                   class="w-full h-full object-cover"
+                  @error="handleImageError"
                 />
-                <div v-else class="w-full h-full bg-ukraine-blue flex items-center justify-center">
-                  <i class="fas fa-user text-white text-sm"></i>
-                </div>
+                <i v-else class="fas fa-user text-white text-sm"></i>
               </div>
 
               <div class="flex-1">
@@ -192,17 +190,27 @@
                   <textarea
                     v-model="newComment"
                     placeholder="Додайте свій коментар..."
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-ukraine-blue focus:border-transparent resize-none"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ukraine-blue focus:border-transparent resize-none min-h-[80px] max-h-[200px] transition-all duration-200 hover:border-gray-400"
                     rows="3"
                     maxlength="500"
                     required
+                    @input="autoResize"
+                    ref="commentTextarea"
                   ></textarea>
                   <div class="flex items-center justify-between">
-                    <span class="text-xs text-gray-500">{{ newComment.length }}/500</span>
+                    <span 
+                      :class="[
+                        'text-xs transition-colors',
+                        newComment.length > 450 ? 'text-red-500' : 
+                        newComment.length > 400 ? 'text-orange-500' : 'text-gray-500'
+                      ]"
+                    >
+                      {{ newComment.length }}/500
+                    </span>
                     <button
                       type="submit"
                       :disabled="submittingComment || !newComment.trim()"
-                      class="px-4 py-2 bg-ukraine-blue text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                      class="px-6 py-2 bg-ukraine-blue text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 font-medium"
                     >
                       <i v-if="submittingComment" class="fas fa-spinner fa-spin"></i>
                       <i v-else class="fas fa-paper-plane"></i>
@@ -264,16 +272,15 @@
               class="p-6 hover:bg-gray-50 transition-colors"
             >
               <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
                   <img 
                     v-if="comment.authorPhotoURL" 
                     :src="comment.authorPhotoURL" 
                     :alt="comment.authorName"
                     class="w-full h-full object-cover"
+                    @error="handleImageError"
                   />
-                  <div v-else class="w-full h-full bg-ukraine-blue flex items-center justify-center">
-                    <i class="fas fa-user text-white text-sm"></i>
-                  </div>
+                  <i v-else class="fas fa-user text-white text-sm"></i>
                 </div>
 
                 <div class="flex-1">
@@ -338,6 +345,7 @@ const topic = ref<any>(null)
 const comments = ref<any[]>([])
 const newComment = ref('')
 const submittingComment = ref(false)
+const commentTextarea = ref<HTMLTextAreaElement | null>(null)
 
 // Computed
 const topicId = computed(() => route.params.id as string)
@@ -499,6 +507,18 @@ const shareTopic = async () => {
   }
 }
 
+const autoResize = () => {
+  if (commentTextarea.value) {
+    commentTextarea.value.style.height = 'auto'
+    const scrollHeight = commentTextarea.value.scrollHeight
+    const maxHeight = 200 // max-h-[200px]
+    const minHeight = 80  // min-h-[80px]
+    
+    const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight)
+    commentTextarea.value.style.height = newHeight + 'px'
+  }
+}
+
 const submitComment = async () => {
   if (!authStore.user || !newComment.value.trim() || submittingComment.value) return
 
@@ -518,6 +538,11 @@ const submitComment = async () => {
 
     await push(dbRef(rtdb, 'comments'), commentData)
     newComment.value = ''
+    
+    // Reset textarea height
+    if (commentTextarea.value) {
+      commentTextarea.value.style.height = 'auto'
+    }
   } catch (error) {
     console.error('Error submitting comment:', error)
   } finally {
@@ -614,6 +639,11 @@ const getCategoryClass = (category: string) => {
   return classes[category] || 'bg-blue-100 text-blue-800'
 }
 
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+}
+
 const showNotification = (message: string) => {
   const notification = document.createElement('div')
   notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300 translate-x-full'
@@ -655,5 +685,33 @@ onMounted(() => {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom scrollbar for textarea */
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Smooth transitions for avatar gradients */
+.bg-gradient-to-br {
+  transition: all 0.3s ease;
+}
+
+.bg-gradient-to-br:hover {
+  transform: scale(1.05);
 }
 </style>

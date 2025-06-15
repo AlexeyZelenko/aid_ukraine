@@ -49,18 +49,17 @@
         <div class="p-6 border-b border-gray-100">
           <div class="flex items-start justify-between gap-4">
             <div class="flex items-start gap-3 flex-1">
-              <!-- Author Avatar -->
-              <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                <img 
-                  v-if="topic.authorPhotoURL" 
-                  :src="topic.authorPhotoURL" 
-                  :alt="topic.authorName"
-                  class="w-full h-full object-cover"
-                />
-                <div v-else class="w-full h-full bg-ukraine-blue flex items-center justify-center">
-                  <i class="fas fa-user text-white text-sm"></i>
-                </div>
-              </div>
+                             <!-- Author Avatar -->
+               <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
+                 <img 
+                   v-if="topic.authorPhotoURL" 
+                   :src="topic.authorPhotoURL" 
+                   :alt="topic.authorName"
+                   class="w-full h-full object-cover"
+                   @error="handleImageError"
+                 />
+                 <i v-else class="fas fa-user text-white text-sm"></i>
+               </div>
 
               <!-- Topic Info -->
               <div class="flex-1 min-w-0">
@@ -77,8 +76,14 @@
                 </div>
 
                 <!-- Title -->
-                <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-                  {{ topic.title }}
+                <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 flex items-center gap-2">
+                  <span>{{ topic.title }}</span>
+                  <span 
+                    v-if="(topic.commentsCount || 0) > 0"
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-ukraine-blue text-white"
+                  >
+                    {{ topic.commentsCount }}
+                  </span>
                 </h3>
 
                 <!-- Author and Date -->
@@ -189,8 +194,14 @@
 
               <!-- Comments Count -->
               <div class="flex items-center gap-2 text-sm text-gray-600">
-                <i class="far fa-comment"></i>
-                <span>{{ topic.commentsCount || 0 }} коментарів</span>
+                <i :class="[
+                  (topic.commentsCount || 0) > 0 ? 'fas fa-comment text-ukraine-blue' : 'far fa-comment'
+                ]"></i>
+                <span :class="[
+                  (topic.commentsCount || 0) > 0 ? 'font-medium text-ukraine-blue' : ''
+                ]">
+                  {{ topic.commentsCount || 0 }} {{ getCommentsText(topic.commentsCount || 0) }}
+                </span>
               </div>
 
               <!-- Views Count -->
@@ -203,10 +214,10 @@
             <!-- View Topic Button -->
             <router-link
               :to="{ name: 'blog-detail', params: { id: topic.id } }"
-              class="inline-flex items-center gap-2 px-4 py-2 bg-ukraine-blue text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-ukraine-blue text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
             >
               <i class="fas fa-external-link-alt"></i>
-              {{ topic.commentsCount > 0 ? 'Читати обговорення' : 'Розпочати обговорення' }}
+              {{ (topic.commentsCount || 0) > 0 ? 'Читати обговорення' : 'Розпочати обговорення' }}
             </router-link>
           </div>
         </div>
@@ -300,13 +311,43 @@ const loadTopics = () => {
       topics.value = Object.keys(data).map(id => ({
         id,
         ...data[id],
-        isLiked: authStore.user && data[id].likes && data[id].likes[authStore.user.uid] || false
+        isLiked: authStore.user && data[id].likes && data[id].likes[authStore.user.uid] || false,
+        commentsCount: 0, // Will be updated from comments
+        likesCount: data[id].likes ? Object.keys(data[id].likes).length : 0
       }))
     } else {
       topics.value = []
     }
     
+    // Load comments to update counts
+    loadCommentsCount()
+    
     loading.value = false
+    emit('updateStats')
+  })
+}
+
+const loadCommentsCount = () => {
+  const commentsRef = dbRef(rtdb, 'comments')
+  onValue(commentsRef, (snapshot) => {
+    const data = snapshot.val()
+    if (data) {
+      const comments = Object.keys(data).map(id => ({
+        id,
+        ...data[id]
+      }))
+      
+      // Update comments count for each topic
+      topics.value.forEach(topic => {
+        topic.commentsCount = comments.filter(comment => comment.topicId === topic.id).length
+      })
+    } else {
+      // Reset comments count if no comments
+      topics.value.forEach(topic => {
+        topic.commentsCount = 0
+      })
+    }
+    
     emit('updateStats')
   })
 }
@@ -454,6 +495,18 @@ const getCategoryClass = (category: string) => {
     announcements: 'bg-red-100 text-red-800'
   }
   return classes[category] || 'bg-blue-100 text-blue-800'
+}
+
+const getCommentsText = (count: number) => {
+  if (count === 0) return 'коментарів'
+  if (count === 1) return 'коментар'
+  if (count >= 2 && count <= 4) return 'коментарі'
+  return 'коментарів'
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
 }
 
 const showNotification = (message: string) => {
