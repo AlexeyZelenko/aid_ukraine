@@ -83,6 +83,14 @@
               <i class="fas fa-globe mr-2 text-yellow-700"></i>
               <a :href="volunteer.website" target="_blank" class="text-ukraine-blue hover:underline">{{ volunteer.website }}</a>
             </div>
+            <div v-if="volunteer.rating" class="mb-2 flex items-center text-gray-700">
+              <i class="fas fa-star mr-2 text-yellow-500"></i>
+              <span>Рейтинг: {{ volunteer.rating }}/5</span>
+            </div>
+            <div v-if="volunteer.experience" class="mb-2 flex items-center text-gray-700">
+              <i class="fas fa-briefcase mr-2 text-blue-500"></i>
+              <span>Досвід: {{ volunteer.experience }} років</span>
+            </div>
           </div>
         </div>
         <div v-if="volunteer.specializations && volunteer.specializations.length > 0" class="mb-8">
@@ -103,17 +111,25 @@
           </l-map>
         </div>
       </div>
-      <div v-else class="text-center text-gray-500 py-12">
+      <div v-else-if="loading" class="text-center text-gray-500 py-12">
         <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
         <div>Завантаження...</div>
+      </div>
+      <div v-else class="text-center text-gray-500 py-12">
+        <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-500"></i>
+        <div>Волонтер не знайдений</div>
+        <button @click="goBack" class="mt-4 px-4 py-2 bg-ukraine-blue text-white rounded hover:bg-blue-700">
+          Повернутися до списку
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useVolunteersStore } from '../stores/volunteers'
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet'
@@ -133,107 +149,24 @@ L.Icon.Default.mergeOptions({
 const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const tileAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 
-// Координаты для Черкас (пример)
-const locationCoords = ref<[number, number]>([49.444433, 32.059767])
-
-// Импортируем mockVolunteers из Volunteers.vue (или продублируем для мок-режима)
-const mockVolunteers = [
-{
-    id: '1',
-    name: 'Фонд "Сила Доброти"',
-    email: 'info@heart-ukraine.org',
-    phone: '+38 (044) 234-56-78',
-    organization: 'Благодійний фонд "Сила Доброти"',
-    type: 'fund',
-    description: 'Благодійний фонд, що займається допомогою переселенцям.',
-    location: 'Черкаси',
-    verified: true,
-    createdAt: new Date('2024-01-10'),
-    website: 'https://heart-ukraine.org',
-    specializations: ['фінансова допомога', 'медикаменти', 'продукти харчування'],
-    rating: 5,
-    experience: 20
-  },
-  {
-    id: '2',
-    name: 'Центр реабілітації "Надія"',
-    email: 'info@nadia-rehab.com',
-    phone: '+38 (056) 456-78-90',
-    organization: 'Центр реабілітації "Надія"',
-    type: 'rehabilitation',
-    description: 'Спеціалізований центр реабілітації для військових та цивільних. Фізична та психологічна реабілітація.',
-    location: 'Медведівка',
-    verified: true,
-    createdAt: new Date('2024-01-08'),
-    website: 'https://nadia-rehab.com',
-    specializations: ['фізична реабілітація', 'психологічна допомога', 'медична реабілітація'],
-    rating: 5
-  },
-  {
-    id: '3',
-    name: 'Блага вість',
-    email: 'church.st.nicholas@email.com',
-    phone: '+38 (067) 111-22-33',
-    organization: 'Блага Вість',
-    type: 'church',
-    description: 'Церква, що організовує гуманітарну допомогу, підтримку переселенців, духовну підтримку та спільні заходи для громади.',
-    location: 'Черкаси',
-    verified: true,
-    createdAt: new Date('2024-01-03'),
-    website: 'https://st-nicholas-church.ua',
-    specializations: ['гуманітарна допомога', 'підтримка переселенців', 'духовна підтримка', 'соціальні заходи'],
-    rating: 5
-  },  
-  {
-    id: '4',
-    name: 'Ірина Сидоренко',
-    email: 'irina.sydorenko@email.com',
-    phone: '+38 (093) 567-89-01',
-    organization: 'Психолог-волонтер',
-    type: 'volunteer',
-    description: 'Практикуючий психолог. Надаю безкоштовні консультації для людей, що пережили травму війни.',
-    location: 'Одеса',
-    verified: true,
-    createdAt: new Date('2024-01-14'),
-    specializations: ['психологічна підтримка', 'травма війни', 'консультації'],
-    rating: 5,
-    experience: 8
-  },  
-  {
-    id: '5',
-    name: 'Віктор Мельник',
-    email: 'viktor.melnyk@email.com',
-    phone: '+38 (095) 789-01-23',
-    organization: 'IT-волонтер',
-    type: 'volunteer',
-    description: 'IT-спеціаліст. Допомагаю з налаштуванням комп\'ютерів, навчанням цифровій грамотності.',
-    location: 'Харків',
-    verified: true,
-    createdAt: new Date('2024-01-13'),
-    specializations: ['IT-підтримка', 'цифрова грамотність', 'налаштування техніки'],
-    rating: 4,
-    experience: 5
-  },
-  {
-    id: '6',
-    name: 'Анна Шевченко',
-    email: 'anna.shevchenko@email.com',
-    phone: '+38 (096) 890-12-34',
-    organization: 'Юрист-волонтер',
-    type: 'volunteer',
-    description: 'Юрист з досвідом роботи в сфері соціального права. Надаю безкоштовні юридичні консультації.',
-    location: 'Київ',
-    verified: true,
-    createdAt: new Date('2024-01-09'),
-    specializations: ['юридичні консультації', 'соціальне право', 'документообіг'],
-    rating: 5,
-    experience: 12
-  }  
-]
-
 const route = useRoute()
 const router = useRouter()
-const volunteer = ref<any>(null)
+const volunteersStore = useVolunteersStore()
+const loading = ref(true)
+
+// Отримуємо волонтера з store або завантажуємо його
+const volunteer = computed(() => {
+  const id = route.params.id as string
+  return volunteersStore.volunteers?.find(v => v.id === id) || null
+})
+
+// Координати для карти
+const locationCoords = computed<[number, number]>(() => {
+  if (volunteer.value?.latitude && volunteer.value?.longitude) {
+    return [volunteer.value.latitude, volunteer.value.longitude]
+  }
+  return [49.444433, 32.059767] // Координати по замовчуванню (Черкаси)
+})
 
 const goBack = () => {
   router.push({ name: 'volunteers' })
@@ -283,9 +216,33 @@ const getTypeIcon = (type: string) => {
   return icons[type] || 'fas fa-user'
 }
 
-onMounted(() => {
-  const id = route.params.id
-  volunteer.value = mockVolunteers.find(v => v.id === id)
+onMounted(async () => {
+  loading.value = true
+  
+  try {
+    // Якщо дані ще не завантажені, завантажуємо їх
+    if (!volunteersStore.volunteers || volunteersStore.volunteers.length === 0) {
+      await volunteersStore.fetchVolunteers()
+    }
+    
+    // Перевіряємо чи існує волонтер з таким ID
+    const id = route.params.id as string
+    const volunteerExists = volunteersStore.volunteers?.find(v => v.id === id)
+    
+    if (!volunteerExists) {
+      console.warn(`Волонтер з ID ${id} не знайдений`)
+      // Можна перенаправити назад або показати помилку
+      router.push({ name: 'volunteers' })
+      return
+    }
+    
+  } catch (error) {
+    console.error('Помилка завантаження даних волонтера:', error)
+    // Можна показати повідомлення про помилку
+    router.push({ name: 'volunteers' })
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
