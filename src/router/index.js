@@ -127,7 +127,8 @@ var router = createRouter({
         {
             path: '/church-registration',
             name: 'church-registration',
-            component: ChurchRegistration
+            component: ChurchRegistration,
+            meta: { requiresAuth: true }
         },
         {
             path: '/admin',

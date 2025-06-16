@@ -1,13 +1,54 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-12">
     <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
-      <div class="text-center mb-8">
-        <div class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-church text-3xl text-white"></i>
+      <!-- Authentication Check -->
+      <div v-if="!authStore.user && !authStore.loading" class="text-center mb-8">
+        <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-lock text-3xl text-white"></i>
         </div>
-        <h1 class="text-3xl font-bold text-purple-700 mb-2">Реєстрація церкви/релігійної організації</h1>
-        <p class="text-gray-600">Долучайтеся до мережі релігійних організацій, які допомагають людям</p>
+        <h1 class="text-3xl font-bold text-red-600 mb-4">Необхідна авторизація</h1>
+        <p class="text-gray-600 mb-6">Для реєстрації церкви або релігійної організації потрібно увійти в систему</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <router-link 
+            to="/login" 
+            class="bg-ukraine-blue text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            Увійти в систему
+          </router-link>
+          <router-link 
+            to="/register" 
+            class="border border-ukraine-blue text-ukraine-blue px-6 py-3 rounded-lg hover:bg-ukraine-blue hover:text-white transition-colors font-medium"
+          >
+            <i class="fas fa-user-plus mr-2"></i>
+            Зареєструватися
+          </router-link>
+        </div>
       </div>
+
+      <!-- Loading State -->
+      <div v-else-if="authStore.loading" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-4xl text-purple-600 mb-4"></i>
+        <p class="text-gray-600">Завантаження...</p>
+      </div>
+
+      <!-- Registration Form (only for authenticated users) -->
+      <div v-else>
+        <div class="text-center mb-8">
+          <div class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-church text-3xl text-white"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-purple-700 mb-2">Реєстрація церкви/релігійної організації</h1>
+          <p class="text-gray-600">Долучайтеся до мережі релігійних організацій, які допомагають людям</p>
+          
+          <!-- User Info -->
+          <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+            <p class="text-sm text-green-800">
+              <i class="fas fa-user-check mr-2"></i>
+              Ви увійшли як: <strong>{{ authStore.user.email }}</strong>
+            </p>
+          </div>
+        </div>
 
       <form @submit.prevent="submitForm" class="space-y-6">
         <div>
@@ -309,6 +350,7 @@
           </button>
         </div>
       </form>
+      </div> <!-- End of authenticated user section -->
     </div>
   </div>
 </template>
@@ -317,7 +359,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVolunteersStore } from '../stores/volunteers'
+import { useAuthStore } from '../stores/auth'
 import { useToast } from 'primevue/usetoast'
+import { db } from '../config/firebase'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { LMap, LTileLayer, LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
@@ -336,6 +381,7 @@ L.Icon.Default.mergeOptions({
 
 const router = useRouter()
 const volunteersStore = useVolunteersStore()
+const authStore = useAuthStore()
 const toast = useToast()
 
 const submitting = ref(false)
@@ -432,6 +478,17 @@ const setCoordinates = (lat: number, lng: number, cityName: string) => {
 }
 
 const submitForm = async () => {
+  // Перевірка авторизації
+  if (!authStore.user) {
+    toast.add({
+      severity: 'error',
+      summary: 'Помилка',
+      detail: 'Для реєстрації церкви потрібно увійти в систему',
+      life: 3000
+    })
+    return
+  }
+
   if (!form.value.agreeToTerms) {
     toast.add({
       severity: 'warn',
@@ -445,7 +502,51 @@ const submitForm = async () => {
   submitting.value = true
 
   try {
+    // Дані для збереження в Firebase
     const churchData = {
+      // Основна інформація
+      name: form.value.name,
+      organizationType: form.value.organizationType,
+      contactPerson: form.value.contactPerson,
+      position: form.value.position || '',
+      email: form.value.email,
+      phone: form.value.phone,
+      address: form.value.address,
+      location: form.value.location,
+      website: form.value.website || '',
+      
+      // Координати
+      latitude: form.value.latitude,
+      longitude: form.value.longitude,
+      
+      // Додаткова інформація
+      members: form.value.members || 0,
+      experience: form.value.experience || 0,
+      services: form.value.services,
+      description: form.value.description,
+      
+      // Документи
+      hasRegistration: form.value.hasRegistration,
+      hasTaxNumber: form.value.hasTaxNumber,
+      
+      // Системні поля
+      userId: authStore.user.uid,
+      userEmail: authStore.user.email,
+      status: 'pending', // pending, approved, rejected
+      verified: false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      
+      // Тип запису
+      type: 'church'
+    }
+
+    // Збереження в Firebase Firestore
+    const docRef = await addDoc(collection(db, 'churches'), churchData)
+    console.log('Церква зареєстрована з ID:', docRef.id)
+
+    // Також додаємо в volunteers store для сумісності
+    const volunteerData = {
       name: form.value.name,
       email: form.value.email,
       phone: form.value.phone,
@@ -458,20 +559,20 @@ const submitForm = async () => {
       description: `${form.value.description}\n\nТип організації: ${getOrganizationTypeLabel(form.value.organizationType)}\nКонтактна особа: ${form.value.contactPerson}${form.value.position ? ` (${form.value.position})` : ''}\nАдреса: ${form.value.address}${form.value.members > 0 ? `\nКількість прихожан: ${form.value.members}` : ''}`,
       verified: false,
       createdAt: new Date(),
-      // Координати з карти
       latitude: form.value.latitude,
       longitude: form.value.longitude,
-      // Додаткові поля для церков
       organizationType: form.value.organizationType,
       contactPerson: form.value.contactPerson,
       position: form.value.position,
       address: form.value.address,
       members: form.value.members,
       hasRegistration: form.value.hasRegistration,
-      hasTaxNumber: form.value.hasTaxNumber
+      hasTaxNumber: form.value.hasTaxNumber,
+      userId: authStore.user.uid,
+      firebaseId: docRef.id
     }
 
-    await volunteersStore.addVolunteer(churchData)
+    await volunteersStore.addVolunteer(volunteerData)
 
     toast.add({
       severity: 'success',

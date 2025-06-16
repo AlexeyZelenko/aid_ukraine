@@ -100,6 +100,7 @@
 <script>
 import DashboardComponent from '@/components/AdminPanel/DashboardComponent.vue'
 import VolunteersComponent from '@/components/AdminPanel/VolunteersComponent.vue'
+import ChurchesComponent from '@/components/AdminPanel/ChurchesComponent.vue'
 import NeedsComponent from '@/components/AdminPanel/NeedsComponent.vue'
 import ProjectsComponent from '@/components/AdminPanel/ProjectsComponent.vue'
 import AnalyticsComponent from '@/components/AdminPanel/AnalyticsComponent.vue'
@@ -112,7 +113,8 @@ export default {
   name: 'AdminPanel',
   components: {
     DashboardComponent,
-    VolunteersComponent,    
+    VolunteersComponent,
+    ChurchesComponent,    
     NeedsComponent,
     ProjectsComponent,
     AnalyticsComponent,
@@ -138,6 +140,13 @@ export default {
           icon: 'pi pi-users',
           component: 'volunteers',
           badge: '24'
+        },
+        {
+          id: 2.5,
+          label: 'Церкви/Релігійні організації',
+          icon: 'pi pi-home',
+          component: 'churches',
+          badge: '5'
         },        
         {
           id: 3,
@@ -194,6 +203,7 @@ export default {
       const componentMap = {
         dashboard: 'DashboardComponent',
         volunteers: 'VolunteersComponent',
+        churches: 'ChurchesComponent',
         organizations: 'OrganizationsComponent',
         needs: 'NeedsComponent',
         projects: 'ProjectsComponent',
