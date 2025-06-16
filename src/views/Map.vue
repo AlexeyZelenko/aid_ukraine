@@ -4,8 +4,50 @@
     <div class="bg-white shadow-sm py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 class="text-4xl font-bold text-ukraine-blue mb-4">{{ $t('map.title') }}</h1>
-        <p class="text-xl text-gray-600">{{ $t('map.subtitle') }}</p>
+        <!-- <p class="text-xl text-gray-600">{{ $t('map.subtitle') }}</p> -->
         <div class="ukraine-accent-bar w-24 mx-auto mt-6"></div>
+      </div>
+    </div>
+
+        <!-- Volunteer Filters -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold mb-4 text-center">Фільтр волонтерів</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <label class="flex items-center text-sm cursor-pointer hover:bg-gray-50 p-2 rounded">
+            <input type="checkbox" v-model="volunteerFilters.volunteer" class="mr-3">
+            <span class="flex items-center">
+              <i class="fas fa-user text-blue-600 mr-2"></i>
+              Волонтери
+            </span>
+          </label>
+          <label class="flex items-center text-sm cursor-pointer hover:bg-gray-50 p-2 rounded">
+            <input type="checkbox" v-model="volunteerFilters.fund" class="mr-3">
+            <span class="flex items-center">
+              <i class="fas fa-building text-yellow-600 mr-2"></i>
+              Фонди
+            </span>
+          </label>
+          <label class="flex items-center text-sm cursor-pointer hover:bg-gray-50 p-2 rounded">
+            <input type="checkbox" v-model="volunteerFilters.rehabilitation" class="mr-3">
+            <span class="flex items-center">
+              <i class="fas fa-hospital text-green-600 mr-2"></i>
+              Реабілітація
+            </span>
+          </label>
+          <label class="flex items-center text-sm cursor-pointer hover:bg-gray-50 p-2 rounded">
+            <input type="checkbox" v-model="volunteerFilters.church" class="mr-3">
+            <span class="flex items-center">
+              <i class="fas fa-church text-purple-600 mr-2"></i>
+              Церкви
+            </span>
+          </label>
+        </div>
+        <div class="text-center mt-4">
+          <span class="text-sm text-gray-600">
+            Показано волонтерів на карті: <strong>{{ filteredVolunteers.length }}</strong>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -16,128 +58,110 @@
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="<a href=&quot;https://www.openstreetmap.org/copyright>OpenStreetMap</a> contributors"
             ></LTileLayer>
+            
+            <!-- Volunteers Markers -->
             <LMarker
-              v-for="point in filteredHelpPoints"
-              :key="point.id"
-              :lat-lng="[point.latitude, point.longitude]"
+              v-for="volunteer in filteredVolunteers"
+              :key="`volunteer-${volunteer.id}`"
+              :lat-lng="[volunteer.latitude, volunteer.longitude]"
             >
-              <LIcon :icon-url="getPointIconUrl(point.type)" :icon-size="[32, 32]" />
+              <LIcon :icon-url="getVolunteerIconUrl(volunteer.type)" :icon-size="[32, 32]" />
               <LPopup>
-                <div class="font-bold">{{ point.title }}</div>
-                <div>{{ point.description }}</div>
-                <div>{{ point.address }}</div>
-                <div>{{ point.phone }}</div>
-                <div>{{ point.hours }}</div>
+                <div class="min-w-[200px]">
+                  <div class="font-bold text-lg mb-2">{{ volunteer.name }}</div>
+                  <div class="text-sm text-gray-600 mb-1">{{ volunteer.organization }}</div>
+                  <div class="text-sm text-gray-600 mb-2">
+                    <i class="fas fa-map-marker-alt mr-1"></i>
+                    {{ volunteer.location }}
+                  </div>
+                  <div class="text-sm mb-2">{{ volunteer.description }}</div>
+                  <div class="text-sm text-gray-600 mb-2">
+                    <i class="fas fa-phone mr-1"></i>
+                    {{ volunteer.phone }}
+                  </div>
+                  <div class="text-sm text-gray-600 mb-2">
+                    <i class="fas fa-envelope mr-1"></i>
+                    {{ volunteer.email }}
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span 
+                      class="px-2 py-1 text-xs rounded-full font-medium"
+                      :class="getVolunteerTypeClass(volunteer.type)"
+                    >
+                      {{ getVolunteerTypeLabel(volunteer.type) }}
+                    </span>
+                    <div v-if="volunteer.verified" class="text-green-500">
+                      <i class="fas fa-check-circle" title="Верифіковано"></i>
+                    </div>
+                  </div>
+                </div>
               </LPopup>
             </LMarker>
           </LMap>
-      
-      <!-- Map Controls -->
-      <div class="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
-        <div class="space-y-3">
-          <button 
-            @click="addHelpPoint"
-            class="btn-ukraine w-full text-sm"
-          >
-            <i class="fas fa-plus mr-2"></i>
-            Додати точку допомоги
-          </button>
-          
-          <div class="border-t pt-3">
-            <h4 class="font-semibold text-sm mb-2">Фільтри:</h4>
-            <div class="space-y-2">
-              <label class="flex items-center text-sm">
-                <input type="checkbox" v-model="filters.medical" class="mr-2">
-                <span class="flex items-center">
-                  <i class="fas fa-plus-circle text-red-500 mr-1"></i>
-                  Медична допомога
-                </span>
-              </label>
-              <label class="flex items-center text-sm">
-                <input type="checkbox" v-model="filters.food" class="mr-2">
-                <span class="flex items-center">
-                  <i class="fas fa-utensils text-green-500 mr-1"></i>
-                  Їжа
-                </span>
-              </label>
-              <label class="flex items-center text-sm">
-                <input type="checkbox" v-model="filters.shelter" class="mr-2">
-                <span class="flex items-center">
-                  <i class="fas fa-home text-blue-500 mr-1"></i>
-                  Притулок
-                </span>
-              </label>
-              <label class="flex items-center text-sm">
-                <input type="checkbox" v-model="filters.transport" class="mr-2">
-                <span class="flex items-center">
-                  <i class="fas fa-car text-yellow-500 mr-1"></i>
-                  Транспорт
-                </span>
-              </label>
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
 
-    <!-- Help Points List -->
+    <!-- Volunteers List -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h2 class="text-2xl font-semibold mb-6">Точки допомоги</h2>
-      
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div 
-          v-for="point in helpPoints" 
-          :key="point.id"
-          class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover"
-        >
-          <div class="flex items-start justify-between mb-3">
-            <h3 class="font-semibold text-lg">{{ point.title }}</h3>
-            <i 
-              :class="getPointIcon(point.type)" 
-              :style="{ color: getPointColor(point.type) }"
-              class="text-xl"
-            ></i>
-          </div>
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-semibold mb-6 text-center">Волонтери на карті</h2>
           
-          <p class="text-gray-600 mb-4">{{ point.description }}</p>
-          
-          <div class="space-y-2 text-sm text-gray-600 mb-4">
-            <div class="flex items-center">
-              <i class="fas fa-map-marker-alt mr-2 text-ukraine-blue"></i>
-              {{ point.address }}
-            </div>
-            <div class="flex items-center">
-              <i class="fas fa-phone mr-2 text-ukraine-blue"></i>
-              {{ point.phone }}
-            </div>
-            <div class="flex items-center">
-              <i class="fas fa-clock mr-2 text-ukraine-blue"></i>
-              {{ point.hours }}
-            </div>
-          </div>
-          
-          <div class="flex justify-between items-center">
-            <span 
-              class="px-3 py-1 text-xs rounded-full"
-              :class="{
-                'bg-green-100 text-green-800': point.status === 'active',
-                'bg-red-100 text-red-800': point.status === 'urgent',
-                'bg-gray-100 text-gray-800': point.status === 'inactive'
-              }"
+          <div class="grid gap-4">
+            <div 
+              v-for="volunteer in volunteersWithCoordinates" 
+              :key="volunteer.id"
+              class="bg-white rounded-lg shadow-lg p-6 ukraine-border card-hover"
             >
-              {{ getStatusLabel(point.status) }}
-            </span>
-            <button 
-              @click="showOnMap(point)"
-              class="text-ukraine-blue hover:text-ukraine-blue-light text-sm"
-            >
-              <i class="fas fa-map mr-1"></i>
-              Показати на карті
-            </button>
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                  <div class="flex items-center mb-1">
+                    <h3 class="font-semibold text-lg">{{ volunteer.name }}</h3>
+                    <div v-if="volunteer.verified" class="ml-2">
+                      <i class="fas fa-check-circle text-green-500" title="Верифіковано"></i>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-600">{{ volunteer.organization }}</p>
+                </div>
+                <span 
+                  class="px-3 py-1 text-xs rounded-full font-medium"
+                  :class="getVolunteerTypeClass(volunteer.type)"
+                >
+                  {{ getVolunteerTypeLabel(volunteer.type) }}
+                </span>
+              </div>
+              
+              <p class="text-gray-600 mb-4 text-sm">{{ volunteer.description }}</p>
+              
+              <div class="space-y-2 text-sm text-gray-600 mb-4">
+                <div class="flex items-center">
+                  <i class="fas fa-map-marker-alt mr-2 text-ukraine-blue"></i>
+                  {{ volunteer.location }}
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-phone mr-2 text-ukraine-blue"></i>
+                  {{ volunteer.phone }}
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-envelope mr-2 text-ukraine-blue"></i>
+                  {{ volunteer.email }}
+                </div>
+              </div>
+              
+              <div class="flex justify-between items-center">
+                <div class="text-xs text-gray-500">
+                  Зареєстровано: {{ formatDate(volunteer.createdAt) }}
+                </div>
+                <button 
+                  @click="showVolunteerOnMap(volunteer)"
+                  class="text-ukraine-blue hover:text-ukraine-blue-light text-sm"
+                >
+                  <i class="fas fa-map mr-1"></i>
+                  Показати на карті
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Add Point Modal -->
     <div 
@@ -241,6 +265,8 @@
 import { ref, reactive, onMounted, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
+import { useVolunteersStore, type Volunteer } from '../stores/volunteers';
+import { useToast } from 'primevue/usetoast';
 import 'leaflet/dist/leaflet.css';
 
 interface HelpPoint {
@@ -257,18 +283,19 @@ interface HelpPoint {
 }
 
 const { t } = useI18n();
+const volunteersStore = useVolunteersStore();
+const toast = useToast();
 
 const zoom = ref(10);
-
 const showAddModal = ref(false);
-const map = ref<any>(null)
+const map = ref<any>(null);
 
-const filters = reactive({
-  medical: true,
-  food: true,
-  shelter: true,
-  transport: true
-})
+const volunteerFilters = reactive({
+  volunteer: true,
+  fund: true,
+  rehabilitation: true,
+  church: true
+});
 
 const pointForm = ref({
   title: '',
@@ -333,14 +360,23 @@ const helpPoints = ref([
   },
 ]);
 
+// Computed properties
+const volunteersWithCoordinates = computed(() => {
+  return volunteersStore.volunteers.filter(volunteer => 
+    volunteer.latitude && volunteer.longitude && 
+    !isNaN(volunteer.latitude) && !isNaN(volunteer.longitude)
+  );
+});
+
+const filteredVolunteers = computed(() => {
+  return volunteersWithCoordinates.value.filter(volunteer => {
+    return volunteerFilters[volunteer.type as keyof typeof volunteerFilters];
+  });
+});
+
+// Functions
 function addHelpPoint() {
   showAddModal.value = true;
-  // Optionally, get current map center for new point default coordinates
-  // if (map.value) {
-  //   const center = map.value.leafletObject.getCenter();
-  //   pointForm.value.latitude = center.lat;
-  //   pointForm.value.longitude = center.lng;
-  // }
 }
 
 function closeAddModal() {
@@ -378,81 +414,82 @@ const resetForm = () => {
   };
 };
 
-function getPointIconUrl(type: string) {
-  // You would typically have different icons for different types
-  // For simplicity, using a generic marker icon here.
-  // In a real app, you'd import specific icon images.
+function getVolunteerIconUrl(type: string) {
   switch (type) {
-    case 'medical':
-      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png';
-    case 'food':
+    case 'volunteer':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png';
+    case 'fund':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png';
+    case 'rehabilitation':
       return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png';
-    case 'shelter':
-      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png';
-    case 'transport':
-      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png';
+    case 'church':
+      return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png';
     default:
       return 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png';
   }
 }
 
-function getPointIcon(type: string) {
+function getVolunteerTypeClass(type: string) {
   switch (type) {
-    case 'medical':
-      return 'fas fa-plus-circle';
-    case 'food':
-      return 'fas fa-utensils';
-    case 'shelter':
-      return 'fas fa-home';
-    case 'transport':
-      return 'fas fa-car';
+    case 'volunteer':
+      return 'bg-blue-100 text-blue-800';
+    case 'fund':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'rehabilitation':
+      return 'bg-green-100 text-green-800';
+    case 'church':
+      return 'bg-purple-100 text-purple-800';
     default:
-      return 'fas fa-info-circle';
+      return 'bg-gray-100 text-gray-800';
   }
 }
 
-function getPointColor(type: string) {
+function getVolunteerTypeLabel(type: string) {
   switch (type) {
-    case 'medical':
-      return '#ef4444'; // red-500
-    case 'food':
-      return '#22c55e'; // green-500
-    case 'shelter':
-      return '#3b82f6'; // blue-500
-    case 'transport':
-      return '#eab308'; // yellow-500
+    case 'volunteer':
+      return 'Волонтер';
+    case 'fund':
+      return 'Фонд';
+    case 'rehabilitation':
+      return 'Реабілітація';
+    case 'church':
+      return 'Церква';
     default:
-      return '#6b7280'; // gray-500
+      return 'Невідомо';
   }
 }
 
-function getStatusLabel(status: string) {
-  switch (status) {
-    case 'active':
-      return 'Активна';
-    case 'urgent':
-      return 'Термінова';
-    case 'inactive':
-      return 'Неактивна';
-    default:
-      return '';
+function showVolunteerOnMap(volunteer: Volunteer) {
+  if (map.value && volunteer.latitude && volunteer.longitude) {
+    map.value.leafletObject.setView([volunteer.latitude, volunteer.longitude], 14);
   }
 }
 
-
-
-function showOnMap(point: any) {
-  if (map.value) {
-    map.value.leafletObject.setView([point.latitude, point.longitude], 14); // Center map and set zoom
-  }
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('uk-UA', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).format(date);
 }
 
-watch(filters, () => {
-  // This would update map markers based on filters
-  console.log('Filters updated:', filters)
-}, { deep: true })
+watch(volunteerFilters, () => {
+  console.log('Volunteer filters updated:', volunteerFilters);
+}, { deep: true });
 
-onMounted(() => {
-  // Map initialization is handled by Vue Leaflet's LMap component
-})
+onMounted(async () => {
+  try {
+    await volunteersStore.fetchVolunteers();
+    console.log('Волонтери завантажені для карти:', volunteersStore.volunteers.length);
+    console.log('Волонтери з координатами:', volunteersWithCoordinates.value.length);
+  } catch (error) {
+    console.error('Помилка завантаження волонтерів для карти:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Помилка',
+      detail: 'Не вдалося завантажити волонтерів для карти.',
+      life: 3000
+    });
+  }
+});
 </script>
