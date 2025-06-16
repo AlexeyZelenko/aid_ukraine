@@ -1,7 +1,7 @@
 <template>
-    <div class="bg-white rounded-lg shadow p-4 text-center">
-      <div class="text-2xl font-bold" :class="`text-${color}`">{{ value }}</div>
-      <div class="text-sm text-gray-600">{{ label }}</div>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4 text-center">
+      <div class="text-lg md:text-2xl font-bold" :class="`text-${color}`">{{ value }}</div>
+      <div class="text-xs md:text-sm text-gray-600 leading-tight">{{ label }}</div>
     </div>
   </template>
   

@@ -1,15 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-12">
+  <div class="min-h-screen bg-gray-50 py-6 md:py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <header class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-ukraine-blue mb-4">{{ $t('volunteers.title') }}</h1>
-        <p class="text-xl text-gray-600">{{ $t('volunteers.subtitle') }}</p>
-        <div class="ukraine-accent-bar w-24 mx-auto mt-6"></div>
+      <header class="text-center mb-8 md:mb-12">
+        <h1 class="text-2xl md:text-4xl font-bold text-ukraine-blue mb-2 md:mb-4">{{ $t('volunteers.title') }}</h1>
+        <p class="text-lg md:text-xl text-gray-600">{{ $t('volunteers.subtitle') }}</p>
+        <div class="ukraine-accent-bar w-16 md:w-24 mx-auto mt-4 md:mt-6"></div>
       </header>
 
       <!-- Statistics -->
-      <section class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+      <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8">
         <StatCard 
           v-for="stat in statistics" 
           :key="stat.label"
@@ -20,7 +20,7 @@
       </section>
 
       <!-- Volunteer Types -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-8 md:mb-12">
         <VolunteerTypeCard
           v-for="type in volunteerTypes"
           :key="type.id"
@@ -30,7 +30,7 @@
       </section>
 
       <!-- Search and Filters -->
-      <section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <section class="bg-white rounded-lg shadow-lg p-4 md:p-6 mb-6 md:mb-8">
         <SearchFilters
           v-model:search="searchQuery"
           v-model:type="selectedType"
@@ -41,17 +41,17 @@
       </section>
 
       <!-- Volunteers List -->
-      <section class="bg-white rounded-lg shadow-lg p-6">
-        <div class="mb-4 flex justify-between items-center">
+      <section class="bg-white rounded-lg shadow-lg p-4 md:p-6">
+        <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h3 class="text-lg font-semibold text-gray-900">Список волонтерів</h3>
-          <div class="flex items-center gap-4">
-            <div class="text-sm text-gray-600">
-              Всього: {{ volunteers.length }}
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+            <div class="text-sm text-gray-600 order-2 sm:order-1">
+              Всього: {{ volunteers.filter(v => v.verified === true).length }}
             </div>
             <button
               @click="refreshData"
               :disabled="volunteersStore.loading"
-              class="px-3 py-1 text-sm bg-ukraine-blue text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              class="px-3 py-2 text-sm bg-ukraine-blue text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto justify-center"
             >
               <svg v-if="!volunteersStore.loading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
