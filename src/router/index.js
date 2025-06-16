@@ -7,6 +7,7 @@ import Map from '../views/Map.vue';
 import Blog from '../views/Blog.vue';
 import Articles from '../views/Articles.vue';
 import BlogTopicDetail from '../components/Blog/BlogTopicDetail.vue';
+import BlogGuide from '../views/BlogGuide.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import About from '../views/About.vue';
@@ -74,6 +75,11 @@ var router = createRouter({
             name: 'blog-detail',
             component: BlogTopicDetail,
             props: true
+        },
+        {
+            path: '/blog-guide',
+            name: 'blog-guide',
+            component: BlogGuide
         },
         {
             path: '/articles',

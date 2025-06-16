@@ -5,6 +5,18 @@
       <div class="text-center mb-8 md:mb-12">
         <h1 class="text-2xl md:text-4xl font-bold text-ukraine-blue mb-2 md:mb-4">{{ $t('blog.title') }}</h1>
         <p class="text-lg md:text-xl text-gray-600">{{ $t('blog.subtitle') }}</p>
+        
+        <!-- Help Link -->
+        <div class="mt-3 md:mt-4">
+          <router-link 
+            to="/blog-guide" 
+            class="inline-flex items-center text-sm md:text-base text-ukraine-blue hover:text-blue-700 font-medium transition-colors"
+          >
+            <i class="fas fa-question-circle mr-2"></i>
+            Як користуватися блогом?
+          </router-link>
+        </div>
+        
         <div class="ukraine-accent-bar w-16 md:w-24 mx-auto mt-4 md:mt-6"></div>
         
         <!-- Statistics Bar -->
@@ -277,6 +289,21 @@
 
           <!-- Mobile: Compact Cards Row -->
           <div class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Help Card - Mobile -->
+            <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-ukraine-blue">
+              <h3 class="text-base font-semibold text-gray-900 mb-2">
+                <i class="fas fa-question-circle mr-2 text-ukraine-blue"></i>
+                Потрібна допомога?
+              </h3>
+              <router-link 
+                to="/blog-guide" 
+                class="inline-flex items-center bg-ukraine-blue text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                <i class="fas fa-book mr-2"></i>
+                Інструкція
+              </router-link>
+            </div>
+
             <!-- User Info Card (if authenticated) -->
             <div v-if="authStore.user" class="bg-white rounded-lg shadow-sm p-4">
               <h3 class="text-base font-semibold text-gray-900 mb-3">Ваша активність</h3>
@@ -363,6 +390,24 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- How to Use Blog -->
+            <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-ukraine-blue">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-question-circle mr-2 text-ukraine-blue"></i>
+                Потрібна допомога?
+              </h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Не знаєте як створити тему або знайти потрібну інформацію? Перегляньте нашу детальну інструкцію.
+              </p>
+              <router-link 
+                to="/blog-guide" 
+                class="inline-flex items-center bg-ukraine-blue text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                <i class="fas fa-book mr-2"></i>
+                Інструкція користування
+              </router-link>
             </div>
 
             <!-- Guidelines -->
