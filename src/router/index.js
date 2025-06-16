@@ -8,6 +8,7 @@ import Blog from '../views/Blog.vue';
 import Articles from '../views/Articles.vue';
 import BlogTopicDetail from '../components/Blog/BlogTopicDetail.vue';
 import BlogGuide from '../views/BlogGuide.vue';
+import VolunteerGuide from '../views/VolunteerGuide.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import About from '../views/About.vue';
@@ -80,6 +81,11 @@ var router = createRouter({
             path: '/blog-guide',
             name: 'blog-guide',
             component: BlogGuide
+        },
+        {
+            path: '/volunteer-guide',
+            name: 'volunteer-guide',
+            component: VolunteerGuide
         },
         {
             path: '/articles',

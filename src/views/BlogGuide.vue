@@ -33,6 +33,12 @@
           >
             Як знайти тему
           </button>
+          <router-link 
+            to="/volunteer-guide"
+            class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors text-center"
+          >
+            Стати волонтером
+          </router-link>
         </div>
       </div>
 
@@ -248,6 +254,73 @@
               <li>• <strong>Зручна навігація</strong> - всі функції адаптовані під сенсорний екран</li>
               <li>• <strong>Швидкий пошук</strong> - легко знайти потрібну інформацію</li>
             </ul>
+          </div>
+        </section>
+
+        <!-- Volunteer Section -->
+        <section class="mb-8 md:mb-12">
+          <h2 class="text-xl md:text-2xl font-bold text-ukraine-blue mb-4 border-l-4 border-ukraine-blue pl-4">
+            🤝 Хочете стати волонтером?
+          </h2>
+          
+          <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 md:p-8 border border-green-200">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+              <div class="flex-shrink-0">
+                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
+                  <i class="fas fa-hands-helping text-2xl text-white"></i>
+                </div>
+              </div>
+              
+              <div class="flex-1 text-center md:text-left">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">
+                  Станьте індивідуальним волонтером!
+                </h3>
+                <p class="text-gray-600 mb-4">
+                  Дізнайтеся як стати волонтером, які є можливості для допомоги та де знайти організації, 
+                  які потребують вашої підтримки. Кожен внесок важливий!
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                  <router-link 
+                    to="/volunteer-guide" 
+                    class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold inline-flex items-center justify-center"
+                  >
+                    <i class="fas fa-book-open mr-2"></i>
+                    Як стати волонтером
+                  </router-link>
+                  
+                  <router-link 
+                    to="/volunteer-registration" 
+                    class="border-2 border-green-600 text-green-600 px-6 py-3 rounded-lg hover:bg-green-600 hover:text-white transition-colors font-semibold inline-flex items-center justify-center"
+                  >
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Зареєструватися як волонтер
+                  </router-link>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="mt-6 pt-6 border-t border-green-200">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <div class="text-2xl font-bold text-green-600">500+</div>
+                  <div class="text-sm text-gray-600">Активних волонтерів</div>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-blue-600">15</div>
+                  <div class="text-sm text-gray-600">Напрямків діяльності</div>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-purple-600">200+</div>
+                  <div class="text-sm text-gray-600">Організацій</div>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold text-orange-600">24/7</div>
+                  <div class="text-sm text-gray-600">Підтримка</div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
