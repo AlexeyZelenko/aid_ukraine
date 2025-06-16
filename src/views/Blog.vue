@@ -79,6 +79,34 @@
 
               <!-- Search and Sort -->
               <div class="flex items-center gap-3">
+                <!-- View Mode Toggle -->
+                <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                  <button 
+                    @click="viewMode = 'full'"
+                    :class="[
+                      'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                      viewMode === 'full' 
+                        ? 'bg-white text-ukraine-blue shadow-sm' 
+                        : 'text-gray-600 hover:text-ukraine-blue'
+                    ]"
+                    title="Повне відображення"
+                  >
+                    <i class="fas fa-th-large"></i>
+                  </button>
+                  <button 
+                    @click="viewMode = 'compact'"
+                    :class="[
+                      'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                      viewMode === 'compact' 
+                        ? 'bg-white text-ukraine-blue shadow-sm' 
+                        : 'text-gray-600 hover:text-ukraine-blue'
+                    ]"
+                    title="Компактне відображення"
+                  >
+                    <i class="fas fa-list"></i>
+                  </button>
+                </div>
+                
                 <div class="relative">
                   <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                   <input 
@@ -106,6 +134,7 @@
             :view="currentView"
             :search-query="searchQuery"
             :sort-by="sortBy"
+            :view-mode="viewMode"
             @update-stats="updateStats"
           />
         </div>
@@ -205,6 +234,7 @@ const statsLoading = ref(true)
 const currentView = ref<'active' | 'archived'>('active')
 const searchQuery = ref('')
 const sortBy = ref('newest')
+const viewMode = ref<'full' | 'compact'>('compact')
 
 // Data
 const topics = ref<any[]>([])

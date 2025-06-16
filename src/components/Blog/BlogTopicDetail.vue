@@ -884,6 +884,9 @@ const showNotification = (message: string) => {
 
 // Lifecycle
 onMounted(() => {
+  // Scroll to top when component loads
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  
   loadTopic()
 })
 </script>

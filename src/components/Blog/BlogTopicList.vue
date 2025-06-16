@@ -40,9 +40,11 @@
 
     <!-- Topics List -->
     <div v-else class="space-y-4">
+      <!-- Full View -->
       <div 
+        v-if="viewMode === 'full'"
         v-for="topic in filteredTopics" 
-        :key="topic.id" 
+        :key="`full-${topic.id}`" 
         class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
       >
         <!-- Topic Header -->
@@ -222,6 +224,129 @@
           </div>
         </div>
       </div>
+
+      <!-- Compact View -->
+      <div 
+        v-else
+        v-for="topic in filteredTopics" 
+        :key="`compact-${topic.id}`" 
+        class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4"
+      >
+        <div class="flex items-start gap-3">
+          <!-- Author Avatar -->
+          <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-ukraine-blue to-blue-600 flex items-center justify-center">
+            <img 
+              v-if="topic.authorPhotoURL" 
+              :src="topic.authorPhotoURL" 
+              :alt="topic.authorName"
+              class="w-full h-full object-cover"
+              @error="handleImageError"
+            />
+            <i v-else class="fas fa-user text-white text-xs"></i>
+          </div>
+
+          <!-- Topic Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1 min-w-0">
+                <!-- Category and Title -->
+                <div class="flex items-center gap-2 mb-1">
+                  <span :class="getCategoryClass(topic.category)" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium">
+                    <i :class="getCategoryIcon(topic.category)" class="mr-1"></i>
+                    {{ getCategoryName(topic.category) }}
+                  </span>
+                  <span v-if="topic.archived" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                    <i class="fas fa-archive mr-1"></i>
+                    Архів
+                  </span>
+                </div>
+
+                <!-- Title -->
+                <h3 class="text-base font-semibold text-gray-900 mb-1 line-clamp-2">
+                  <router-link :to="{ name: 'blog-detail', params: { id: topic.id } }" class="hover:text-ukraine-blue">
+                    {{ topic.title }}
+                  </router-link>
+                </h3>
+
+                <!-- Author, Date and Stats -->
+                <div class="flex items-center gap-3 text-sm text-gray-500">
+                  <span class="font-medium">{{ topic.authorName }}</span>
+                  <span>•</span>
+                  <span>{{ formatDateCompact(topic.createdAt) }}</span>
+                  <span v-if="(topic.commentsCount || 0) > 0" class="flex items-center gap-1 text-ukraine-blue">
+                    <i class="fas fa-comment text-xs"></i>
+                    <span class="font-medium">{{ topic.commentsCount }}</span>
+                  </span>
+                  <span v-if="(topic.likesCount || 0) > 0" class="flex items-center gap-1 text-red-600">
+                    <i class="fas fa-heart text-xs"></i>
+                    <span class="font-medium">{{ topic.likesCount }}</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex items-center gap-1">
+                <!-- Like Button -->
+                <button
+                  @click="toggleLike(topic)"
+                  :disabled="!authStore.user"
+                  :class="[
+                    'p-1.5 rounded-full text-xs transition-colors',
+                    topic.isLiked 
+                      ? 'text-red-600 hover:bg-red-50' 
+                      : 'text-gray-400 hover:bg-gray-50',
+                    !authStore.user && 'opacity-50 cursor-not-allowed'
+                  ]"
+                >
+                  <i :class="topic.isLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
+                </button>
+
+                <!-- More Options -->
+                <div class="relative">
+                  <button
+                    @click="toggleMenu(topic.id)"
+                    data-dropdown-trigger
+                    class="p-1.5 rounded-full hover:bg-gray-50 transition-colors text-gray-400"
+                  >
+                    <i class="fas fa-ellipsis-h text-xs"></i>
+                  </button>
+                  
+                  <!-- Dropdown Menu -->
+                  <div
+                    v-if="activeMenu === topic.id"
+                    data-dropdown-menu
+                    class="absolute right-0 top-full mt-1 w-40 bg-white rounded-md shadow-lg z-10 py-1 border border-gray-200"
+                  >
+                    <button
+                      @click="shareTopic(topic)"
+                      class="flex items-center gap-2 w-full px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
+                    >
+                      <i class="fas fa-share-alt"></i>
+                      Поділитися
+                    </button>
+                    <button
+                      v-if="authStore.user && topic.authorId === authStore.user.uid"
+                      @click="toggleArchive(topic)"
+                      class="flex items-center gap-2 w-full px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
+                    >
+                      <i :class="topic.archived ? 'fas fa-undo' : 'fas fa-archive'"></i>
+                      {{ topic.archived ? 'Відновити' : 'Архівувати' }}
+                    </button>
+                    <button
+                      v-if="authStore.user && topic.authorId === authStore.user.uid"
+                      @click="deleteTopic(topic)"
+                      class="flex items-center gap-2 w-full px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 border-t border-gray-100"
+                    >
+                      <i class="fas fa-trash"></i>
+                      Видалити
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Load More Button -->
@@ -248,6 +373,7 @@ const props = defineProps<{
   view: 'active' | 'archived'
   searchQuery: string
   sortBy: string
+  viewMode: 'full' | 'compact'
 }>()
 
 // Emits
@@ -461,6 +587,26 @@ const formatDate = (timestamp: number | any) => {
   })
 }
 
+const formatDateCompact = (timestamp: number | any) => {
+  if (!timestamp) return 'Невідомо'
+  
+  let date: Date
+  if (typeof timestamp === 'object' && timestamp.seconds) {
+    // Firebase Timestamp
+    date = new Date(timestamp.seconds * 1000)
+  } else if (typeof timestamp === 'number') {
+    date = new Date(timestamp)
+  } else {
+    return 'Невідомо'
+  }
+  
+  return date.toLocaleDateString('uk-UA', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric'
+  })
+}
+
 const getCategoryName = (category: string) => {
   const categories: Record<string, string> = {
     general: 'Загальне',
@@ -535,8 +681,6 @@ const showNotification = (message: string) => {
 watch([() => props.view, () => props.searchQuery, () => props.sortBy], () => {
   page.value = 1
 })
-
-
 
 // Lifecycle
 onMounted(() => {
