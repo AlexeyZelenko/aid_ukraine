@@ -374,6 +374,7 @@ const props = defineProps<{
   searchQuery: string
   sortBy: string
   viewMode: 'full' | 'compact'
+  selectedCategory: string
 }>()
 
 // Emits
@@ -404,8 +405,11 @@ const filteredTopics = computed(() => {
       topic.title.toLowerCase().includes(props.searchQuery.toLowerCase()) ||
       topic.content.toLowerCase().includes(props.searchQuery.toLowerCase()) ||
       (topic.tags && topic.tags.some((tag: string) => tag.toLowerCase().includes(props.searchQuery.toLowerCase())))
+    
+    // Filter by category
+    const matchesCategory = props.selectedCategory === 'all' || topic.category === props.selectedCategory
 
-    return matchesView && matchesSearch
+    return matchesView && matchesSearch && matchesCategory
   })
 
   // Sort topics
@@ -678,7 +682,7 @@ const showNotification = (message: string) => {
 }
 
 // Watchers
-watch([() => props.view, () => props.searchQuery, () => props.sortBy], () => {
+watch([() => props.view, () => props.searchQuery, () => props.sortBy, () => props.selectedCategory], () => {
   page.value = 1
 })
 

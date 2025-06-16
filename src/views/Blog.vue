@@ -126,6 +126,99 @@
                   <option value="mostLikes">Найбільше лайків</option>
                 </select>
               </div>
+
+              <!-- Category Filter -->
+              <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex items-center gap-3 flex-wrap">
+                  <span class="text-sm font-medium text-gray-700">Категорії:</span>
+                  <div class="flex flex-wrap items-center gap-2">
+                                      <button
+                    @click="selectedCategory = 'all'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'all'
+                        ? 'bg-ukraine-blue text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ]"
+                  >
+                    <i class="fas fa-layer-group mr-1"></i>
+                    Всі ({{ getCategoryCount('all') }})
+                  </button>
+                                      <button
+                    @click="selectedCategory = 'general'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'general'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                    ]"
+                  >
+                    <i class="fas fa-comments mr-1"></i>
+                    Загальне ({{ getCategoryCount('general') }})
+                  </button>
+                                      <button
+                    @click="selectedCategory = 'help'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'help'
+                        ? 'bg-green-600 text-white'
+                        : 'bg-green-100 text-green-800 hover:bg-green-200'
+                    ]"
+                  >
+                    <i class="fas fa-hands-helping mr-1"></i>
+                    Допомога ({{ getCategoryCount('help') }})
+                  </button>
+                                      <button
+                    @click="selectedCategory = 'news'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'news'
+                        ? 'bg-yellow-600 text-white'
+                        : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                    ]"
+                  >
+                    <i class="fas fa-newspaper mr-1"></i>
+                    Новини ({{ getCategoryCount('news') }})
+                  </button>
+                                      <button
+                    @click="selectedCategory = 'ideas'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'ideas'
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                    ]"
+                  >
+                    <i class="fas fa-lightbulb mr-1"></i>
+                    Ідеї ({{ getCategoryCount('ideas') }})
+                  </button>
+                                      <button
+                    @click="selectedCategory = 'questions'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'questions'
+                        ? 'bg-orange-600 text-white'
+                        : 'bg-orange-100 text-orange-800 hover:bg-orange-200'
+                    ]"
+                  >
+                    <i class="fas fa-question-circle mr-1"></i>
+                    Питання ({{ getCategoryCount('questions') }})
+                  </button>
+                                      <button
+                    @click="selectedCategory = 'announcements'"
+                    :class="[
+                      'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                      selectedCategory === 'announcements'
+                        ? 'bg-red-600 text-white'
+                        : 'bg-red-100 text-red-800 hover:bg-red-200'
+                    ]"
+                  >
+                    <i class="fas fa-bullhorn mr-1"></i>
+                    Оголошення ({{ getCategoryCount('announcements') }})
+                  </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -135,6 +228,7 @@
             :search-query="searchQuery"
             :sort-by="sortBy"
             :view-mode="viewMode"
+            :selected-category="selectedCategory"
             @update-stats="updateStats"
           />
         </div>
@@ -235,6 +329,7 @@ const currentView = ref<'active' | 'archived'>('active')
 const searchQuery = ref('')
 const sortBy = ref('newest')
 const viewMode = ref<'full' | 'compact'>('compact')
+const selectedCategory = ref('all')
 
 // Data
 const topics = ref<any[]>([])
@@ -245,6 +340,12 @@ const totalTopics = computed(() => topics.value.length)
 const activeTopics = computed(() => topics.value.filter(t => !t.archived).length)
 const archivedTopics = computed(() => topics.value.filter(t => t.archived).length)
 const totalComments = computed(() => comments.value.length)
+
+// Category statistics
+const getCategoryCount = (category: string) => {
+  if (category === 'all') return totalTopics.value
+  return topics.value.filter(t => t.category === category && !t.archived).length
+}
 
 // User statistics
 const userTopics = computed(() => {
