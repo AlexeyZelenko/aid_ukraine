@@ -88,16 +88,6 @@
             <div class="text-gray-700 text-xs sm:text-base">Волонтерів</div>
           </div>
           
-          <!-- <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
-            <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
-              <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
-              {{ fulfilledRequests.toLocaleString() }}
-            </div>
-            <div class="text-gray-700 text-xs sm:text-base">Виконаних запитів</div>
-          </div> -->
-          
           <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
             <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
               <i class="fas fa-spinner fa-spin"></i>
@@ -108,15 +98,15 @@
             <div class="text-gray-700 text-xs sm:text-base">Міст</div>
           </div>
           
-          <!-- <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
-            <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
-              <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
-              {{ supportAvailable }}
-            </div>
-            <div class="text-gray-700 text-xs sm:text-base">Підтримка</div>
-          </div> -->
+                      <!-- <div class="bg-white bg-opacity-50 rounded-lg p-4 sm:p-6 shadow-sm">
+              <div v-if="statsLoading" class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+              <div v-else class="text-2xl sm:text-4xl font-bold text-ukraine-blue mb-1 sm:mb-2">
+                {{ supportAvailable }}
+              </div>
+              <div class="text-gray-700 text-xs sm:text-base">Підтримка</div>
+            </div> -->
         </div>
         
         <!-- Last Updated Info -->
@@ -168,7 +158,7 @@ const totalVolunteers = computed(() => {
 })
 
 const fulfilledRequests = computed(() => {
-  return needsStore.needs?.filter(need => need.status === 'fulfilled').length || 0
+  return needsStore.needs?.filter(need => need.status === 'fulfilled' && need.verified === true).length || 0
 })
 
 const activeCities = computed(() => {
@@ -182,9 +172,9 @@ const activeCities = computed(() => {
     }
   })
   
-  // Cities from needs
+  // Cities from verified needs only
   needsStore.needs?.forEach(need => {
-    if (need.location) {
+    if (need.location && need.verified === true) {
       const city = need.location.split(',')[0].trim()
       cities.add(city)
     }
@@ -194,18 +184,18 @@ const activeCities = computed(() => {
 })
 
 const supportAvailable = computed(() => {
-  const openNeeds = needsStore.needs?.filter(need => need.status === 'open').length || 0
-  const inProgressNeeds = needsStore.needs?.filter(need => need.status === 'in-progress').length || 0
+  const openNeeds = needsStore.needs?.filter(need => need.status === 'open' && need.verified === true).length || 0
+  const inProgressNeeds = needsStore.needs?.filter(need => need.status === 'in-progress' && need.verified === true).length || 0
   return openNeeds + inProgressNeeds > 0 ? '24/7' : 'Доступна'
 })
 
 // Additional stats for enhanced information
 const totalRequests = computed(() => {
-  return needsStore.needs?.length || 0
+  return needsStore.needs?.filter(need => need.verified === true).length || 0
 })
 
 const urgentRequests = computed(() => {
-  return needsStore.needs?.filter(need => need.priority === 'urgent' && need.status === 'open').length || 0
+  return needsStore.needs?.filter(need => need.priority === 'urgent' && need.status === 'open' && need.verified === true).length || 0
 })
 
 const verifiedVolunteers = computed(() => {

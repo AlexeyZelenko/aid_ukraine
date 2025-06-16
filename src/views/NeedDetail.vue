@@ -368,7 +368,14 @@ const loadNeedData = async () => {
     const cachedNeed = needsStore.needs?.find(n => n.id === id)
     
     if (cachedNeed) {
-      // Якщо знайдено в кеші, завершуємо
+      // Проверяем верификацию
+      if (!cachedNeed.verified) {
+        error.value = 'Ця потреба не верифікована і недоступна для перегляду'
+        setTimeout(() => {
+          router.push({ name: 'needs' })
+        }, 2000)
+        return
+      }
       console.log('Потребу знайдено в кеші')
       return
     }
@@ -382,6 +389,14 @@ const loadNeedData = async () => {
     // Перевіряємо знову після завантаження всіх потреб
     const foundNeed = needsStore.needs?.find(n => n.id === id)
     if (foundNeed) {
+      // Проверяем верификацию
+      if (!foundNeed.verified) {
+        error.value = 'Ця потреба не верифікована і недоступна для перегляду'
+        setTimeout(() => {
+          router.push({ name: 'needs' })
+        }, 2000)
+        return
+      }
       console.log('Потребу знайдено після завантаження всіх потреб')
       return
     }
@@ -391,6 +406,15 @@ const loadNeedData = async () => {
     const needData = await needsStore.getNeedById(id)
     if (!needData) {
       error.value = 'Потребу не знайдено'
+      return
+    }
+    
+    // Проверяем верификацию загруженной потребности
+    if (!needData.verified) {
+      error.value = 'Ця потреба не верифікована і недоступна для перегляду'
+      setTimeout(() => {
+        router.push({ name: 'needs' })
+      }, 2000)
       return
     }
     

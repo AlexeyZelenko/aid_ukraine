@@ -13,6 +13,8 @@ import About from '../views/About.vue';
 import NeedDetail from '../views/NeedDetail.vue';
 import VolunteerProfile from '../views/VolunteerProfile.vue';
 import AdminPanel from '../views/AdminPanel.vue';
+import VolunteerRegistration from '../views/VolunteerRegistration.vue';
+import ChurchRegistration from '../views/ChurchRegistration.vue';
 import { useAuthStore } from '../stores/auth'; // Add this line
 
 var router = createRouter({
@@ -91,6 +93,16 @@ var router = createRouter({
             name: 'organization-projects',
             component: () => import('../views/VolunteerProjects.vue'),
             props: true
+        },
+        {
+            path: '/volunteer-registration',
+            name: 'volunteer-registration',
+            component: VolunteerRegistration
+        },
+        {
+            path: '/church-registration',
+            name: 'church-registration',
+            component: ChurchRegistration
         },
         {
             path: '/admin',

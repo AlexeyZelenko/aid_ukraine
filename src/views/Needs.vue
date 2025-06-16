@@ -244,6 +244,9 @@ import { useRouter } from 'vue-router'
   const filteredNeeds = computed(() => {
     let filtered = [...needs.value]
 
+    // Показывать только верифицированные потребности
+    filtered = filtered.filter(need => need.verified === true)
+
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
       filtered = filtered.filter(need => 
@@ -269,10 +272,10 @@ import { useRouter } from 'vue-router'
     return filtered
   })
 
-  const totalNeeds = computed(() => needs.value.length)
-  const urgentNeeds = computed(() => needs.value.filter(n => n.priority === 'urgent').length)
-  const inProgressNeeds = computed(() => needs.value.filter(n => n.status === 'in-progress').length)
-  const fulfilledNeeds = computed(() => needs.value.filter(n => n.status === 'fulfilled').length)
+  const totalNeeds = computed(() => needs.value.filter(n => n.verified === true).length)
+  const urgentNeeds = computed(() => needs.value.filter(n => n.priority === 'urgent' && n.verified === true).length)
+  const inProgressNeeds = computed(() => needs.value.filter(n => n.status === 'in-progress' && n.verified === true).length)
+  const fulfilledNeeds = computed(() => needs.value.filter(n => n.status === 'fulfilled' && n.verified === true).length)
   
   // Methods
   const getPriorityClass = (priority: string) => {

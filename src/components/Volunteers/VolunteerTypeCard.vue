@@ -9,12 +9,23 @@
         </div>
         <h3 class="text-xl font-semibold mb-3">{{ $t(type.titleKey) }}</h3>
         <p class="text-gray-600 mb-4">{{ type.description }}</p>
-        <!-- <button 
+        
+        <!-- Показуємо кнопку реєстрації тільки для волонтерів та церков -->
+        <button 
+          v-if="type.id === 'volunteer' || type.id === 'church'"
           @click="$emit('register', type.id)"
           class="btn-ukraine w-full"
         >
           Зареєструватися
-        </button> -->
+        </button>
+
+        <!-- Для інших типів показуємо повідомлення -->
+        <div 
+          v-else
+          class="bg-gray-100 text-gray-600 py-2 px-4 rounded-md text-sm"
+        >
+          Реєстрація наразі недоступна
+        </div>
       </div>
     </div>
   </template>

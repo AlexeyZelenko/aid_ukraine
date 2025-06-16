@@ -66,7 +66,7 @@
         <VolunteersList
           :volunteers="filteredVolunteers"
           :loading="volunteersStore.loading"
-          :total="volunteers.length"
+          :total="volunteers.filter(v => v.verified === true).length"
           @contact="contactVolunteer"
           @view-profile="viewProfile"
         />
@@ -116,11 +116,15 @@ const volunteerTypes = VOLUNTEER_TYPES
 
 // Computed properties
 const volunteers = computed(() => {
+  // Отримуємо всіх волонтерів для внутрішньої логіки (статистика, локації)
   return volunteersStore.volunteers || []
 })
 
 const filteredVolunteers = computed(() => {
   return volunteers.value.filter(volunteer => {
+    // Показуємо тільки верифікованих волонтерів
+    const isVerified = volunteer.verified === true
+
     const matchesSearch = !searchQuery.value || 
       volunteer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       volunteer.organization.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -136,27 +140,46 @@ const filteredVolunteers = computed(() => {
       (selectedVerification.value === 'verified' && volunteer.verified) ||
       (selectedVerification.value === 'pending' && !volunteer.verified)
 
-    return matchesSearch && matchesType && matchesLocation && matchesVerification
-  })
+    return isVerified && matchesSearch && matchesType && matchesLocation && matchesVerification
+  }).reverse()
 })
 
 const uniqueLocations = computed(() => {
-  const locations = new Set(volunteers.value.map(v => v.location))
+  // Враховуємо тільки верифікованих волонтерів для списку локацій
+  const verifiedVolunteers = volunteers.value.filter(v => v.verified === true)
+  const locations = new Set(verifiedVolunteers.map(v => v.location))
   return Array.from(locations).sort()
 })
 
-const statistics = computed(() => [
-  { value: volunteers.value.length, label: 'Всього волонтерів', color: 'ukraine-blue' },
-  { value: volunteers.value.filter(v => v.type === 'volunteer').length, label: 'Індивідуальні', color: 'blue-600' },
-  { value: volunteers.value.filter(v => v.type === 'fund').length, label: 'Фонди', color: 'yellow-600' },
-  { value: volunteers.value.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' },
-  { value: volunteers.value.filter(v => v.type === 'church').length, label: 'Церкви', color: 'red-600' }
-])
+const statistics = computed(() => {
+  // Враховуємо тільки верифікованих волонтерів у статистиці
+  const verifiedVolunteers = volunteers.value.filter(v => v.verified === true)
+  
+  return [
+    { value: verifiedVolunteers.length, label: 'Всього волонтерів', color: 'ukraine-blue' },
+    { value: verifiedVolunteers.filter(v => v.type === 'volunteer').length, label: 'Індивідуальні', color: 'blue-600' },
+    { value: verifiedVolunteers.filter(v => v.type === 'fund').length, label: 'Фонди', color: 'yellow-600' },
+    { value: verifiedVolunteers.filter(v => v.type === 'rehabilitation').length, label: 'Центри реабілітації', color: 'green-600' },
+    { value: verifiedVolunteers.filter(v => v.type === 'church').length, label: 'Церкви', color: 'red-600' }
+  ]
+})
 
 // Methods
 const openRegistrationModal = (type: 'volunteer' | 'fund' | 'rehabilitation' | 'church') => {
-  registrationType.value = type
-  showRegistrationModal.value = true
+  // Перенаправляємо на відповідні сторінки реєстрації
+  if (type === 'volunteer') {
+    router.push('/volunteer-registration')
+  } else if (type === 'church') {
+    router.push('/church-registration')
+  } else {
+    // Для інших типів показуємо повідомлення, що реєстрація недоступна
+    toast.add({
+      severity: 'info',
+      summary: 'Інформація',
+      detail: 'Реєстрація для цього типу організації наразі недоступна. Доступна реєстрація тільки для волонтерів та церков.',
+      life: 5000
+    })
+  }
 }
 
 const closeRegistrationModal = () => {
