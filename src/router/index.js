@@ -19,6 +19,25 @@ import { useAuthStore } from '../stores/auth'; // Add this line
 
 var router = createRouter({
     history: createWebHistory(),
+    // Глобальний скрол до верху при переході на нову сторінку
+    scrollBehavior(to, from, savedPosition) {
+        // Якщо є збережена позиція (наприклад, при поверненні назад), використовуємо її
+        if (savedPosition) {
+            return savedPosition;
+        }
+        // Якщо є якір в URL (#section), скролимо до нього
+        if (to.hash) {
+            return {
+                el: to.hash,
+                behavior: 'smooth'
+            };
+        }
+        // В усіх інших випадках скролимо до верху
+        return {
+            top: 0,
+            behavior: 'smooth'
+        };
+    },
     routes: [
         {
             path: '/',
@@ -125,6 +144,21 @@ router.beforeEach((to, from, next) => {
     } else {
         next();
     }
+});
+
+// Додатковий guard для забезпечення скролу до верху
+router.afterEach((to, from) => {
+    // Використовуємо nextTick для забезпечення того, що DOM оновився
+    setTimeout(() => {
+        // Якщо немає якоря в URL, скролимо до верху
+        if (!to.hash) {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, 100); // Невелика затримка для забезпечення завершення рендерингу
 });
 
 export default router;
